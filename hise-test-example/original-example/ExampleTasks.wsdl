@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+https://www.sdn.sap.com/irj/sdn/go/portal/prtroot/docs/library/uuid/a0c9ce4c-ee02-2a10-4b96-cb205464aa02
+
+© 2007 Active Endpoints Inc., Adobe Systems Inc., BEA Systems Inc., International
+Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
+ -->
+<wsdl:definitions name="ClaimApproval"
+  targetNamespace="http://www.insurance.example.com/claims"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:tns="http://www.insurance.example.com/claims"
+  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+    <xsd:schema elementFormDefault="qualified"
+      targetNamespace="http://www.insurance.example.com/claims"
+      xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+      xmlns:tns="http://www.insurance.example.com/claims">
+      <xsd:element name="ClaimApprovalData">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="cust">
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="id" type="xsd:string">
+                  </xsd:element>
+                  <xsd:element name="firstname" type="xsd:string">
+                  </xsd:element>
+                  <xsd:element name="lastname" type="xsd:string">
+                  </xsd:element>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="amount" type="xsd:double" />
+            <xsd:element name="region" type="xsd:string" />
+            <xsd:element name="prio" type="xsd:int" />
+            <xsd:element name="activateAt" type="xsd:dateTime" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="ClaimApprovalRequest">
+    <wsdl:part name="ClaimApprovalRequest"
+      element="tns:ClaimApprovalData" />
+  </wsdl:message>
+  <wsdl:message name="ClaimApprovalResponse">
+    <wsdl:part name="ClaimApprovalResponse" type="xsd:boolean" />
+  </wsdl:message>
+  <wsdl:message name="notifyRequest">
+    <wsdl:part name="firstname" type="xsd:string" />
+    <wsdl:part name="lastname" type="xsd:string" />
+    <wsdl:part name="taskId" type="xsd:string" />
+  </wsdl:message>
+  <wsdl:portType name="ClaimsHandlingPT">
+    <wsdl:operation name="approve">
+      <wsdl:input message="tns:ClaimApprovalRequest" />
+    </wsdl:operation>
+    <wsdl:operation name="escalate">
+      <wsdl:input message="tns:ClaimApprovalRequest" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ClaimsHandlingCallbackPT">
+    <wsdl:operation name="approvalResponse">
+      <wsdl:input message="tns:ClaimApprovalResponse" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ClaimApprovalReminderPT">
+    <wsdl:operation name="notify">
+      <wsdl:input message="tns:notifyRequest" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

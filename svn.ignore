@@ -1,0 +1,9 @@
+.classpath
+.settings
+.project
+target
+*.trc
+*.log
+*.local
+*.settings
+*.xml.releaseBackup
