@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.hise.runtime.Message;
+import org.apache.hise.dao.Message;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;

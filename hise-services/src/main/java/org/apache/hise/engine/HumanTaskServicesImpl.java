@@ -28,8 +28,13 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hise.api.HumanInteractionsManager;
 import org.apache.hise.api.HumanTaskServices;
+import org.apache.hise.dao.Assignee;
+import org.apache.hise.dao.AssigneeDao;
+import org.apache.hise.dao.Fault;
+import org.apache.hise.dao.GenericHumanRole;
+import org.apache.hise.dao.Person;
+import org.apache.hise.dao.TaskDao;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.lang.faults.HTException;
 import org.apache.hise.lang.faults.HTIllegalAccessException;
@@ -37,13 +42,7 @@ import org.apache.hise.lang.faults.HTIllegalArgumentException;
 import org.apache.hise.lang.faults.HTIllegalOperationException;
 import org.apache.hise.lang.faults.HTIllegalStateException;
 import org.apache.hise.lang.faults.HTRecipientNotAllowedException;
-import org.apache.hise.runtime.Assignee;
-import org.apache.hise.runtime.AssigneeDao;
-import org.apache.hise.runtime.Fault;
-import org.apache.hise.runtime.GenericHumanRole;
-import org.apache.hise.runtime.Person;
 import org.apache.hise.runtime.Task;
-import org.apache.hise.runtime.TaskDao;
 import org.apache.hise.runtime.Task.Status;
 import org.apache.hise.runtime.Task.TaskTypes;
 import org.apache.hise.utils.DOMUtils;
@@ -63,29 +62,20 @@ public class HumanTaskServicesImpl implements HumanTaskServices {
 
     private final Log log = LogFactory.getLog(HumanTaskServicesImpl.class);
 
-    /**
-     * DAO for accessing {@link Task}s.
-     */
-    private TaskDao taskDao;
-
-    /**
-     * DAO for accessing {@link Assignee}s.
-     */
-    private AssigneeDao assigneeDao;
 
     /**
      * Fully implemented methods - visible in interface.
      */
 
-    private HumanInteractionsManager humanInteractionsManager;
+    private HISEEngine engine;
 
-    public void setTaskManager(HumanInteractionsManager taskManager) {
-        Validate.notNull(taskManager);
-        this.humanInteractionsManager = taskManager;
+    
+    public void setEngine(HISEEngine engine) {
+        this.engine = engine;
     }
 
     public void receive(QName portType, String operation, Element body, String createdBy) throws HTException {
-        QName taskName = humanInteractionsManager.getTaskName(portType, operation);
+        QName taskName = engine.getTaskName(portType, operation);
         assert(taskName != null);
         log.debug("routed " + portType + " " + operation + " -> " + taskName);
         createTask(taskName, createdBy, DOMUtils.domToString(DOMUtils.getFirstElement(DOMUtils.getFirstElement(body))));

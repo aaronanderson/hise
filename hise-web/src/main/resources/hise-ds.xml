@@ -27,6 +27,19 @@
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
     ">
 
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+      <property name="entityManagerFactory" ref="htEntityManagerFactory"/>
+      <property name="dataSource" ref="htDataSource"/>
+    </bean>
+
+    <bean id="htEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="htDataSource" />
+        <property name="jpaVendorAdapter" ref="htJPAVendorAdapter"/>
+        <property name="jpaPropertyMap" ref="htJPAPropertyMap"/>
+        <property name="persistenceXmlLocation" value="classpath:/hise/persistence.xml" />
+        <property name="persistenceUnitName" value="HISE-PU"/>
+    </bean>
+
     <util:map id="htJPAPropertyMap">
         <!-- 
             <entry key="hibernate.search.default.directory_provider" value="org.hibernate.search.store.RAMDirectoryProvider"  />   

@@ -38,15 +38,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hise.api.HumanInteractionsManager;
 import org.apache.hise.api.PeopleQuery;
+import org.apache.hise.dao.Assignee;
+import org.apache.hise.dao.Group;
+import org.apache.hise.dao.Message;
 import org.apache.hise.lang.HumanInteractions;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.lang.faults.HTConfigurationException;
 import org.apache.hise.lang.faults.HTException;
-import org.apache.hise.runtime.Assignee;
-import org.apache.hise.runtime.Group;
-import org.apache.hise.runtime.Message;
 import org.apache.hise.utils.DOMUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -63,32 +62,20 @@ import org.apache.hise.lang.xsd.htd.TTask;
  * @author <a href="mailto:ww@touk.pl">Witek Wołejszo</a>
  */
 @Service
-public class HumanInteractionsManagerImpl implements HumanInteractionsManager {
+public class HumanInteractionsCompiler {
 
-    private final Log log = LogFactory.getLog(HumanInteractionsManagerImpl.class);
+    private final Log log = LogFactory.getLog(HumanInteractionsCompiler.class);
+    
+    private HISEEngine engine;
 
     // ============= FIELDS ===================
-
-    private final List<HumanInteractions> humanInteractionsList = new ArrayList<HumanInteractions>();
-
-    private Map<String, QName> tasksMap = new HashMap<String, QName>();
-    
-    public static QName getCanonicalQName(QName q) {
-        String ns = q.getNamespaceURI();
-        ns = ns.endsWith("/") ? ns.substring(0, ns.length() - 1) : ns;
-        return new QName(ns, q.getLocalPart());
-    }
-    
-    private String tasksKey(QName portType, String operation) {
-        return getCanonicalQName(portType) + ";" + operation; 
-    }
     
     /**
      * XML namespaces supported in human task definitions.
      */
     private Map<String, String> xmlNamespaces;
     
-    private PeopleQuery peopleQuery;
+    private PropertyBasedPeopleQuery peopleQuery;
     
     // ============= CONSTRUCTOR ===================
 
@@ -99,16 +86,16 @@ public class HumanInteractionsManagerImpl implements HumanInteractionsManager {
      * @param resources collection of *.xml files with human interactions definitions.
      * @throws HTException thrown when task definition names are not unique 
      */
-    public HumanInteractionsManagerImpl(Resource[] resources, PeopleQuery peopleQuery, Map<String, String> xmlNamespaces) throws HTException {
+    public HumanInteractionsCompiler(Resource resource, PropertyBasedPeopleQuery peopleQuery, Map<String, String> xmlNamespaces) throws HTException {
         
-        Validate.notNull(resources);
+        Validate.notNull(resource);
         
         this.peopleQuery = peopleQuery;
         this.xmlNamespaces = xmlNamespaces;
         
         Map<String, String> taskDefinitionsNamesMap = new HashMap<String, String>();
         
-        for (Resource htdXml : resources) {
+        Resource htdXml = resource;
             
             try {
                 
@@ -123,26 +110,22 @@ public class HumanInteractionsManagerImpl implements HumanInteractionsManager {
                  
                 humanInteractions.setTaskDefinitions(taskDefinitions);
 
-                this.humanInteractionsList.add(humanInteractions);
-                
                 for (TaskDefinition d : taskDefinitions) {
-                    String key = tasksKey(d.getInterface().getPortType(), d.getInterface().getOperation());
-                    assert(tasksMap.get(key) == null);
+                    String key = HISEEngine.tasksKey(d.getInterface().getPortType(), d.getInterface().getOperation());
+                    assert(engine.tasksMap.get(key) == null);
                     log.debug("registering route " + key + " -> " + d.getTaskName());
-                    tasksMap.put(key, d.getTaskName());
+                    engine.tasksMap.put(key, d.getTaskName());
                 }
                 
             } catch (Exception e) {
                 throw new HTConfigurationException("Error parsing configuration.", e);
             }
-        }
-        
     }
     
     /**
      * Default scope constructor used in Unit Tests.
      */
-    HumanInteractionsManagerImpl() {
+    HumanInteractionsCompiler() {
         
     }
 
@@ -159,15 +142,7 @@ public class HumanInteractionsManagerImpl implements HumanInteractionsManager {
 
     public TaskDefinition getTaskDefinition(QName taskName) {
         Validate.notNull(taskName);
-
-        for (HumanInteractions humanInteractions : this.humanInteractionsList) {
-            for (TaskDefinition taskDefinition : humanInteractions.getTaskDefinitions()) {
-                if (taskName.equals(taskDefinition.getTaskName())) {
-                    return taskDefinition;
-                }
-            }
-        }
-        throw new HTConfigurationException("Task definition with a given name: " + taskName + " not found!", null);
+        return engine.getTaskDefinition(taskName);
     }
 
     // ============= HELPER METHODS ===================
@@ -262,7 +237,7 @@ public class HumanInteractionsManagerImpl implements HumanInteractionsManager {
     }
 
     public QName getTaskName(QName portType, String operation) {
-        return tasksMap.get(tasksKey(portType, operation));
+        return engine.tasksMap.get(HISEEngine.tasksKey(portType, operation));
     }
 
 }

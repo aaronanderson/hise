@@ -27,8 +27,8 @@ import javax.xml.namespace.QName;
 import javax.xml.xpath.XPathConstants;
 
 import org.apache.hise.api.HumanInteractionsManager;
+import org.apache.hise.dao.Message;
 import org.apache.hise.lang.faults.HTException;
-import org.apache.hise.runtime.Message;
 import org.apache.hise.runtime.Task;
 import org.junit.Assume;
 import org.junit.Ignore;

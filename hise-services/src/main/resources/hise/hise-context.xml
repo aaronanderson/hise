@@ -29,14 +29,6 @@
     <context:spring-configured/>
     <context:annotation-config/>
     
-    <bean id="htEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="htDataSource" />
-        <property name="jpaVendorAdapter" ref="htJPAVendorAdapter"/>
-        <property name="jpaPropertyMap" ref="htJPAPropertyMap"/>
-        <property name="persistenceXmlLocation" value="classpath:/hise/persistence.xml" />
-        <property name="persistenceUnitName" value="HISE-PU"/>
-    </bean>
-
     <bean id="taskDao" class="org.apache.hise.runtime.JpaTaskDao">
         <property name="entityManagerFactory" ref="htEntityManagerFactory" />
     </bean>
@@ -50,4 +42,39 @@
 		<property name="assigneeDao" ref="assigneeDao" />
         <property name="taskManager" ref="taskManager"/>
 	</bean>
+  
+    <bean name="taskOperations" class="org.apache.hise.engine.TaskOperationsImpl">
+      <property name="services" ref="humanTaskServices"/>
+    </bean>
+  
+    <bean id="hisePasswordCallback" class="org.apache.hise.engine.MapPasswordCallback">
+      <property name="passwords" ref="hiseLoginProperties"/>
+    </bean>
+  
+    <bean id="transactionHandler" class="org.apache.hise.engine.TransactionHandler">
+      <property name="transactionManager" ref="transactionManager"/>
+    </bean>
+
+    
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+  
+    <bean name="peopleQuery" class="org.apache.hise.engine.PropertyBasedPeopleQuery">
+      <property name="configuration" value="classpath:peopleGroups.properties"/>
+    </bean>
+
+<!--   
+    <bean id="taskManager" class="org.apache.hise.engine.HumanInteractionsManagerImpl">
+      <constructor-arg index="0">
+        <value>classpath:*-human-interaction.xml</value>
+      </constructor-arg>
+      <constructor-arg ref="peopleQuery" index="1"/>
+      <constructor-arg index="2">
+        <map>
+          <entry key="hise" value="http://www.hise/hise/schema"/>
+        </map>
+      </constructor-arg>
+    </bean>
+     -->
+  
+    <util:properties id="hiseLoginProperties" location="classpath:hise-login.properties"/>
 </beans>

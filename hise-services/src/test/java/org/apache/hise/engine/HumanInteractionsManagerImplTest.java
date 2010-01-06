@@ -23,7 +23,7 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.hise.engine.HumanInteractionsManagerImpl;
+import org.apache.hise.engine.HumanInteractionsCompiler;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -37,7 +37,7 @@ public class HumanInteractionsManagerImplTest {
     @Test
     public void testUnmarshallHumanInteractionsData() throws Exception {
         Resource htdXml = new ClassPathResource("testHtd1-human-interaction.xml");
-        HumanInteractionsManagerImpl humanInteractionsManagerImpl = new HumanInteractionsManagerImpl();
+        HumanInteractionsCompiler humanInteractionsManagerImpl = new HumanInteractionsCompiler();
         org.apache.hise.lang.xsd.htd.THumanInteractions hi = humanInteractionsManagerImpl.unmarshallHumanInteractionsData(htdXml);
         Assert.assertNotNull(hi);
     }

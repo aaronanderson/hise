@@ -28,8 +28,8 @@ import java.util.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.api.PeopleQuery;
-import org.apache.hise.runtime.Assignee;
-import org.apache.hise.runtime.Person;
+import org.apache.hise.dao.Assignee;
+import org.apache.hise.dao.Person;
 import org.springframework.core.io.Resource;
 
 

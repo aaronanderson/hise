@@ -42,7 +42,7 @@ import net.sf.saxon.om.NodeInfo;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hise.runtime.Message;
+import org.apache.hise.dao.Message;
 import org.apache.hise.utils.DOMUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

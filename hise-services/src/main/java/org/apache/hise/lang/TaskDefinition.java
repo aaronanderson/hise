@@ -35,14 +35,13 @@ import javax.xml.xpath.XPathConstants;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hise.api.PeopleQuery;
-import org.apache.hise.api.TemplateEngine;
+import org.apache.hise.dao.Assignee;
+import org.apache.hise.dao.GenericHumanRole;
+import org.apache.hise.dao.Group;
+import org.apache.hise.dao.Person;
+import org.apache.hise.engine.PropertyBasedPeopleQuery;
 import org.apache.hise.engine.RegexpTemplateEngine;
 import org.apache.hise.lang.faults.HTException;
-import org.apache.hise.runtime.Assignee;
-import org.apache.hise.runtime.GenericHumanRole;
-import org.apache.hise.runtime.Group;
-import org.apache.hise.runtime.Person;
 import org.apache.hise.runtime.Task;
 import org.apache.hise.utils.XmlUtils;
 import org.w3c.dom.Element;
@@ -64,9 +63,9 @@ public class TaskDefinition {
 
     private final Log log = LogFactory.getLog(TaskDefinition.class);
     
-    private TemplateEngine templateEngine;
+    private RegexpTemplateEngine templateEngine;
 
-    private final PeopleQuery peopleQuery;
+    private final PropertyBasedPeopleQuery peopleQuery;
 
     private final TTask tTask;
 
@@ -81,7 +80,7 @@ public class TaskDefinition {
 
     // ==================== CONSTRUCTOR =========================
 
-    public TaskDefinition(TTask taskDefinition, PeopleQuery peopleQuery, Map<String, String> xmlNamespaces, String targetNamespace) {
+    public TaskDefinition(TTask taskDefinition, PropertyBasedPeopleQuery peopleQuery, Map<String, String> xmlNamespaces, String targetNamespace) {
 
         super();
 
@@ -144,12 +143,7 @@ public class TaskDefinition {
         Validate.notNull(task);
         
         if (this.tTask.getPriority() != null) {
-            String priorityXPath = this.tTask.getPriority().getContent().get(0).toString().trim();
-            Validate.notNull(priorityXPath);
-            
-            Double d = (Double) task.evaluateXPath(priorityXPath, XPathConstants.NUMBER);
-            
-            return d.intValue();
+            return Integer.parseInt(task.evaluateExpression(tTask.getPriority()).toString());
         }
         
         return null;
@@ -179,8 +173,9 @@ public class TaskDefinition {
             Validate.notNull(parameterName);
             Validate.notNull(parameterXPath);
 
-            Object o = task.evaluateXPath(parameterXPath, returnType);
-
+            TExpression e = new TExpression();
+            e.getContent().add(parameterXPath);
+            Object o = task.evaluateExpression(e);
             result.put(parameterName, o);
         }
 
@@ -321,10 +316,6 @@ public class TaskDefinition {
         return new QName(targetNamespace, this.tTask.getName());
     }
 
-    public void setTemplateEngine(TemplateEngine templateEngine) {
-        this.templateEngine = templateEngine;
-    }
-    
     public TTask gettTask() {
         return tTask;
     }

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.hise.runtime;
+package org.apache.hise.dao;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

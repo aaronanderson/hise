@@ -32,7 +32,6 @@ import javax.xml.ws.handler.MessageContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hise.api.HumanTaskServices;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.w3c.dom.Element;
 
@@ -43,7 +42,7 @@ import org.w3c.dom.Element;
 public class HISEJaxWSService implements Provider<SOAPMessage> {
     private static Log __log = LogFactory.getLog(HISEJaxWSService.class);
     
-    private HumanTaskServices services;
+    private HISEEngine hiseEngine;
     private WebServiceContext context;
     private JpaTransactionManager transactionManager;
     private MessageFactory messageFactory;
@@ -65,14 +64,6 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
         this.context = context;
     }
 
-    public HumanTaskServices getServices() {
-        return services;
-    }
-
-    public void setServices(HumanTaskServices services) {
-        this.services = services;
-    }
-
     public SOAPMessage invoke(SOAPMessage request) {
         try {
 //            TransactionStatus tx = transactionManager.getTransaction(new DefaultTransactionDefinition());
@@ -85,7 +76,7 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
             
             Element body = request.getSOAPBody();
             __log.debug("invoking " + request + " operation:" + operation + " portType:" + portType + " operation2:" + operation2);
-            services.receive(portType, operation.getLocalPart(), body, context.getUserPrincipal().getName());
+            hiseEngine.humanTaskServices.receive(portType, operation.getLocalPart(), body, context.getUserPrincipal().getName());
             SOAPMessage m = messageFactory.createMessage();
 //            transactionManager.commit(tx);
             return m;

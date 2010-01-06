@@ -17,34 +17,25 @@
  * under the License.
  */
 
-package org.apache.hise.runtime;
+package org.apache.hise.dao;
 
-import java.io.Serializable;
+import javax.persistence.MappedSuperclass;
 
+import org.springframework.beans.factory.annotation.Configurable;
 
 /**
- * Basic DAO operations for domain objects extending {@link Base}.
- * @author Witek Wołejszo
+ * Base class for WS-HumanTask domain model. Implements common methods like: toString, equals, hashCode. Class
+ * is {@link Configurable} and expects container to initialise some of its values.
+ * 
+ * @author Witold Wołejszo
  */
-public interface BasicDao<T extends Base, ID extends Serializable> {
+@Configurable
+@MappedSuperclass
+public abstract class Base {
 
-    /**
-     * Retrieves domain object from persistent store.
-     * @param id Identifier of the object requested
-     * @return requested domain object
-     */
-    T fetch(ID id);
-
-    /**
-     * Saves domain object in persistent store.
-     * @param entity Domain object to be updated
-     */
-    void update(T entity);
-
-    /**
-     * Creates domain object in persistent store.
-     * @param entity Domain object to be created
-     */
-    void create(T entity);
-
+    @Override
+    public abstract int hashCode();
+    
+    @Override
+    public abstract boolean equals(Object obj);
 }

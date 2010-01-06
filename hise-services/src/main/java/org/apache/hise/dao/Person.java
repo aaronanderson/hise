@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.hise.runtime;
+package org.apache.hise.dao;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,32 +28,25 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
-/**
- * Unresolved group of people.
- *
- * @author Witek Wołejszo
- * @author Kamil Eisenbart
- * @author Mateusz Lipczyński
- */
 @Entity
-@Table(name = "ASSIGNEE_GROUP")
-public class Group extends Assignee {
+@Table(name = "ASSIGNEE_PERSON")
+public class Person extends Assignee {
 
     @Column(unique = true, nullable = false)
     private String name;
 
     /**
-     * Unresolved group of people constructor.
+     * Person constructor.
      */
-    public Group() {
+    public Person() {
         super();
     }
 
     /**
-     * Unresolved group of people constructor.
-     * @param name The group name.
+     * Person constructor.
+     * @param name The person name.
      */
-    public Group(String name) {
+    public Person(String name) {
         super();
         Validate.notNull(name);
         this.setName(name);
@@ -68,8 +61,8 @@ public class Group extends Assignee {
     }
 
     /**
-     * Returns the group hash code.
-     * @return group hash code
+     * Returns the person hash code.
+     * @return person hash code
      */
     @Override
     public int hashCode() {
@@ -82,7 +75,7 @@ public class Group extends Assignee {
     }
 
     /**
-     * Checks whether the group is equal to another object.
+     * Checks whether the person is equal to another object.
      * @param obj object to compare
      * @return true if the objects are equal, false otherwise
      */
@@ -97,7 +90,7 @@ public class Group extends Assignee {
         final String[] excludeFields = { "name" };
         return EqualsBuilder.reflectionEquals(this, obj, excludeFields);
     }
-
+    
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("id", this.id).append("name", this.name).toString();

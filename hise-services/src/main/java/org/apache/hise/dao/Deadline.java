@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.hise.runtime;
+package org.apache.hise.dao;
 
 import java.util.Date;
 
@@ -34,6 +34,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.hise.runtime.Task;
 
 /**
  * Holds start or completion deadline information.

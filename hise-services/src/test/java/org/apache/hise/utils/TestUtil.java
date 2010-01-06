@@ -25,9 +25,9 @@ import java.util.Map;
 
 import org.apache.hise.api.HumanInteractionsManager;
 import org.apache.hise.api.PeopleQuery;
-import org.apache.hise.engine.HumanInteractionsManagerImpl;
+import org.apache.hise.dao.Assignee;
+import org.apache.hise.engine.HumanInteractionsCompiler;
 import org.apache.hise.lang.faults.HTException;
-import org.apache.hise.runtime.Assignee;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -55,7 +55,7 @@ public class TestUtil {
             resources.add(new ClassPathResource(htdFile));
         }
         
-        return new HumanInteractionsManagerImpl((Resource[]) resources.toArray(), new PeopleQuery() {
+        return new HumanInteractionsCompiler((Resource[]) resources.toArray(), new PeopleQuery() {
 
             public List<Assignee> evaluate(String logicalPeopleGroupName, Map<String, Object> parameters) {
                 return new ArrayList<Assignee>();

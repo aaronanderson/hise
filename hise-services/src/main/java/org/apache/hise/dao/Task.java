@@ -1,0 +1,531 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+package org.apache.hise.dao;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import javax.annotation.Resource;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.Transient;
+import javax.xml.XMLConstants;
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
+
+import net.sf.saxon.Configuration;
+import net.sf.saxon.query.DynamicQueryContext;
+import net.sf.saxon.query.StaticQueryContext;
+import net.sf.saxon.query.XQueryExpression;
+import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.type.AnyItemType;
+
+import org.apache.commons.lang.Validate;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Configurable;
+
+
+/**
+ * Holds task instance information. Provides task business operations.
+ *
+ * @author Kamil Eisenbart
+ * @author Witek Wołejszo
+ * @author Mateusz Lipczyński
+ * @author Warren Crossing
+ */
+@Entity
+@Table(name = "TASK")
+@Configurable(preConstruction = true)
+public class Task extends Base {
+
+    /**
+     * Logger.
+     */
+    @Transient
+    private final Log __log = LogFactory.getLog(Task.class);
+    
+    /**
+     * Key {@link Task} definition is looked up in {@link HumanInteractionsManager} by.
+     */
+    @Column(nullable = false)
+    private String taskDefinitionKey;
+
+    public static enum TaskTypes {
+        ALL, TASKS, NOTIFICATIONS;
+    }
+
+    /**
+     * Task statuses.
+     */
+    public static enum Status {
+
+        /**
+         * Upon creation. Remains CREATED if there are no potential owners.
+         */
+        CREATED, 
+
+        /**
+         * Created task with multiple potential owners.
+         */
+        READY, 
+        
+        /**
+         * Created task with single potential owner. Work started. Actual owner set.
+         */
+        RESERVED, 
+
+        /**
+         * Work started and task is being worked on now. Actual owner set.
+         */
+        IN_PROGRESS,
+
+        /**
+         * In any of its active states (Ready, Reserved, InProgress), a task can be suspended, 
+         * transitioning it into the Suspended state. On resumption of the task, it transitions 
+         * back to the original state from which it had been suspended.
+         */
+        SUSPENDED, 
+
+        /**
+         * Successful completion of the work. One of the final states.
+         */
+        COMPLETED, 
+
+        /**
+         * Unsuccessful completion of the work. One of the final states.
+         */
+        FAILED, 
+
+        /**
+         * Unrecoverable error in human task processing. One of the final states.
+         */
+        ERROR,
+
+        /**
+         * TODO javadoc, One of the final states.
+         */
+        EXITED, 
+        
+        /**
+         * Task is no longer needed - skipped. This is considered a “good” outcome of a task. One of the final states.
+         */
+        OBSOLETE;
+
+        public String value() {
+            return name();
+        }
+
+        public static Status fromValue(String v) {
+            return valueOf(v);
+        }
+
+    }
+
+    /**
+     * Task operations. Enumeration used to trigger comments.
+     */
+    private static enum Operations {
+        CREATE, STATUS, NOMINATE, CLAIM, START, DELEGATE, RELEASE, COMPLETE, FAIL; 
+    }
+
+    /**
+     * Task's id. Autogenerated.
+     */
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "task_seq")
+    @SequenceGenerator(name = "task_seq", sequenceName = "task_seq")
+    private Long id;
+
+    /**
+     * Task input message map. Maps message part to message. If
+     * document style Web HumanTaskServicesImpl are used to start Task, part name
+     * should be set to {@link Message.DEFAULT_PART_NAME_KEY}.
+     */
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @MapKey(name = "partName")
+    @JoinTable(name = "TASK_MSG_INPUT")
+    private Map<String, Message> input = new HashMap<String, Message>();
+
+    /**
+     * Task output message map. Maps message part to message.
+     */
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @MapKey(name = "partName")
+    @JoinTable(name = "TASK_MSG_OUTPUT")
+    private Map<String, Message> output = new HashMap<String, Message>();
+
+    /**
+     * Task status.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+//    @Index(name = "task_status_idx")
+    private Status status;
+
+    /**
+     * Previous status of SUSPENDED Task. When Task is resumed this
+     * status is copied to the status field.
+     */
+    @Enumerated(EnumType.STRING)
+    private Status statusBeforeSuspend;
+
+    /**
+     * People assigned to different generic human roles.
+     */
+    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    private Person actualOwner;
+
+    /**
+     * This element is used to specify the priority of the task. It is an optional element which value is an integer expression. If not present, the priority of
+     * the task is unspecified. 0 is the highest priority, larger numbers identify lower priorities.
+     */
+    private int priority;
+
+    /**
+     * Task initiator. Depending on how the task has been instantiated the task initiator may or may not be defined.
+     */
+    private String createdBy;
+
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date createdOn;
+
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date activationTime;
+
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date expirationTime;
+
+    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
+    private Date suspensionTime;
+
+    private boolean skippable;
+
+    private boolean escalated;
+    
+    private boolean notification = false;
+
+    public boolean isNotification() {
+        return notification;
+    }
+
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "TASK_POTENTIAL_OWNERS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
+    private Set<Assignee> potentialOwners;
+
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "TASK_EXCLUDED_OWNERS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
+    private Set<Assignee> excludedOwners;
+
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "TASK_STAKEHOLDERS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
+    private Set<Assignee> taskStakeholders;
+
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "TASK_BUSINESS_AMINISTRATORS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
+    private Set<Assignee> businessAdministrators;
+
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JoinTable(name = "TASK_NOTIFICATION_RECIPIENTS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
+    private Set<Assignee> notificationRecipients;
+
+    @OneToMany(mappedBy = "task", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    private List<Comment> comments = new ArrayList<Comment>();
+
+    @OneToMany(mappedBy = "task", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    private List<Attachment> attachments = new ArrayList<Attachment>();
+
+    @OneToMany(mappedBy = "task", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    private List<Deadline> deadlines = new ArrayList<Deadline>();
+
+    /**
+     * Fault information. Set when task fail method is called.
+     */
+    private Fault fault;
+    
+    /**
+     * Task presentation parameters recalculated on input message change. 
+     * Maps presentation parameter name to its value. Can be used as a where clause parameter
+     * in task query operations.
+     */
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "task", fetch = FetchType.EAGER)
+    @MapKey(name = "name")
+    private Map<String, PresentationParameter> presentationParameters = new HashMap<String, PresentationParameter>();
+
+
+    public List<Deadline> getDeadlines() {
+        return deadlines;
+    }
+
+    public void setDeadlines(List<Deadline> deadlines) {
+        this.deadlines = deadlines;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.id == null ? 0 : this.id.hashCode();
+    }
+    
+    /**
+     * Checks whether the task is equal to another object.
+     * @param obj object to compare
+     * @return true if the objects are equal, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Task == false) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        Task rhs = (Task) obj;
+        return new EqualsBuilder().append(this.id, rhs.id).isEquals();
+    }
+    
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", this.id).append("actualOwner", actualOwner).toString();
+    }
+
+    public String getTaskDefinitionKey() {
+        return taskDefinitionKey;
+    }
+
+    public void setTaskDefinitionKey(String taskDefinitionKey) {
+        this.taskDefinitionKey = taskDefinitionKey;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Map<String, Message> getInput() {
+        return input;
+    }
+
+    public void setInput(Map<String, Message> input) {
+        this.input = input;
+    }
+
+    public Map<String, Message> getOutput() {
+        return output;
+    }
+
+    public void setOutput(Map<String, Message> output) {
+        this.output = output;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Status getStatusBeforeSuspend() {
+        return statusBeforeSuspend;
+    }
+
+    public void setStatusBeforeSuspend(Status statusBeforeSuspend) {
+        this.statusBeforeSuspend = statusBeforeSuspend;
+    }
+
+    public Person getActualOwner() {
+        return actualOwner;
+    }
+
+    public void setActualOwner(Person actualOwner) {
+        this.actualOwner = actualOwner;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Date createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public Date getActivationTime() {
+        return activationTime;
+    }
+
+    public void setActivationTime(Date activationTime) {
+        this.activationTime = activationTime;
+    }
+
+    public Date getExpirationTime() {
+        return expirationTime;
+    }
+
+    public void setExpirationTime(Date expirationTime) {
+        this.expirationTime = expirationTime;
+    }
+
+    public Date getSuspensionTime() {
+        return suspensionTime;
+    }
+
+    public void setSuspensionTime(Date suspensionTime) {
+        this.suspensionTime = suspensionTime;
+    }
+
+    public boolean isSkippable() {
+        return skippable;
+    }
+
+    public void setSkippable(boolean skippable) {
+        this.skippable = skippable;
+    }
+
+    public boolean isEscalated() {
+        return escalated;
+    }
+
+    public void setEscalated(boolean escalated) {
+        this.escalated = escalated;
+    }
+
+    public Set<Assignee> getPotentialOwners() {
+        return potentialOwners;
+    }
+
+    public void setPotentialOwners(Set<Assignee> potentialOwners) {
+        this.potentialOwners = potentialOwners;
+    }
+
+    public Set<Assignee> getExcludedOwners() {
+        return excludedOwners;
+    }
+
+    public void setExcludedOwners(Set<Assignee> excludedOwners) {
+        this.excludedOwners = excludedOwners;
+    }
+
+    public Set<Assignee> getTaskStakeholders() {
+        return taskStakeholders;
+    }
+
+    public void setTaskStakeholders(Set<Assignee> taskStakeholders) {
+        this.taskStakeholders = taskStakeholders;
+    }
+
+    public Set<Assignee> getBusinessAdministrators() {
+        return businessAdministrators;
+    }
+
+    public void setBusinessAdministrators(Set<Assignee> businessAdministrators) {
+        this.businessAdministrators = businessAdministrators;
+    }
+
+    public Set<Assignee> getNotificationRecipients() {
+        return notificationRecipients;
+    }
+
+    public void setNotificationRecipients(Set<Assignee> notificationRecipients) {
+        this.notificationRecipients = notificationRecipients;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public List<Attachment> getAttachments() {
+        return attachments;
+    }
+
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public Fault getFault() {
+        return fault;
+    }
+
+    public void setFault(Fault fault) {
+        this.fault = fault;
+    }
+
+    public Map<String, PresentationParameter> getPresentationParameters() {
+        return presentationParameters;
+    }
+
+    public void setPresentationParameters(Map<String, PresentationParameter> presentationParameters) {
+        this.presentationParameters = presentationParameters;
+    }
+
+    public void setNotification(boolean notification) {
+        this.notification = notification;
+    }
+
+    
+    
+}

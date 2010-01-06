@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import javax.xml.namespace.QName;
 
 import org.apache.hise.api.HumanInteractionsManager;
-import org.apache.hise.engine.HumanInteractionsManagerImpl;
+import org.apache.hise.engine.HumanInteractionsCompiler;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.lang.faults.HTConfigurationException;
 import org.apache.hise.lang.faults.HTException;
@@ -35,7 +35,7 @@ import org.junit.Test;
 
 
 /**
- * {@link HumanInteractionsManagerImpl} class unit tests.
+ * {@link HumanInteractionsCompiler} class unit tests.
  *
  * @author <a href="mailto:jkr@touk.pl">Jakub Kurlenda</a>
  */

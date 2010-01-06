@@ -33,10 +33,10 @@ import org.apache.hise.api.HumanTaskServices;
 import org.apache.hise.lang.faults.HTException;
 import org.apache.hise.lang.faults.HTIllegalArgumentException;
 import org.apache.hise.lang.faults.HTIllegalOperationException;
-import org.apache.hise.runtime.GenericHumanRole;
 import org.apache.hise.runtime.Task;
 import org.apache.hise.runtime.Task.TaskTypes;
 
+import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.engine.wsdl.IllegalAccessFault;
 import org.apache.hise.engine.wsdl.IllegalArgumentFault;
 import org.apache.hise.engine.wsdl.IllegalOperationFault;

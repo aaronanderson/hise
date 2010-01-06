@@ -33,7 +33,7 @@ import org.apache.hise.api.TemplateEngine;
  * Utility class used to merge presentation parameters into template strings using regexp replace.
  * @author Witek Wołejszo
  */
-public class RegexpTemplateEngine implements TemplateEngine {
+public class RegexpTemplateEngine {
     
     private final Log log = LogFactory.getLog(RegexpTemplateEngine.class);
 

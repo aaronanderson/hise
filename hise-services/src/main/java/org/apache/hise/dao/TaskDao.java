@@ -17,15 +17,12 @@
  * under the License.
  */
 
-package org.apache.hise.runtime;
+package org.apache.hise.dao;
 
 import java.util.List;
 
-import org.apache.hise.api.HumanTaskServices;
-import org.apache.hise.runtime.Task.TaskTypes;
+import org.apache.hise.dao.Task.TaskTypes;
 import org.springframework.stereotype.Repository;
-
-
 
 /**
  * DAO operations specific to {@link Task}.

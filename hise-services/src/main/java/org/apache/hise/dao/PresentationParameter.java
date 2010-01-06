@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.hise.runtime;
+package org.apache.hise.dao;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -38,6 +38,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hise.runtime.Task;
 import org.hibernate.annotations.Index;
 
 /**

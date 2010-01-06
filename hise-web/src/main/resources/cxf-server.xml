@@ -46,17 +46,6 @@
   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
   <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-  <bean name="taskOperations" class="org.apache.hise.engine.TaskOperationsImpl">
-    <property name="services" ref="humanTaskServices"/>
-  </bean>
-
-  <bean id="hisePasswordCallback" class="org.apache.hise.engine.MapPasswordCallback">
-    <property name="passwords" ref="hiseLoginProperties"/>
-  </bean>
-
-  <bean id="transactionHandler" class="org.apache.hise.engine.TransactionHandler">
-    <property name="transactionManager" ref="transactionManager"/>
-  </bean>
 
   <jaxws:endpoint id="taskOperationsEndpoint"
     name="taskOperationsEndpoint"

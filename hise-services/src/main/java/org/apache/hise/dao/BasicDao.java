@@ -17,29 +17,34 @@
  * under the License.
  */
 
-package org.apache.hise.api;
+package org.apache.hise.dao;
 
-import java.util.Map;
-
-import org.apache.hise.engine.RegexpTemplateEngine;
-
+import java.io.Serializable;
 
 
 /**
- * Responsible for merging presentation template with presentation parameters. 
- * Default implementation {@link RegexpTemplateEngine} works according to specification. But other
- * more flexible implementations can be made.
- *
+ * Basic DAO operations for domain objects extending {@link Base}.
  * @author Witek Wołejszo
  */
-public interface TemplateEngine {
+public interface BasicDao<T extends Base, ID extends Serializable> {
 
     /**
-     * Merges template with presentationParameterValues. 
-     * @param template The template String.
-     * @param presentationParameterValues Presentation parameters.
-     * @return The template string with filled in values.
+     * Retrieves domain object from persistent store.
+     * @param id Identifier of the object requested
+     * @return requested domain object
      */
-    String merge(String template, Map<String, Object> presentationParameterValues);
+    T fetch(ID id);
+
+    /**
+     * Saves domain object in persistent store.
+     * @param entity Domain object to be updated
+     */
+    void update(T entity);
+
+    /**
+     * Creates domain object in persistent store.
+     * @param entity Domain object to be created
+     */
+    void create(T entity);
 
 }
