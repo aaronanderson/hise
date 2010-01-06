@@ -44,6 +44,11 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
   </wsdl:message>
   <wsdl:message name="ClaimApprovalResponse">
   </wsdl:message>
+  <wsdl:message name="ClaimResolveRequest">
+    <wsdl:part name="ok" type="xsd:boolean" />
+  </wsdl:message>
+  <wsdl:message name="ClaimResolveResponse">
+  </wsdl:message>
   <wsdl:message name="notifyRequest">
     <wsdl:part name="firstname" type="xsd:string" />
     <wsdl:part name="lastname" type="xsd:string" />
@@ -58,6 +63,12 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
     <wsdl:operation name="escalate">
       <wsdl:input message="tns:ClaimApprovalRequest" />
       <wsdl:output message="tns:ClaimApprovalResponse"></wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:portType name="ClaimsResolvingPT">
+    <wsdl:operation name="resolve">
+      <wsdl:input message="tns:ClaimResolveRequest" />
+      <wsdl:output message="tns:ClaimResolveResponse" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:portType name="ClaimApprovalReminderPT">
@@ -91,6 +102,24 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
   <wsdl:service name="ClaimsHandlingService">
     <wsdl:port name="ClaimsHandlingPort" binding="tns:ClaimsHandlingBinding">
       <soap:address location="http://localhost:8090"/>
+    </wsdl:port>
+  </wsdl:service>
+
+  <wsdl:binding name="ClaimsResolvingBinding" type="tns:ClaimsResolvingPT">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="resolve">
+      <soap:operation soapAction="http://www.insurance.example.com/claims/approve" />
+      <wsdl:input>
+        <soap:body use="literal" namespace="http://www.insurance.example.com/claims" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" namespace="http://www.insurance.example.com/claims" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ClaimsResolvingService">
+    <wsdl:port name="ClaimsResolvingPort" binding="tns:ClaimsResolvingBinding">
+      <soap:address location="http://localhost:9999"/> <!--some non existing destination, since it has to be initialized from callback EPR -->
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>
