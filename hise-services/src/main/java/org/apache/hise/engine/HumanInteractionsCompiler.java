@@ -38,7 +38,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hise.api.PeopleQuery;
 import org.apache.hise.dao.Assignee;
 import org.apache.hise.dao.Group;
 import org.apache.hise.dao.Message;

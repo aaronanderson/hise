@@ -68,7 +68,7 @@ import org.apache.hise.lang.xsd.htdt.TTime;
 @WebService
 public class TaskOperationsImpl implements TaskOperations {
 
-    private HumanTaskServices services;
+    private HISEEngine engine;
 
     private WebServiceContext context;
     

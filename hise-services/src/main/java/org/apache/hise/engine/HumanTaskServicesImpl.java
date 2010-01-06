@@ -28,7 +28,6 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hise.api.HumanTaskServices;
 import org.apache.hise.dao.Assignee;
 import org.apache.hise.dao.AssigneeDao;
 import org.apache.hise.dao.Fault;
@@ -43,8 +42,6 @@ import org.apache.hise.lang.faults.HTIllegalOperationException;
 import org.apache.hise.lang.faults.HTIllegalStateException;
 import org.apache.hise.lang.faults.HTRecipientNotAllowedException;
 import org.apache.hise.runtime.Task;
-import org.apache.hise.runtime.Task.Status;
-import org.apache.hise.runtime.Task.TaskTypes;
 import org.apache.hise.utils.DOMUtils;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +55,7 @@ import org.w3c.dom.Element;
  * @author Witek Wołejszo
  * @author Mateusz Lipczyński
  */
-public class HumanTaskServicesImpl implements HumanTaskServices {
+public class HumanTaskServicesImpl {
 
     private final Log log = LogFactory.getLog(HumanTaskServicesImpl.class);
 
@@ -91,13 +88,10 @@ public class HumanTaskServicesImpl implements HumanTaskServices {
         
         log.info("Creating task: " + taskName + " , createdBy: " + createdBy);
 
-        TaskDefinition taskDefinition = this.humanInteractionsManager.getTaskDefinition(taskName);
+        TaskDefinition taskDefinition = engine.getTaskDefinition(taskName);
 
         Task newTask = new Task();
-        newTask.setHumanInteractionsManager(humanInteractionsManager);
-        newTask.setAssigneeDao(assigneeDao);
         newTask.init(taskDefinition, createdBy, requestXml);
-        this.taskDao.create(newTask);
         return newTask;
     }
 

@@ -21,8 +21,7 @@ package org.apache.hise.lang;
 
 import java.util.List;
 
-import org.apache.hise.api.HumanInteractionsManager;
-import org.apache.hise.api.PeopleQuery;
+import org.apache.hise.engine.PropertyBasedPeopleQuery;
 import org.w3c.dom.Document;
 
 
@@ -40,7 +39,7 @@ public class HumanInteractions {
 
     private List<TaskDefinition> taskDefinitions;
     
-    private PeopleQuery peopleQuery;
+    private PropertyBasedPeopleQuery peopleQuery;
 
     /**
      * Private constructor to prevent instantiation.
@@ -53,7 +52,7 @@ public class HumanInteractions {
      * @param document the human interactions DOM document
      * @param peopleQuery
      */
-    public HumanInteractions(Document document, PeopleQuery peopleQuery) {
+    public HumanInteractions(Document document, PropertyBasedPeopleQuery peopleQuery) {
         super();
         this.setDocument(document);
         this.peopleQuery = peopleQuery;
