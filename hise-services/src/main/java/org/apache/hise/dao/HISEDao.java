@@ -19,43 +19,29 @@
 
 package org.apache.hise.dao;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityNotFoundException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
-import javax.persistence.Transient;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.Task.Status;
 import org.apache.hise.dao.Task.TaskTypes;
-import org.springframework.stereotype.Repository;
 
 
-/**
- * Implements basic JPA DAO for Task {@link Task} and convenience search
- * methods.
- * 
- * @author Witek Wołejszo
- * @author Warren Crossing
- */
-@Repository
-public class TaskDao {
+public class HISEDao {
     
-    private static final Log log = LogFactory.getLog(TaskDao.class);
+    private static final Log log = LogFactory.getLog(HISEDao.class);
 
-    @PersistenceContext(name = "HISE-PU")
-    protected EntityManager entityManager;
+    private EntityManager entityManager;
 
-    @PersistenceUnit
-    private EntityManagerFactory entityManagerFactory;
+    
     
 //    /**
 //     * Returns tasks. See {@link HumanTaskServices#getMyTasks(String, TaskTypes, GenericHumanRole, String, List, String, String, Integer)}
@@ -194,56 +180,155 @@ public class TaskDao {
 //        return result;
 //    }
 
-    
-    /**
-     * Checks if given task exists.
-     * @param primaryKey Primary key of the entity
-     * @return true if entity exists false otherwise
-     */
-    public boolean exists(Long id) {
-        try {
-            entityManager.find(Task.class,id);
-            return true;
-        } catch (EntityNotFoundException xENF) {
-            return false;
-        }
-    }
-    
-    /**
-     * Retrieves domain object from persistent store.
-     * @param id Identifier of requested domain object
-     * @return fetched domain object
-     */
-    public Task fetch(Long id) {
-        return entityManager.find(Task.class, id);
-    }
-    
-    /**
-     * Saves domain object in persistent store. 
-     * @param entity Domain object to save
-     */
-    public void update(Task entity) {
-        entityManager.merge(entity);
-    }
-    
-    /**
-     * Creates domain object in persistent store. 
-     * @param entity Domain object to create
-     */
-    public void create(Task entity) {
-        entityManager.persist(entity);
+    public HISEDao(EntityManager entityManager) {
+        super();
+        this.entityManager = entityManager;
     }
 
-    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
+//    /**
+//     * Checks if given task exists.
+//     * @param primaryKey Primary key of the entity
+//     * @return true if entity exists false otherwise
+//     */
+//    public boolean exists(Long id) {
+//        try {
+//            entityManager.find(Task.class,id);
+//            return true;
+//        } catch (EntityNotFoundException xENF) {
+//            return false;
+//        }
+//    }
+//    
+//    /**
+//     * Retrieves domain object from persistent store.
+//     * @param id Identifier of requested domain object
+//     * @return fetched domain object
+//     */
+//    public Task fetch(Long id) {
+//        return entityManager.find(Task.class, id);
+//    }
+//    
+//    /**
+//     * Saves domain object in persistent store. 
+//     * @param entity Domain object to save
+//     */
+//    public void update(Task entity) {
+//        entityManager.merge(entity);
+//    }
+//    
+//    /**
+//     * Creates domain object in persistent store. 
+//     * @param entity Domain object to create
+//     */
+//    public void create(Task entity) {
+//        entityManager.persist(entity);
+//    }
+//
+//    public List<Task> getTasks(Assignee owner, TaskTypes taskType, GenericHumanRole genericHumanRole, String workQueue, List<Status> status, String whereClause, String orderByClause, String createdOnClause, Integer maxTasks, Integer offset) {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//    
+//    
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public Person getPerson(String name) {
+//
+//        Query query = entityManager.createQuery("SELECT p FROM Person p WHERE p.name = :name");
+//        query.setParameter("name", name);
+//        
+//        try {
+//            
+//            return (Person) query.getSingleResult();
+//        } catch (NoResultException e) {
+//            
+//            return null;
+//        }
+//    }
+//
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public Assignee fetch(Long id) {
+//        return entityManager.find(Assignee.class, id);
+//    }
+//    
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public void update(Assignee entity) {
+//        entityManager.merge(entity);
+//    }
+//    
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public void create(Assignee entity) {
+//        entityManager.persist(entity);
+//    }
+//
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public Group getGroup(String name) {
+//        
+//        Query query = entityManager.createQuery("SELECT g FROM Group g WHERE g.name = :name");
+//        query.setParameter("name", name);
+//        
+//        try {
+//            
+//            return (Group) query.getSingleResult();
+//        } catch (NoResultException e) {
+//            
+//            return null;
+//        }
+//    }
+//
+//    /**
+//     * {@inheritDoc}
+//     * TODO should work when ids are set
+//     */
+//    public Set<Assignee> saveNotExistingAssignees(Set<Assignee> assignees) {
+//        
+//        Set<Assignee> result = new HashSet<Assignee>();
+//        
+//        for (Assignee a : assignees) {
+//
+//            if (a instanceof Person) {
+//
+//                Person p = this.getPerson(a.getName());
+//                if (p == null) {
+//                    this.create(a);
+//                    p = (Person) a;
+//                }
+//                result.add(p);
+//               
+//            } else if (a instanceof Group) {
+//                
+//                Group g = this.getGroup(a.getName());
+//                if (g == null) {
+//                    this.create(a);
+//                    g = (Group) a;
+//                }
+//                result.add(g);      
+//            }
+//        }
+//
+//        return result;
+//    }
+//    
+
+    public Task loadTask(Long taskId) {
+        return entityManager.find(Task.class, taskId);
+    }
+    
+    public void saveTask(Task t) {
+        entityManager.persist(t);
     }
 
-    public EntityManagerFactory getEntityManagerFactory() {
-        return entityManagerFactory;
+    public Person loadUser(String userId) {
+        return entityManager.find(Person.class, userId);
     }
-
-    public List<Task> getTasks(Assignee owner, TaskTypes taskType, GenericHumanRole genericHumanRole, String workQueue, List<Status> status, String whereClause, String orderByClause, String createdOnClause, Integer maxTasks, Integer offset) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    
 }

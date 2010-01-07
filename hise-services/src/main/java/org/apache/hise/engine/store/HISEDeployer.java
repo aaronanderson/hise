@@ -15,7 +15,7 @@ public class HISEDeployer {
     }
     
     public void deploy(HISEDD di) throws CompileException {
-        HumanInteractions tasks = HumanInteractionsCompiler.compile(di.getHumanInteractionsResouce());
+        HumanInteractions tasks = HumanInteractionsCompiler.compile(di.getHumanInteractionsResource());
         
         for (TaskDD t : di.getTasksDI()) {
             TaskDefinition d = tasks.getTaskDefinitions().get(t.getTaskName());

@@ -11,6 +11,7 @@
     <property name="hiseEngine" ref="hiseEngine"/>
     <property name="deploymentInfo">
       <bean class="org.apache.hise.engine.store.HISEDD">
+        <property name="humanInteractionsResource" value="classpath:testHtd1.xml"></property>
         <property name="tasksDI">
           <list>
             <bean class="org.apache.hise.engine.store.TaskDD">

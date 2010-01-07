@@ -1,22 +1,17 @@
 package org.apache.hise.engine;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManagerFactory;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hise.dao.AssigneeDao;
-import org.apache.hise.dao.GenericHumanRole;
-import org.apache.hise.dao.Person;
-import org.apache.hise.dao.TaskDao;
-import org.apache.hise.dao.Task.TaskTypes;
+import org.apache.hise.dao.HISEDao;
 import org.apache.hise.engine.store.HISEDD;
 import org.apache.hise.engine.store.TaskDD;
-import org.apache.hise.lang.HumanInteractions;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.runtime.Task;
 import org.apache.hise.utils.DOMUtils;
@@ -34,23 +29,14 @@ public class HISEEngine {
     
     public final Map<String, QName> tasksMap = new HashMap<String, QName>();
     public final Map<QName, TaskInfo> tasks = new HashMap<QName, TaskInfo>();
-    public AssigneeDao assigneeDao;
-    public TaskDao taskDao;
+    private EntityManagerFactory entityManagerFactory;
     
-    public AssigneeDao getAssigneeDao() {
-        return assigneeDao;
+    public HISEDao getSession() {
+        return new HISEDao(entityManagerFactory.createEntityManager());
     }
 
-    public void setAssigneeDao(AssigneeDao assigneeDao) {
-        this.assigneeDao = assigneeDao;
-    }
-
-    public TaskDao getTaskDao() {
-        return taskDao;
-    }
-
-    public void setTaskDao(TaskDao taskDao) {
-        this.taskDao = taskDao;
+    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     public static QName getCanonicalQName(QName q) {
@@ -87,10 +73,6 @@ public class HISEEngine {
         return n;
     }
     
-    public Task loadTask(Long taskId) {
-        return null;
-    }
-    
     public void receive(QName portType, String operation, Element body, String createdBy) {
         QName taskName = getTaskName(portType, operation);
         assert(taskName != null);
@@ -115,28 +97,24 @@ public class HISEEngine {
 //        return newTask;
 //    }
 
-    /**
-     * {@inheritDoc}
-     */
-    public List<org.apache.hise.dao.Task> getMyTasks(String personName, TaskTypes taskType, GenericHumanRole genericHumanRole, String workQueue, List<org.apache.hise.dao.Task.Status> statuses,
-            String whereClause, String orderByClause, String createdOnClause, Integer maxTasks, Integer offset) {
-
-        Person person = null;
-
-        if (workQueue == null) {
-            person = this.assigneeDao.getPerson(personName);
-        }
-
-        return this.taskDao.getTasks(person, taskType, genericHumanRole, workQueue, statuses,
-                whereClause, orderByClause, createdOnClause, maxTasks, offset);
-    }
+//    /**
+//     * {@inheritDoc}
+//     */
+//    public List<org.apache.hise.dao.Task> getMyTasks(String personName, TaskTypes taskType, GenericHumanRole genericHumanRole, String workQueue, List<org.apache.hise.dao.Task.Status> statuses,
+//            String whereClause, String orderByClause, String createdOnClause, Integer maxTasks, Integer offset) {
+//
+//        Person person = null;
+//
+//        EntityManager em = entityManagerFactory.createEntityManager();
+//        if (workQueue == null) {
+//            person = new AssigneeDao(em).getPerson(personName);
+//        }
+//
+//        return new TaskDao(em).getTasks(person, taskType, genericHumanRole, workQueue, statuses,
+//                whereClause, orderByClause, createdOnClause, maxTasks, offset);
+//    }
     
-    public Person loadUser(String userId) {
-        return assigneeDao.getPerson(userId);
-    }
-    
-    public void registerHumanInteractions(HumanInteractions hi) {
-        for (TaskDefinition d : hi.getTaskDefinitions().values()) {
-        }
-    }
+//    public Person loadUser(String userId, EntityManager em) {
+//        return new AssigneeDao(em).getPerson(userId);
+//    }
 }

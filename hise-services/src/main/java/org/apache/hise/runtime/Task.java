@@ -20,10 +20,12 @@
 package org.apache.hise.runtime;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManager;
 import javax.xml.namespace.QName;
 
 import net.sf.saxon.Configuration;
@@ -35,8 +37,11 @@ import net.sf.saxon.trans.XPathException;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hise.dao.HISEDao;
+import org.apache.hise.dao.Message;
 import org.apache.hise.dao.Person;
 import org.apache.hise.dao.PresentationParameter;
+import org.apache.hise.dao.Task.Status;
 import org.apache.hise.engine.HISEEngine;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.lang.xsd.htd.TExpression;
@@ -66,8 +71,6 @@ public class Task {
     private Task(HISEEngine engine) {
         this.hiseEngine = engine;
         Validate.notNull(hiseEngine);
-        Validate.notNull(hiseEngine.assigneeDao);
-        Validate.notNull(hiseEngine.taskDao);
         
         taskStateListeners = new ArrayList<TaskStateListener>();
         taskStateListeners.add(new DeadlineController());
@@ -90,7 +93,9 @@ public class Task {
 
     public static Task load(HISEEngine engine, Long id) {
         Task t = new Task(engine);
-        t.setTaskDto(engine.taskDao.fetch(id));
+        HISEDao dao = engine.getSession();
+        t.taskDto = dao.loadTask(id);
+//        t.setTaskDto(em.find(Task.class, , arg1)engine.taskDao.fetch(id));
         t.taskDefinition = engine.getTaskDefinition(t.taskDto.getTaskDefinitionName());
         return t;
     }
@@ -104,13 +109,21 @@ public class Task {
         Task t = new Task(engine);
         Validate.notNull(taskDefinition);
         t.taskDefinition = taskDefinition;
-        t.taskDto.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
+        org.apache.hise.dao.Task u = new org.apache.hise.dao.Task();
+        u.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
+        u.setCreatedBy(createdBy);
+        u.setStatus(Status.CREATED);
+        u.getInput().put("request", new Message(requestXml));
+        u.setCreatedOn(new Date());
+        u.setActivationTime(new Date());
+        u.setEscalated(false);
+        u.setNotification(false);
+        u.setStatus(Status.CREATED);
+        t.taskDto = u;
+        engine.getSession().saveTask(u);
         
         return t;
         
-//        Message m = new Message(requestXml);
-//        taskDto.getInput().put(m.getRootNodeName(), m);
-//
 //        recalculatePresentationParameters();
 //        
 //        //retrieveExistingAssignees check if group or people with the same name exist

@@ -6,7 +6,7 @@ import org.springframework.core.io.Resource;
 
 public class HISEDD {
     private List<TaskDD> tasksDI;
-    private Resource humanInteractionsResouce;
+    private Resource humanInteractionsResource;
 
     public List<TaskDD> getTasksDI() {
         return tasksDI;
@@ -16,11 +16,11 @@ public class HISEDD {
         this.tasksDI = tasksDI;
     }
 
-    public Resource getHumanInteractionsResouce() {
-        return humanInteractionsResouce;
+    public Resource getHumanInteractionsResource() {
+        return humanInteractionsResource;
     }
 
-    public void setHumanInteractionsResouce(Resource humanInteractionsResouce) {
-        this.humanInteractionsResouce = humanInteractionsResouce;
+    public void setHumanInteractionsResource(Resource humanInteractionsResource) {
+        this.humanInteractionsResource = humanInteractionsResource;
     }
 }

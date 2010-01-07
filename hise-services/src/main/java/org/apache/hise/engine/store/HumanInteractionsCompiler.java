@@ -48,7 +48,7 @@ public class HumanInteractionsCompiler {
     }
 
     public static HumanInteractions compile(Resource resource) throws CompileException {
-        Validate.notNull(resource);
+        Validate.notNull(resource, "Specified resource is null");
         try {
             HumanInteractionsCompiler c = new HumanInteractionsCompiler();
             log.debug("compiling " + resource);

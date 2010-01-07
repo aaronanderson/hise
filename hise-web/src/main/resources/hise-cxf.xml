@@ -19,19 +19,6 @@
   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
   <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
 
-<!-- 
-  <context:spring-configured/>
-  <context:annotation-config/>
-   -->
-
-  <bean id="taskDao" class="org.apache.hise.dao.TaskDao">
-    <property name="entityManagerFactory" ref="htEntityManagerFactory"/>
-  </bean>
-
-  <bean id="assigneeDao" class="org.apache.hise.dao.AssigneeDao">
-    <property name="entityManagerFactory" ref="htEntityManagerFactory"/>
-  </bean>
-
   <bean id="hisePasswordCallback" class="org.apache.hise.engine.MapPasswordCallback">
     <property name="passwords" ref="hiseLoginProperties"/>
   </bean>
@@ -41,8 +28,7 @@
   </bean>
 
   <bean id="hiseEngine" class="org.apache.hise.engine.HISEEngine">
-    <property name="taskDao" ref="taskDao"/>
-    <property name="assigneeDao" ref="assigneeDao"/>
+    <property name="entityManagerFactory" ref="htEntityManagerFactory"/>
   </bean>
 
   <tx:annotation-driven transaction-manager="transactionManager"/>

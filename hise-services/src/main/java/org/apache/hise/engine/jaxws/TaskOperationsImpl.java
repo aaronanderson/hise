@@ -20,7 +20,6 @@
 package org.apache.hise.engine.jaxws;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -29,9 +28,6 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
-import org.apache.hise.runtime.Task;
-
-import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.Person;
 import org.apache.hise.engine.HISEEngine;
 import org.apache.hise.engine.wsdl.IllegalAccessFault;
@@ -47,8 +43,8 @@ import org.apache.hise.lang.xsd.htda.TComment;
 import org.apache.hise.lang.xsd.htda.TStatus;
 import org.apache.hise.lang.xsd.htda.TTaskAbstract;
 import org.apache.hise.lang.xsd.htda.TTaskQueryResultSet;
-import org.apache.hise.lang.xsd.htdt.IllegalState;
 import org.apache.hise.lang.xsd.htdt.TTime;
+import org.apache.hise.runtime.Task;
 
 /**
  * Implementation of WS-HT API. Operations are executed by end users, i.e. actual or potential owners. The identity of the user is implicitly passed when invoking any of the operations listed in the table below. The participant operations listed below only apply to tasks unless explicitly noted otherwise. The authorization column indicates people of which roles are authorized to perform the operation. Stakeholders of the task are not mentioned explicitly. They have the same authorization rights as business administrators.
@@ -77,12 +73,11 @@ public class TaskOperationsImpl implements TaskOperations {
     }
     
     private Person loadUser() {
-        return hiseEngine.loadUser(getUserString());
+        return hiseEngine.getSession().loadUser(getUserString());
     }
 
     public void claim(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {
-        Task task = hiseEngine.loadTask(Long.valueOf(identifier));
-
+        Task task = Task.load(hiseEngine, Long.valueOf(identifier));
         task.claim(loadUser());
     }
 
