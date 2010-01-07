@@ -43,7 +43,6 @@
   <bean id="hiseEngine" class="org.apache.hise.engine.HISEEngine" init-method="init">
     <property name="taskDao" ref="taskDao"/>
     <property name="assigneeDao" ref="assigneeDao"/>
-    <property name="taskManager" ref="taskManager"/>
   </bean>
 
   <tx:annotation-driven transaction-manager="transactionManager"/>

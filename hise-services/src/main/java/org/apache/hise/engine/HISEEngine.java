@@ -29,6 +29,22 @@ public class HISEEngine {
     public AssigneeDao assigneeDao;
     public TaskDao taskDao;
     
+    public AssigneeDao getAssigneeDao() {
+        return assigneeDao;
+    }
+
+    public void setAssigneeDao(AssigneeDao assigneeDao) {
+        this.assigneeDao = assigneeDao;
+    }
+
+    public TaskDao getTaskDao() {
+        return taskDao;
+    }
+
+    public void setTaskDao(TaskDao taskDao) {
+        this.taskDao = taskDao;
+    }
+
     public static QName getCanonicalQName(QName q) {
         String ns = q.getNamespaceURI();
         ns = ns.endsWith("/") ? ns.substring(0, ns.length() - 1) : ns;
