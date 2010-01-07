@@ -40,28 +40,26 @@ import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 
 public class HumanInteractionsCompiler {
-    private final Log log = LogFactory.getLog(HumanInteractionsCompiler.class);
+    private static final Log log = LogFactory.getLog(HumanInteractionsCompiler.class);
 
     private Map<String, String> xmlNamespaces;
 
     private HumanInteractionsCompiler() {
     }
 
-    public static HumanInteractions compile(Resource resource) {
+    public static HumanInteractions compile(Resource resource) throws CompileException {
         Validate.notNull(resource);
-
-        HumanInteractionsCompiler c = new HumanInteractionsCompiler();
         try {
+            HumanInteractionsCompiler c = new HumanInteractionsCompiler();
+            log.debug("compiling " + resource);
             return c.compile2(resource);
         } catch (Exception e) {
-            throw new RuntimeException("Compile error for " + resource, e);
+            throw new CompileException("Compile error for " + resource, e);
         }
     }
 
     private HumanInteractions compile2(Resource resource) throws Exception {
         Validate.notNull(resource);
-
-        HumanInteractionsCompiler c = new HumanInteractionsCompiler();
 
         Resource htdXml = resource;
         THumanInteractions hiDoc;
@@ -76,7 +74,7 @@ public class HumanInteractionsCompiler {
         }
 
         HumanInteractions humanInteractions = new HumanInteractions();
-        
+
         for (TTask tTask : hiDoc.getTasks().getTask()) {
             TaskDefinition taskDefinition = new TaskDefinition(tTask, this.xmlNamespaces, hiDoc.getTargetNamespace());
             QName name = taskDefinition.getTaskName();
@@ -85,52 +83,51 @@ public class HumanInteractionsCompiler {
             }
             humanInteractions.getTaskDefinitions().put(name, taskDefinition);
         }
-        
+
         return humanInteractions;
     }
 
-
-//    /**
-//     * Creates HumanInteractions instance, passing DOM Document instance to its constructor.
-//     * 
-//     * @param htdXml
-//     * @return
-//     * @throws IOException
-//     * @throws ParserConfigurationException
-//     * @throws SAXException
-//     */
-//    private HumanInteractions createHumanIteractionsInstance(Resource htdXml) throws Exception {
-//        InputStream is;
-//
-//        // dom
-//        is = htdXml.getInputStream();
-//
-//        DocumentBuilderFactory factory = DOMUtils.getDocumentBuilderFactory();
-//        factory.setNamespaceAware(true);
-//
-//        DocumentBuilder builder = factory.newDocumentBuilder();
-//        Document document = builder.parse(is);
-//
-//        return new HumanInteractions(document, this.peopleQuery);
-//        return null;
-//    }
-//
-//    /**
-//     * Just a very simple, stub org.apache.hise.model.spec.PeopleQuery implementation, which simply creates Assignee instances with a given name.
-//     * 
-//     * @param logicalPeopleGroupName
-//     *            the logical people group name
-//     * @param input
-//     *            the input message that created the task
-//     * @return collection of assignees.
-//     */
-//    public List<Assignee> evaluate(String logicalPeopleGroupName, Map<String, Message> input) {
-//        List<Assignee> assignees = new ArrayList<Assignee>();
-//        Group group = new Group();
-//        group.setName(logicalPeopleGroupName);
-//        assignees.add(group);
-//        return assignees;
-//    }
+    // /**
+    // * Creates HumanInteractions instance, passing DOM Document instance to its constructor.
+    // *
+    // * @param htdXml
+    // * @return
+    // * @throws IOException
+    // * @throws ParserConfigurationException
+    // * @throws SAXException
+    // */
+    // private HumanInteractions createHumanIteractionsInstance(Resource htdXml) throws Exception {
+    // InputStream is;
+    //
+    // // dom
+    // is = htdXml.getInputStream();
+    //
+    // DocumentBuilderFactory factory = DOMUtils.getDocumentBuilderFactory();
+    // factory.setNamespaceAware(true);
+    //
+    // DocumentBuilder builder = factory.newDocumentBuilder();
+    // Document document = builder.parse(is);
+    //
+    // return new HumanInteractions(document, this.peopleQuery);
+    // return null;
+    // }
+    //
+    // /**
+    // * Just a very simple, stub org.apache.hise.model.spec.PeopleQuery implementation, which simply creates Assignee instances with a given name.
+    // *
+    // * @param logicalPeopleGroupName
+    // * the logical people group name
+    // * @param input
+    // * the input message that created the task
+    // * @return collection of assignees.
+    // */
+    // public List<Assignee> evaluate(String logicalPeopleGroupName, Map<String, Message> input) {
+    // List<Assignee> assignees = new ArrayList<Assignee>();
+    // Group group = new Group();
+    // group.setName(logicalPeopleGroupName);
+    // assignees.add(group);
+    // return assignees;
+    // }
 
     // public QName getTaskName(QName portType, String operation) {
     // return engine.tasksMap.get(HISEEngine.tasksKey(portType, operation));
