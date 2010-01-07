@@ -59,7 +59,7 @@ import org.apache.hise.lang.xsd.htdt.TTime;
 @WebService
 public class TaskOperationsImpl implements TaskOperations {
 
-    private HISEEngine engine;
+    private HISEEngine hiseEngine;
 
     private WebServiceContext context;
 
@@ -73,11 +73,11 @@ public class TaskOperationsImpl implements TaskOperations {
     }
     
     private Person loadUser() {
-        return engine.loadUser(getUserString());
+        return hiseEngine.loadUser(getUserString());
     }
 
     public void claim(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {
-        Task task = engine.loadTask(Long.valueOf(identifier));
+        Task task = hiseEngine.loadTask(Long.valueOf(identifier));
 
         task.claim(loadUser());
     }

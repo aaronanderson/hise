@@ -40,7 +40,7 @@
     <property name="transactionManager" ref="transactionManager"/>
   </bean>
 
-  <bean id="hiseEngine" class="org.apache.hise.engine.HISEEngine" init-method="init">
+  <bean id="hiseEngine" class="org.apache.hise.engine.HISEEngine">
     <property name="taskDao" ref="taskDao"/>
     <property name="assigneeDao" ref="assigneeDao"/>
   </bean>
@@ -58,7 +58,11 @@
     <property name="dataSource" ref="htDataSource"/>
   </bean>
 
-  <jaxws:endpoint id="taskOperationsEndpoint" name="taskOperationsEndpoint" address="/taskOperations/" implementor="#taskOperations" serviceName="htdaw:taskOperations" publish="true" depends-on="taskOperations" wsdlLocation="classpath:ws-humantask.wsdl">
+  <bean name="taskOperations" class="org.apache.hise.engine.jaxws.TaskOperationsImpl">
+    <property name="hiseEngine" ref="hiseEngine"/>
+  </bean>
+
+  <jaxws:endpoint id="taskOperationsEndpoint" name="taskOperationsEndpoint" address="/taskOperations/" implementor="#taskOperations" serviceName="htdaw:taskOperations" publish="true"  wsdlLocation="classpath:ws-humantask.wsdl">
     <jaxws:handlers>
       <ref bean="transactionHandler"/>
     </jaxws:handlers>
