@@ -8,13 +8,17 @@
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
        ">
   <bean class="org.apache.hise.engine.store.HISEDeployer" init-method="init">
-    <property name="engine" ref="hiseEngine"/>
+    <property name="hiseEngine" ref="hiseEngine"/>
     <property name="deploymentInfo">
       <bean class="org.apache.hise.engine.store.HISEDD">
         <property name="tasksDI">
           <list>
             <bean class="org.apache.hise.engine.store.TaskDD">
-              <property name="taskName" value="ins:Task1"/>
+              <property name="taskName">
+                <bean class="javax.xml.namespace.QName" factory-method="valueOf">
+                  <constructor-arg type="java.lang.String" value="{http://www.insurance.example.com/claims}Task1"></constructor-arg>
+                </bean>
+              </property>
               <property name="handler" ref="testHtd1"/>
             </bean>
           </list>

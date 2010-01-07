@@ -51,6 +51,12 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
         messageFactory = MessageFactory.newInstance();
     }
     
+    public void setHiseEngine(HISEEngine hiseEngine) {
+        this.hiseEngine = hiseEngine;
+    }
+
+
+
     public WebServiceContext getContext() {
         return context;
     }

@@ -62,6 +62,10 @@ public class TaskOperationsImpl implements TaskOperations {
     private HISEEngine hiseEngine;
 
     private WebServiceContext context;
+    
+    public void setHiseEngine(HISEEngine hiseEngine) {
+        this.hiseEngine = hiseEngine;
+    }
 
     @Resource
     public void setContext(WebServiceContext context) {
@@ -373,7 +377,6 @@ public class TaskOperationsImpl implements TaskOperations {
 
     public void skip(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault, IllegalOperationFault {
         // TODO Auto-generated method stub
-
     }
 
     public void stop(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {

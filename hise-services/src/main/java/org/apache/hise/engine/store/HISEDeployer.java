@@ -3,10 +3,22 @@ package org.apache.hise.engine.store;
 import org.apache.hise.engine.HISEEngine;
 
 public class HISEDeployer {
-    public HISEEngine engine;
+    public HISEEngine hiseEngine;
     public HISEDD deploymentInfo;
     
     public void init() {
-        engine.deploy(deploymentInfo);
+        hiseEngine.deploy(deploymentInfo);
+    }
+
+    public void setHiseEngine(HISEEngine hiseEngine) {
+        this.hiseEngine = hiseEngine;
+    }
+
+    public HISEDD getDeploymentInfo() {
+        return deploymentInfo;
+    }
+
+    public void setDeploymentInfo(HISEDD deploymentInfo) {
+        this.deploymentInfo = deploymentInfo;
     }
 }
