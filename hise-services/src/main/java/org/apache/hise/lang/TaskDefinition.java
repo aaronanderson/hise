@@ -42,12 +42,10 @@ import org.apache.hise.utils.DOMUtils;
  */
 public class TaskDefinition {
 
-    private final Log log = LogFactory.getLog(TaskDefinition.class);
+    private static final Log log = LogFactory.getLog(TaskDefinition.class);
 
     private final TTask tTask;
 
-    private final boolean instantiable = true;
-    
     private String targetNamespace; 
     
     /**
@@ -278,12 +276,6 @@ public class TaskDefinition {
 //
 //        return this.templateEngine.merge(subjectTemplate, presentationParameterValues).trim();
 //    }
-
-    // ================ GETTERS + SETTERS ===================
-
-    public boolean getInstantiable() {
-        return this.instantiable;
-    }
 
     public QName getTaskName() {
         return DOMUtils.uniqueQName(new QName(targetNamespace, this.tTask.getName()));

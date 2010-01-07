@@ -117,10 +117,6 @@ public class Comment extends Base {
         this.task = task;
     }
 
-    /***************************************************************
-     * Infrastructure methods.                                     *
-     ***************************************************************/
-
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Comment == false) {
