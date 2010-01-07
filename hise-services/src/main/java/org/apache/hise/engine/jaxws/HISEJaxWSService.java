@@ -87,8 +87,7 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
 //            transactionManager.commit(tx);
             return m;
         } catch (Exception e) {
-            __log.debug("", e);
-            return null;
+            throw new RuntimeException("Error during receiving message ", e);
         }
     }
 }
