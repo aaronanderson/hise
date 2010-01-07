@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.hise.engine;
+package org.apache.hise;
 
 import java.util.HashSet;
 import java.util.Set;

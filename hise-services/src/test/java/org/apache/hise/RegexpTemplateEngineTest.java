@@ -17,11 +17,12 @@
  * under the License.
  */
 
-package org.apache.hise.utils;
+package org.apache.hise;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.hise.utils.RegexpTemplateEngine;
 import org.junit.Assert;
 import org.junit.Test;
 

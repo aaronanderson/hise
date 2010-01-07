@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.hise.runtime;
+package org.apache.hise;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
