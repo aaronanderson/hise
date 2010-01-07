@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.hise.engine;
+package org.apache.hise.utils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -43,7 +43,6 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.Message;
-import org.apache.hise.utils.DOMUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

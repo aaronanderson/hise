@@ -75,7 +75,12 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class DOMUtils {
-    
+    public static QName uniqueQName(QName q) {
+        String s = q.getNamespaceURI();
+        while (s.endsWith("/")) { s = s.substring(0, s.length() - 1); }
+        return new QName(s, q.getLocalPart());
+    }
+
     public static Element getFirstElement(Node node) {
         NodeList l = node.getChildNodes();
         for (int i = 0; i < l.getLength(); i++) {

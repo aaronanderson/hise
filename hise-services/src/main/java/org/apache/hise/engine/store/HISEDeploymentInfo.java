@@ -1,4 +1,4 @@
-package org.apache.hise.engine;
+package org.apache.hise.engine.store;
 
 import java.util.List;
 

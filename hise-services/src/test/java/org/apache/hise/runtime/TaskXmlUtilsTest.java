@@ -34,8 +34,8 @@ import net.sf.saxon.dom.NodeWrapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.Message;
-import org.apache.hise.engine.TaskXmlUtils;
 import org.apache.hise.utils.DOMUtils;
+import org.apache.hise.utils.TaskXmlUtils;
 import org.junit.Test;
 import org.w3c.dom.Node;
 

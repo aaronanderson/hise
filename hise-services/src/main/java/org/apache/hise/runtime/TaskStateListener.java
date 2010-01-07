@@ -20,5 +20,5 @@
 package org.apache.hise.runtime;
 
 public interface TaskStateListener {
-    void stateChanged(Task task, Task.Status oldStatus, Task.Status newStatus);
+    void stateChanged(Task task, org.apache.hise.dao.Task.Status oldStatus, org.apache.hise.dao.Task.Status newStatus);
 }

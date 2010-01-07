@@ -27,7 +27,6 @@ import java.util.Properties;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hise.api.PeopleQuery;
 import org.apache.hise.dao.Assignee;
 import org.apache.hise.dao.Person;
 import org.springframework.core.io.Resource;
@@ -41,7 +40,7 @@ import org.springframework.core.io.Resource;
  * @author Witek Wołejszo
  * @author Mateusz Lipczyński
  */
-public final class PropertyBasedPeopleQuery implements PeopleQuery {
+public final class PropertyBasedPeopleQuery {
 
     private final Log log = LogFactory.getLog(PropertyBasedPeopleQuery.class);
 

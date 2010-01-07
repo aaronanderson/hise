@@ -23,10 +23,10 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hise.dao.Task.Status;
 import org.apache.hise.lang.xsd.htd.TDeadline;
 import org.apache.hise.lang.xsd.htd.TDeadlines;
 import org.apache.hise.lang.xsd.htd.TExpression;
-import org.apache.hise.runtime.Task.Status;
 
 public class DeadlineController implements TaskStateListener {
     private static Log __log = LogFactory.getLog(DeadlineController.class);

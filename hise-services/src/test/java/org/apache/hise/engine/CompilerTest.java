@@ -19,27 +19,28 @@
 
 package org.apache.hise.engine;
 
-import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.xml.bind.JAXBException;
+import javax.xml.namespace.QName;
 
-import org.apache.hise.engine.HumanInteractionsCompiler;
+import org.apache.hise.engine.store.HumanInteractionsCompiler;
+import org.apache.hise.lang.HumanInteractions;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 
-public class HumanInteractionsManagerImplTest {
-
-    //private final Log log = LogFactory.getLog(HumanInteractionsManagerImplTest.class);
-    
+public class CompilerTest {
     @Test
     public void testUnmarshallHumanInteractionsData() throws Exception {
         Resource htdXml = new ClassPathResource("testHtd1-human-interaction.xml");
-        HumanInteractionsCompiler humanInteractionsManagerImpl = new HumanInteractionsCompiler();
-        org.apache.hise.lang.xsd.htd.THumanInteractions hi = humanInteractionsManagerImpl.unmarshallHumanInteractionsData(htdXml);
+        HumanInteractions hi = HumanInteractionsCompiler.compile(htdXml);
+        Set<QName> s = hi.getTaskDefinitions().keySet();
         Assert.assertNotNull(hi);
+        Assert.assertTrue(s.contains(QName.valueOf("{http://www.insurance.example.com/claims}Task1")));
+        Assert.assertTrue(s.contains(QName.valueOf("{http://www.insurance.example.com/claims}Task2")));
+        Assert.assertTrue(s.contains(QName.valueOf("{http://www.insurance.example.com/claims}Task3")));
     }
-
 }

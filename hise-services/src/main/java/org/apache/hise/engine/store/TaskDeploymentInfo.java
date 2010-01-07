@@ -1,4 +1,4 @@
-package org.apache.hise.engine;
+package org.apache.hise.engine.store;
 
 import javax.xml.namespace.QName;
 

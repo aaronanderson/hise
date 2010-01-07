@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.hise.engine;
+package org.apache.hise.engine.jaxws;
 
 import javax.annotation.Resource;
 import javax.xml.namespace.QName;
@@ -32,6 +32,7 @@ import javax.xml.ws.handler.MessageContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hise.engine.HISEEngine;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.w3c.dom.Element;
 
@@ -76,7 +77,7 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
             
             Element body = request.getSOAPBody();
             __log.debug("invoking " + request + " operation:" + operation + " portType:" + portType + " operation2:" + operation2);
-            hiseEngine.humanTaskServices.receive(portType, operation.getLocalPart(), body, context.getUserPrincipal().getName());
+            hiseEngine.receive(portType, operation.getLocalPart(), body, context.getUserPrincipal().getName());
             SOAPMessage m = messageFactory.createMessage();
 //            transactionManager.commit(tx);
             return m;

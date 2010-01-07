@@ -20,17 +20,10 @@
 package org.apache.hise.runtime;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
 
-import javax.xml.XMLConstants;
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 
 import net.sf.saxon.Configuration;
@@ -38,35 +31,16 @@ import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.AnyItemType;
 
 import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hise.dao.Assignee;
-import org.apache.hise.dao.Attachment;
-import org.apache.hise.dao.Comment;
-import org.apache.hise.dao.Deadline;
-import org.apache.hise.dao.Fault;
-import org.apache.hise.dao.GenericHumanRole;
-import org.apache.hise.dao.Message;
 import org.apache.hise.dao.Person;
 import org.apache.hise.dao.PresentationParameter;
 import org.apache.hise.engine.HISEEngine;
-import org.apache.hise.engine.TaskXmlUtils;
 import org.apache.hise.lang.TaskDefinition;
-import org.apache.hise.lang.faults.HTConfigurationException;
-import org.apache.hise.lang.faults.HTException;
-import org.apache.hise.lang.faults.HTIllegalAccessException;
-import org.apache.hise.lang.faults.HTIllegalArgumentException;
-import org.apache.hise.lang.faults.HTIllegalStateException;
-import org.apache.hise.lang.faults.HTRecipientNotAllowedException;
 import org.apache.hise.lang.xsd.htd.TExpression;
 import org.apache.hise.utils.XmlUtils;
-import org.hibernate.annotations.Index;
-import org.springframework.beans.factory.annotation.Configurable;
 
 
 /**
@@ -84,10 +58,13 @@ public class Task {
     private HISEEngine hiseEngine;
     
     private org.apache.hise.dao.Task taskDto;
+    private TaskDefinition taskDefinition;
     
     private List<TaskStateListener> taskStateListeners;
     
-    public void init() {
+
+    private Task(HISEEngine engine) {
+        this.hiseEngine = engine;
         Validate.notNull(hiseEngine);
         Validate.notNull(hiseEngine.assigneeDao);
         Validate.notNull(hiseEngine.taskDao);
@@ -111,20 +88,25 @@ public class Task {
 
 
 
-    /**
-     * Task constructor.
-     *
-     * @param taskDefinition  task definition as an object
-     * @param createdBy       person who created the task, can be null
-     * @param requestXml      input data as XML string
-     * @throws HTException
-     */
-    public void init(TaskDefinition taskDefinition, String createdBy, String requestXml) throws HTException {
+    public static Task load(HISEEngine engine, Long id) {
+        Task t = new Task(engine);
+        t.setTaskDto(engine.taskDao.fetch(id));
+        t.taskDefinition = engine.getTaskDefinition(t.taskDto.getTaskDefinitionName());
+        return t;
+    }
 
+    public static Task create(HISEEngine engine, QName taskName, String createdBy, String requestXml) {
+        return create(engine, engine.getTaskDefinition(taskName), createdBy, requestXml);
+    }
+    
+    
+    public static Task create(HISEEngine engine, TaskDefinition taskDefinition, String createdBy, String requestXml) {
+        Task t = new Task(engine);
         Validate.notNull(taskDefinition);
-        init();
+        t.taskDefinition = taskDefinition;
+        t.taskDto.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
         
-        taskDto.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
+        return t;
         
 //        Message m = new Message(requestXml);
 //        taskDto.getInput().put(m.getRootNodeName(), m);
@@ -171,8 +153,13 @@ public class Task {
 //        
 //        recalculatePriority();
     }
+    
+    public TaskDefinition getTaskDefinition() {
+        return taskDefinition;
+    }
 
-//    /**
+
+    //    /**
 //     * If there is only one person in the given list, it
 //     * returns this person. Otherwise, it returns null.
 //     *
@@ -393,26 +380,26 @@ public class Task {
 //        }
 //    }
 //    
-//    /**
-//     * Claims task. Task in READY status can be claimed by
-//     * people from potential owners group not listed in excluded owners.
-//     * 
-//     * @param person                    The Person that claims the task.
-//     * @throws HTIllegalStateException  Thrown when task is in illegal state for claim i.e. not READY. 
-//     * @throws HTIllegalAccessException Thrown when task is in illegal state for claim i.e. not READY or person cannot
-//     *                                  become actual owner i.e. not potential owner or excluded.
-//     */
-//    public void claim(Person person) throws HTIllegalStateException, HTIllegalAccessException {
-//        
-//        Validate.notNull(person);
-//        Validate.notNull(person.getId());
-//
+    /**
+     * Claims task. Task in READY status can be claimed by
+     * people from potential owners group not listed in excluded owners.
+     * 
+     * @param person                    The Person that claims the task.
+     * @throws HTIllegalStateException  Thrown when task is in illegal state for claim i.e. not READY. 
+     * @throws HTIllegalAccessException Thrown when task is in illegal state for claim i.e. not READY or person cannot
+     *                                  become actual owner i.e. not potential owner or excluded.
+     */
+    public void claim(Person person) {
+        
+        Validate.notNull(person);
+        Validate.notNull(person.getId());
+
 //        this.checkCanClaim(person);
 //
 //        this.actualOwner = person;
 //        this.addOperationComment(Operations.CLAIM, person);
 //        this.setStatus(Task.Status.RESERVED);
-//    }
+    }
 //
 //    /**
 //     * Checks if the task can be claimed by the person. Throws exception if it is not. 
@@ -643,17 +630,6 @@ public class Task {
 //	//TODO log operation?
 //    }
 //
-//    /**
-//     * Returns task definition of this task.
-//     * @return
-//     */
-//    public TaskDefinition getTaskDefinition() {
-//        if (this.humanInteractionsManager == null) {
-//            throw new HTConfigurationException("Human interactions manager not available.", null);
-//        }
-//        
-//        return this.humanInteractionsManager.getTaskDefinition(this.getTaskDefinitionKey());
-//    }
 //
 //    /***************************************************************
 //     * Getters & Setters *

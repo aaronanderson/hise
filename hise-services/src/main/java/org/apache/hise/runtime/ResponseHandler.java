@@ -1,6 +1,6 @@
 package org.apache.hise.runtime;
 
-import org.apache.hise.runtime.Task.Status;
+import org.apache.hise.dao.Task.Status;
 
 public class ResponseHandler implements TaskStateListener {
     
@@ -15,5 +15,4 @@ public class ResponseHandler implements TaskStateListener {
 //        task.get
         
     }
-
 }

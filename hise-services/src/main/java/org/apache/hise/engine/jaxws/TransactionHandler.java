@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package org.apache.hise.engine;
+package org.apache.hise.engine.jaxws;
 
 import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.MessageContext;

@@ -337,6 +337,10 @@ public class Task extends Base {
     public void setTaskDefinitionKey(String taskDefinitionKey) {
         this.taskDefinitionKey = taskDefinitionKey;
     }
+    
+    public QName getTaskDefinitionName() {
+        return QName.valueOf(getTaskDefinitionKey());
+    }
 
     public Long getId() {
         return id;
