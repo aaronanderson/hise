@@ -31,8 +31,8 @@
         <property name="dataSource" ref="htDataSource" />
         <property name="jpaVendorAdapter" ref="htJPAVendorAdapter"/>
         <property name="jpaPropertyMap" ref="htJPAPropertyMap"/>
-        <property name="persistenceXmlLocation" value="classpath:/hise/persistence.xml" />
-        <property name="persistenceUnitName" value="HISE-PU"/>
+        <property name="persistenceXmlLocation" value="classpath:/org/apache/hise/persistence.xml" />
+        <property name="persistenceUnitName" value="org.apache.hise"/>
     </bean>
 
     <util:map id="htJPAPropertyMap">

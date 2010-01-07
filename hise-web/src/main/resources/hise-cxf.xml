@@ -19,25 +19,24 @@
   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
   <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
 
-  <import resource="classpath:*-hise-dd.xml"/>
-
+<!-- 
   <context:spring-configured/>
   <context:annotation-config/>
+   -->
 
-  <bean id="taskDao" class="org.apache.hise.runtime.JpaTaskDao">
+  <bean id="taskDao" class="org.apache.hise.dao.TaskDao">
     <property name="entityManagerFactory" ref="htEntityManagerFactory"/>
   </bean>
 
-  <bean id="assigneeDao" class="org.apache.hise.runtime.JpaAssigneeDao">
+  <bean id="assigneeDao" class="org.apache.hise.dao.AssigneeDao">
     <property name="entityManagerFactory" ref="htEntityManagerFactory"/>
   </bean>
-
 
   <bean id="hisePasswordCallback" class="org.apache.hise.engine.MapPasswordCallback">
     <property name="passwords" ref="hiseLoginProperties"/>
   </bean>
 
-  <bean id="transactionHandler" class="org.apache.hise.engine.TransactionHandler">
+  <bean id="transactionHandler" class="org.apache.hise.engine.jaxws.TransactionHandler">
     <property name="transactionManager" ref="transactionManager"/>
   </bean>
 
