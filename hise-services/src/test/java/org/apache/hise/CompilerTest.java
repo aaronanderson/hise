@@ -36,7 +36,7 @@ import org.springframework.core.io.Resource;
 public class CompilerTest {
     @Test
     public void testCompile() throws Exception {
-        Resource htdXml = new ClassPathResource("testHtd1-human-interaction.xml");
+        Resource htdXml = new ClassPathResource("testHtd1.xml");
         HumanInteractions hi = HumanInteractionsCompiler.compile(htdXml);
         Set<QName> s = hi.getTaskDefinitions().keySet();
         Assert.assertNotNull(hi);

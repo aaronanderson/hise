@@ -2,7 +2,7 @@ package org.apache.hise.engine.store;
 
 import javax.xml.namespace.QName;
 
-public class TaskDeploymentInfo {
+public class TaskDD {
     public QName taskName;
     public Object handler;
     public Object sender;

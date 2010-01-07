@@ -37,7 +37,6 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.w3c.dom.Element;
 
 
-
 @WebServiceProvider
 @ServiceMode(value=Service.Mode.MESSAGE)
 public class HISEJaxWSService implements Provider<SOAPMessage> {

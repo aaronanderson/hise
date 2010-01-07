@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.springframework.core.io.Resource;
 
-public class HISEDeploymentInfo {
-    public List<TaskDeploymentInfo> tasksDI;
+public class HISEDD {
+    public List<TaskDD> tasksDI;
     public Resource humanInteractionsResouce;
 
-    public List<TaskDeploymentInfo> getTasksDI() {
+    public List<TaskDD> getTasksDI() {
         return tasksDI;
     }
 
-    public void setTasksDI(List<TaskDeploymentInfo> tasksDI) {
+    public void setTasksDI(List<TaskDD> tasksDI) {
         this.tasksDI = tasksDI;
     }
 

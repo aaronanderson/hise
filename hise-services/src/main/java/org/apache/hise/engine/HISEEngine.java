@@ -14,7 +14,7 @@ import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.Person;
 import org.apache.hise.dao.TaskDao;
 import org.apache.hise.dao.Task.TaskTypes;
-import org.apache.hise.engine.store.HISEDeploymentInfo;
+import org.apache.hise.engine.store.HISEDD;
 import org.apache.hise.lang.HumanInteractions;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.runtime.Task;
@@ -39,7 +39,7 @@ public class HISEEngine {
         return getCanonicalQName(portType) + ";" + operation; 
     }
     
-    public void deploy(HISEDeploymentInfo di) {
+    public void deploy(HISEDD di) {
         
     }
     
