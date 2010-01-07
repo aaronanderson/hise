@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.core.io.Resource;
 
 public class HISEDD {
-    public List<TaskDD> tasksDI;
-    public Resource humanInteractionsResouce;
+    private List<TaskDD> tasksDI;
+    private Resource humanInteractionsResouce;
 
     public List<TaskDD> getTasksDI() {
         return tasksDI;

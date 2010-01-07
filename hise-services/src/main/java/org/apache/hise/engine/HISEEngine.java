@@ -15,6 +15,7 @@ import org.apache.hise.dao.Person;
 import org.apache.hise.dao.TaskDao;
 import org.apache.hise.dao.Task.TaskTypes;
 import org.apache.hise.engine.store.HISEDD;
+import org.apache.hise.engine.store.TaskDD;
 import org.apache.hise.lang.HumanInteractions;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.runtime.Task;
@@ -24,8 +25,15 @@ import org.w3c.dom.Element;
 public class HISEEngine {
     private static Log log = LogFactory.getLog(HISEEngine.class);
     
+    public static class TaskInfo {
+        public String taskKey;
+        public TaskDefinition taskDefinition;
+        public HISEDD parent;
+        public TaskDD dd;
+    }
+    
     public final Map<String, QName> tasksMap = new HashMap<String, QName>();
-    public final Map<QName, TaskDetails> tasks = new HashMap<QName, TaskDetails>();
+    public final Map<QName, TaskInfo> tasks = new HashMap<QName, TaskInfo>();
     public AssigneeDao assigneeDao;
     public TaskDao taskDao;
     
@@ -54,17 +62,29 @@ public class HISEEngine {
     public static String tasksKey(QName portType, String operation) {
         return getCanonicalQName(portType) + ";" + operation; 
     }
-    
-    public void deploy(HISEDD di) {
+
+    public void registerTask(TaskInfo ti) {
+        log.debug("registering route " + ti.taskKey + " -> " + ti.taskDefinition.getTaskName());
         
+        if (tasks.containsKey(ti.taskDefinition.getTaskName()) || tasksMap.containsKey(ti.taskKey)) {
+            throw new IllegalArgumentException("Unable to deploy " + ti + " is already deployed.");
+        }
+        
+        tasksMap.put(ti.taskKey, ti.taskDefinition.getTaskName());
+        tasks.put(ti.taskDefinition.getTaskName(), ti);
+        
+        log.debug("registered");
     }
     
     public TaskDefinition getTaskDefinition(QName taskName) {
+        Validate.notNull(tasks.get(taskName), "" + taskName + " not found");
         return tasks.get(taskName).taskDefinition;
     }
     
     public QName getTaskName(QName portType, String operation) {
-        return tasksMap.get(tasksKey(portType, operation));
+        QName n = tasksMap.get(tasksKey(portType, operation));
+        Validate.notNull(n, "Task for " + portType + " " + operation + " not found in routing table.");
+        return n;
     }
     
     public Task loadTask(Long taskId) {
@@ -117,10 +137,6 @@ public class HISEEngine {
     
     public void registerHumanInteractions(HumanInteractions hi) {
         for (TaskDefinition d : hi.getTaskDefinitions().values()) {
-            String key = HISEEngine.tasksKey(d.getInterface().getPortType(), d.getInterface().getOperation());
-            log.debug("registering route " + key + " -> " + d.getTaskName());
-            Validate.isTrue(tasksMap.get(key) == null);
-            tasksMap.put(key, d.getTaskName());
         }
     }
 }
