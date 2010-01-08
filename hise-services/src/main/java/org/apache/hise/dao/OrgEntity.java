@@ -35,15 +35,14 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "ORG_ENTITY")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public abstract class OrgEntity extends JpaBase {
+public class OrgEntity extends JpaBase {
 
 //    @Id
 //    @GeneratedValue(strategy = GenerationType.AUTO, generator = "asgn_seq")
 //    @SequenceGenerator(name = "asgn_seq", sequenceName = "asgn_seq")
 //    protected Long id;
 
-    @Column(unique = true, nullable = false)
+    @Id
     protected String name;
 
 //    public void setId(Long id) {

@@ -46,7 +46,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Mateusz Lipczyński
  */
 @Entity
-@Table(name = "COMMENT")
+@Table(name = "T_COMMENT")
 public class Comment extends JpaBase {
     
     @Id

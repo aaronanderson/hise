@@ -20,7 +20,6 @@
 package org.apache.hise.dao;
 
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 /**
  * Unresolved group of people.

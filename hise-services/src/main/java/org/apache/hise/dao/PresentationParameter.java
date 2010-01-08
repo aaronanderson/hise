@@ -75,18 +75,18 @@ public class PresentationParameter extends JpaBase {
         return new Object[] { id };
     }
     
-//    @ManyToOne
-//    @JoinColumn(name = "task_id", nullable = false)
-//    @Index(name = "prpr_task_id_idx")
-//    private Task task;
-//
-//    public void setName(String name) {
-//        this.name = name;
-//    }
-//
-//    public String getName() {
-//        return this.name;
-//    }
+    @ManyToOne
+    @JoinColumn(name = "task_id", nullable = false)
+    @Index(name = "prpr_task_id_idx")
+    private Task task;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return this.name;
+    }
 //    
 //    /**
 //     * @param stringValue the stringValue to set
@@ -208,12 +208,12 @@ public class PresentationParameter extends JpaBase {
 //        }
 //    }
 //    
-//    /**
-//     * @param task the task to set
-//     */
-//    public void setTask(Task task) {
-//        this.task = task;
-//    }
+    /**
+     * @param task the task to set
+     */
+    public void setTask(Task task) {
+        this.task = task;
+    }
 //
 //
 //    private void cleanValues() {

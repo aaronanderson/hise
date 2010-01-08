@@ -308,7 +308,7 @@ public class HISEDao extends JpaDaoSupport {
     public Person getPerson(final String name) {
         return (Person) getJpaTemplate().execute(new JpaCallback() {
             public Object doInJpa(EntityManager e) throws PersistenceException {
-                Query query = e.createQuery("SELECT p FROM Person p WHERE p.name = :name");
+                Query query = e.createQuery("SELECT p FROM org_entity o WHERE p.name = :name");
                 query.setParameter("name", name);
                 return  query.getSingleResult();
             }
