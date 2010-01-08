@@ -79,17 +79,10 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Entity
 @Table(name = "TASK")
 @Configurable(preConstruction = true)
-public class Task extends Base {
+public class Task extends JpaBase {
 
-    /**
-     * Logger.
-     */
-    @Transient
-    private final Log __log = LogFactory.getLog(Task.class);
+    private static final Log __log = LogFactory.getLog(Task.class);
     
-    /**
-     * Key {@link Task} definition is looked up in {@link HumanInteractionsManager} by.
-     */
     @Column(nullable = false)
     private String taskDefinitionKey;
 
@@ -253,23 +246,23 @@ public class Task extends Base {
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "TASK_POTENTIAL_OWNERS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
-    private Set<Assignee> potentialOwners;
+    private Set<OrgEntity> potentialOwners;
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "TASK_EXCLUDED_OWNERS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
-    private Set<Assignee> excludedOwners;
+    private Set<OrgEntity> excludedOwners;
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "TASK_STAKEHOLDERS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
-    private Set<Assignee> taskStakeholders;
+    private Set<OrgEntity> taskStakeholders;
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "TASK_BUSINESS_AMINISTRATORS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
-    private Set<Assignee> businessAdministrators;
+    private Set<OrgEntity> businessAdministrators;
 
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "TASK_NOTIFICATION_RECIPIENTS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
-    private Set<Assignee> notificationRecipients;
+    private Set<OrgEntity> notificationRecipients;
 
     @OneToMany(mappedBy = "task", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Comment> comments = new ArrayList<Comment>();
@@ -301,33 +294,6 @@ public class Task extends Base {
 
     public void setDeadlines(List<Deadline> deadlines) {
         this.deadlines = deadlines;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.id == null ? 0 : this.id.hashCode();
-    }
-    
-    /**
-     * Checks whether the task is equal to another object.
-     * @param obj object to compare
-     * @return true if the objects are equal, false otherwise
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Task == false) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        Task rhs = (Task) obj;
-        return new EqualsBuilder().append(this.id, rhs.id).isEquals();
-    }
-    
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("id", this.id).append("actualOwner", actualOwner).toString();
     }
 
     public String getTaskDefinitionKey() {
@@ -454,43 +420,43 @@ public class Task extends Base {
         this.escalated = escalated;
     }
 
-    public Set<Assignee> getPotentialOwners() {
+    public Set<OrgEntity> getPotentialOwners() {
         return potentialOwners;
     }
 
-    public void setPotentialOwners(Set<Assignee> potentialOwners) {
+    public void setPotentialOwners(Set<OrgEntity> potentialOwners) {
         this.potentialOwners = potentialOwners;
     }
 
-    public Set<Assignee> getExcludedOwners() {
+    public Set<OrgEntity> getExcludedOwners() {
         return excludedOwners;
     }
 
-    public void setExcludedOwners(Set<Assignee> excludedOwners) {
+    public void setExcludedOwners(Set<OrgEntity> excludedOwners) {
         this.excludedOwners = excludedOwners;
     }
 
-    public Set<Assignee> getTaskStakeholders() {
+    public Set<OrgEntity> getTaskStakeholders() {
         return taskStakeholders;
     }
 
-    public void setTaskStakeholders(Set<Assignee> taskStakeholders) {
+    public void setTaskStakeholders(Set<OrgEntity> taskStakeholders) {
         this.taskStakeholders = taskStakeholders;
     }
 
-    public Set<Assignee> getBusinessAdministrators() {
+    public Set<OrgEntity> getBusinessAdministrators() {
         return businessAdministrators;
     }
 
-    public void setBusinessAdministrators(Set<Assignee> businessAdministrators) {
+    public void setBusinessAdministrators(Set<OrgEntity> businessAdministrators) {
         this.businessAdministrators = businessAdministrators;
     }
 
-    public Set<Assignee> getNotificationRecipients() {
+    public Set<OrgEntity> getNotificationRecipients() {
         return notificationRecipients;
     }
 
-    public void setNotificationRecipients(Set<Assignee> notificationRecipients) {
+    public void setNotificationRecipients(Set<OrgEntity> notificationRecipients) {
         this.notificationRecipients = notificationRecipients;
     }
 
@@ -530,6 +496,8 @@ public class Task extends Base {
         this.notification = notification;
     }
 
-    
-    
+    @Override
+    public Object[] getKeys() {
+        return new Object[] { id };
+    }
 }

@@ -19,6 +19,7 @@
 
 package org.apache.hise.dao;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,25 +34,36 @@ import javax.persistence.Table;
  * @author Witek Wołejszo
  */
 @Entity
-@Table(name = "ASSIGNEE")
-@Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Assignee extends Base {
+@Table(name = "ORG_ENTITY")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+public abstract class OrgEntity extends JpaBase {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "asgn_seq")
-    @SequenceGenerator(name = "asgn_seq", sequenceName = "asgn_seq")
-    protected Long id;
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.AUTO, generator = "asgn_seq")
+//    @SequenceGenerator(name = "asgn_seq", sequenceName = "asgn_seq")
+//    protected Long id;
 
-    public void setId(Long id) {
-        this.id = id;
+    @Column(unique = true, nullable = false)
+    protected String name;
+
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+//
+//    public Long getId() {
+//        return this.id;
+//    }
+
+    public String getName() {
+        return name;
     }
 
-    public Long getId() {
-        return this.id;
+    public void setName(String name) {
+        this.name = name;
     }
-    
-    public abstract String getName();
 
-    public abstract void setName(String name);
-
+    @Override
+    public Object[] getKeys() {
+        return new Object[] {name} ;
+    }
 }

@@ -37,7 +37,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "ATTACHMENT")
-public class Attachment extends Base {
+public class Attachment extends JpaBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "attc_seq")
@@ -123,35 +123,8 @@ public class Attachment extends Base {
         this.task = task;
     }
 
-    /**
-     * Returns the attachment hashcode.
-     * @return attachment hash code
-     */
     @Override
-    public int hashCode() {
-        return this.id == null ? 0 : this.id.hashCode();
+    public Object[] getKeys() {
+        return new Object[] { id, name };
     }
-
-    /**
-     * Checks whether the attachment is equal to another object.
-     * @param obj object to compare
-     * @return true if the objects are equal, false otherwise
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Attachment == false) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        Attachment rhs = (Attachment) obj;
-        return new EqualsBuilder().append(this.id, rhs.id).isEquals();
-    }
-    
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("id", this.id).append("name", this.getName()).toString();
-    }
-
 }

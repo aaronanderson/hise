@@ -43,7 +43,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
  */
 @Entity
 @Table(name = "DEADLINE")
-public class Deadline extends Base {
+public class Deadline extends JpaBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "ddln_seq")
@@ -63,23 +63,6 @@ public class Deadline extends Base {
     @ManyToOne
     @JoinColumn(name = "TASK_ID")
     private Task task;
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Deadline == false) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        Deadline rhs = (Deadline) obj;
-        return new EqualsBuilder().append(this.id, rhs.id).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return (id == null ? 0 : id.hashCode());
-    }
 
     public Date getEventDate() {
         return eventDate;
@@ -115,5 +98,10 @@ public class Deadline extends Base {
 
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public Object[] getKeys() {
+        return new Object[] { id };
     }
 }

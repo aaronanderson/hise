@@ -403,10 +403,6 @@ public class Task {
      *                                  become actual owner i.e. not potential owner or excluded.
      */
     public void claim(Person person) {
-        
-        Validate.notNull(person);
-        Validate.notNull(person.getId());
-
 //        this.checkCanClaim(person);
 //
         taskDto.setActualOwner(person);
@@ -901,16 +897,16 @@ public class Task {
 //        }
 //    }
 
-    /**
-     * Returns presentation parameter values.
-     * @return the presentation parameter values
-     */
-    public Map<String, Object> getPresentationParameterValues() {
-        Map<String, Object> result = new HashMap<String, Object>();
-        for (Map.Entry<String, PresentationParameter> pp : taskDto.getPresentationParameters().entrySet()) {
-            result.put(pp.getKey(), pp.getValue().getValue());
-        }
-        return result;
-    }
+//    /**
+//     * Returns presentation parameter values.
+//     * @return the presentation parameter values
+//     */
+//    public Map<String, Object> getPresentationParameterValues() {
+//        Map<String, Object> result = new HashMap<String, Object>();
+//        for (Map.Entry<String, PresentationParameter> pp : taskDto.getPresentationParameters().entrySet()) {
+//            result.put(pp.getKey(), pp.getValue().getValue());
+//        }
+//        return result;
+//    }
 
 }

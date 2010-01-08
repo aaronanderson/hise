@@ -19,17 +19,46 @@
 
 package org.apache.hise.dao;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javax.persistence.MappedSuperclass;
 
+import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.springframework.beans.factory.annotation.Configurable;
 
 @Configurable
 @MappedSuperclass
-public abstract class Base {
+public abstract class JpaBase {
 
-    @Override
-    public abstract int hashCode();
+    public abstract Object[] getKeys();
     
     @Override
-    public abstract boolean equals(Object obj);
+    public int hashCode() {
+        HashCodeBuilder b = new HashCodeBuilder();
+        for (Object o : getKeys()) {
+            b.append(o);
+        }
+        return b.toHashCode();
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        List<Object> l1 = new ArrayList<Object>();
+        Collections.addAll(l1, getKeys());
+        List<Object> l2 = new ArrayList<Object>();
+        Collections.addAll(l2, ((JpaBase) obj).getKeys());
+        return l1.equals(l2);
+    }
+
+    @Override
+    public String toString() {
+        ToStringBuilder b = new ToStringBuilder(this);
+        for (Object o : getKeys()) {
+            b.append(o);
+        }
+        return b.toString();
+    }
 }

@@ -177,20 +177,20 @@ public class TaskXmlUtils {
                 throw new XPathFunctionException("Task's input does not contain partName: " + args.get(0));
             }
 
-            try {
-                
-                document = message.getDomDocument();
-                
-            } catch (ParserConfigurationException e) {
-
-                throw new XPathFunctionException(e);
-            } catch (SAXException e) {
-                
-                throw new XPathFunctionException(e);
-            } catch (IOException e) {
-                
-                throw new XPathFunctionException(e);
-            }
+//            try {
+//                
+//                document = message.getDomDocument();
+//                
+//            } catch (ParserConfigurationException e) {
+//
+//                throw new XPathFunctionException(e);
+//            } catch (SAXException e) {
+//                
+//                throw new XPathFunctionException(e);
+//            } catch (IOException e) {
+//                
+//                throw new XPathFunctionException(e);
+//            }
             
             if (document == null) return null;
             NodeList l = document.getElementsByTagName(partName);

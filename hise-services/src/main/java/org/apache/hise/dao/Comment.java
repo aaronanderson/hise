@@ -46,12 +46,9 @@ import org.apache.commons.logging.LogFactory;
  * @author Mateusz Lipczyński
  */
 @Entity
-@Table(name = "TASK_COMMENT")
-public class Comment extends Base {
+@Table(name = "COMMENT")
+public class Comment extends JpaBase {
     
-    @Transient
-    private final Log log = LogFactory.getLog(Comment.class);
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "cmmt_seq")
     @SequenceGenerator(name = "cmmt_seq", sequenceName = "cmmt_seq")
@@ -68,30 +65,12 @@ public class Comment extends Base {
     @JoinColumn(name = "TASK_ID")
     private Task task;
     
-    /***************************************************************
-     * Constructor                                                 *
-     ***************************************************************/
-
-    /**
-     * Creates {@link Comment}.
-     */    
-    public Comment() {
-        super();
-    }
-    
-    /**
-     * Creates {@link Comment}.
-     */
     public Comment(String content, Task task) {
         this.content = content;
         this.date = new Date();
         this.task = task;
     }
     
-    /***************************************************************
-     * Getters & setters                                           *
-     ***************************************************************/
-
     public void setDate(Date date) {
         this.date = date;
     }
@@ -117,24 +96,7 @@ public class Comment extends Base {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Comment == false) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        Comment rhs = (Comment) obj;
-        return new EqualsBuilder().append(this.id, rhs.id).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return (id == null ? 0 : id.hashCode());
-    }
-    
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("id", this.id).append("date", this.date).append("comment", this.content).toString();
+    public Object[] getKeys() {
+        return new Object[] { id };
     }
 }

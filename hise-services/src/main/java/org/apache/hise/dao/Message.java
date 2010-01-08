@@ -53,10 +53,9 @@ import org.xml.sax.SAXException;
  */
 @Entity
 @Table(name = "MESSAGE")
-public class Message extends Base {
+public class Message extends JpaBase {
     
-    @Transient
-    private final Log log = LogFactory.getLog(Message.class);
+    private static final Log log = LogFactory.getLog(Message.class);
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "mssg_seq")
@@ -70,28 +69,9 @@ public class Message extends Base {
     @Lob
     private String message;
     
-    @Transient
-    private Document messageDocument;
-
-    /**
-     * Constructs Message.
-     */
-    public Message() {
-        super();
-    }
-    
-    /**
-     * Constructs Message.
-     * @param message
-     */
     public Message(String message) {
-        
-        super();
-        
         Validate.notNull(message);
-        
         this.message = message;
-        this.partName = this.getRootNodeName();
     }
     
     public void setId(Long id) {
@@ -110,91 +90,8 @@ public class Message extends Base {
         return this.partName;
     }
     
-    //operations
-    
-    /**
-     * Returns {@link InputStream} with message contents using platform encoding. 
-     * @return
-     */
-    private InputStream getMessageInputStream() {
-        return new ByteArrayInputStream(this.message.getBytes());
-    }
-    
-    /**
-     * Returns DOM Document with parsed message part.
-     * @return
-     * @throws ParserConfigurationException
-     * @throws SAXException
-     * @throws IOException
-     */
-    public synchronized Document getDomDocument() throws ParserConfigurationException, SAXException, IOException {
-        
-        if (this.messageDocument == null) {
-            DocumentBuilderFactory factory = DOMUtils.getDocumentBuilderFactory();
-            factory.setNamespaceAware(true);
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            this.messageDocument = builder.parse(this.getMessageInputStream());
-        }
-        
-        return this.messageDocument;
-    }
-    
-    /**
-     * Returns root element name.
-     * @return the root element name
-     */
-    public String getRootNodeName() {
-        
-        try {
-            
-            return this.getDomDocument().getDocumentElement().getNodeName();
-            
-        } catch (ParserConfigurationException e) {
-            
-            log.error(e);
-            throw new RuntimeException("error gettung messages root element name", e);
-            
-        } catch (SAXException e) {
-            
-            log.error("error getting message's root element name", e);
-            throw new RuntimeException("error getting message's root element name", e);
-            
-        } catch (IOException e) {
-            
-            log.error("error getting message's root element name", e);
-            throw new RuntimeException("error getting message's root element name", e);
-        }
-    }
-
-    /***************************************************************
-     * Infrastructure methods.                                     *
-     ***************************************************************/
-
-    /**
-     * Returns the message hashcode.
-     * @return message hash code
-     */
     @Override
-    public int hashCode() {
-        int result = ((id == null) ? 0 : id.hashCode());
-        return result;
+    public Object[] getKeys() {
+        return new Object[] { id };
     }
-
-    /**
-     * Checks whether the message is equal to another object.
-     * @param obj object to compare
-     * @return true if the objects are equal, false otherwise
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Message == false) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        Message m = (Message) obj;
-        return new EqualsBuilder().append(id, m.id).isEquals();
-    }
-
 }

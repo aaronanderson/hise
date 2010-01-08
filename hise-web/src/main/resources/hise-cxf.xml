@@ -39,10 +39,6 @@
 
   <tx:annotation-driven transaction-manager="transactionManager"/>
 
-  <bean name="peopleQuery" class="org.apache.hise.engine.PropertyBasedPeopleQuery">
-    <property name="configuration" value="classpath:peopleGroups.properties"/>
-  </bean>
-
   <util:properties id="hiseLoginProperties" location="classpath:hise-login.properties"/>
 
   <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
