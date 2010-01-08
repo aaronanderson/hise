@@ -32,23 +32,10 @@ import org.apache.commons.logging.LogFactory;
  * @author Witek Wołejszo
  */
 @Embeddable
-public class Fault {
-
-    /**
-     * Logger.
-     */
-    @Transient
-    private final Log log = LogFactory.getLog(Fault.class);
-    
-    /**
-     * Fault name.
-     */
+public class Fault extends JpaBase {
     @Column(name = "fault_name", nullable = true)
     private String name;
     
-    /**
-     * Fault data.
-     */
     @Column(name = "fault_data", nullable = true)
     private String data;
     
@@ -68,13 +55,8 @@ public class Fault {
         this.data = data;
     }
 
-    /***************************************************************
-     * Infrastructure methods.                                     *
-     ***************************************************************/
-
     @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("name", this.name).append("data", this.data).toString();
+    public Object[] getKeys() {
+        return new Object[] { name, data };
     }
-
 }

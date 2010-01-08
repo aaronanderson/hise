@@ -20,16 +20,17 @@
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
     <persistence-unit name="org.apache.hise">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <class>org.apache.hise.dao.Assignee</class>
         <class>org.apache.hise.dao.Attachment</class>
-        <class>org.apache.hise.dao.Base</class>
         <class>org.apache.hise.dao.Comment</class>
         <class>org.apache.hise.dao.Deadline</class>
+        <class>org.apache.hise.dao.Fault</class>
         <class>org.apache.hise.dao.Group</class>
-        <class>org.apache.hise.dao.Person</class>
-        <class>org.apache.hise.dao.Task</class>
+        <class>org.apache.hise.dao.JpaBase</class>
         <class>org.apache.hise.dao.Message</class>
+        <class>org.apache.hise.dao.OrgEntity</class>
+        <class>org.apache.hise.dao.Person</class>
         <class>org.apache.hise.dao.PresentationParameter</class>
+        <class>org.apache.hise.dao.Task</class>
         <exclude-unlisted-classes/>
     </persistence-unit>
 </persistence>
