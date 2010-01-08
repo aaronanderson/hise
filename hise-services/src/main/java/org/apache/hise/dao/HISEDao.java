@@ -19,11 +19,14 @@
 
 package org.apache.hise.dao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
+import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
 
 
@@ -302,9 +305,13 @@ public class HISEDao extends JpaDaoSupport {
 //        return getJpaTemplate().find(Person.class, userId);
 //    }
     
-    public Person getPerson(String name) {
-        Query query = getJpaTemplate().getEntityManager().createQuery("SELECT p FROM Person p WHERE p.name = :name");
-        query.setParameter("name", name);
-        return (Person) query.getSingleResult();
+    public Person getPerson(final String name) {
+        return (Person) getJpaTemplate().execute(new JpaCallback() {
+            public Object doInJpa(EntityManager e) throws PersistenceException {
+                Query query = e.createQuery("SELECT p FROM Person p WHERE p.name = :name");
+                query.setParameter("name", name);
+                return  query.getSingleResult();
+            }
+        });
     }
 }
