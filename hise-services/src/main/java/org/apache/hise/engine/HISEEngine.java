@@ -15,6 +15,7 @@ import org.apache.hise.engine.store.TaskDD;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.runtime.Task;
 import org.apache.hise.utils.DOMUtils;
+import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.w3c.dom.Element;
 
 public class HISEEngine {
@@ -29,14 +30,14 @@ public class HISEEngine {
     
     public final Map<String, QName> tasksMap = new HashMap<String, QName>();
     public final Map<QName, TaskInfo> tasks = new HashMap<QName, TaskInfo>();
-    private EntityManagerFactory entityManagerFactory;
+    private HISEDao hiseDao;
     
-    public HISEDao getSession() {
-        return new HISEDao(entityManagerFactory.createEntityManager());
+    public HISEDao getHiseDao() {
+        return hiseDao;
     }
 
-    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
+    public void setHiseDao(HISEDao hiseDao) {
+        this.hiseDao = hiseDao;
     }
 
     public static QName getCanonicalQName(QName q) {

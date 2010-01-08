@@ -19,30 +19,18 @@
 
 package org.apache.hise.dao;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hise.dao.Task.Status;
-import org.apache.hise.dao.Task.TaskTypes;
+import org.springframework.orm.jpa.EntityManagerFactoryUtils;
+import org.springframework.orm.jpa.support.JpaDaoSupport;
 
 
-public class HISEDao {
+public class HISEDao extends JpaDaoSupport {
     
     private static final Log log = LogFactory.getLog(HISEDao.class);
 
-    private EntityManager entityManager;
-
-    
-    
 //    /**
 //     * Returns tasks. See {@link HumanTaskServices#getMyTasks(String, TaskTypes, GenericHumanRole, String, List, String, String, Integer)}
 //     * for method contract.
@@ -179,12 +167,6 @@ public class HISEDao {
 //        List<Task> result = query.getResultList();
 //        return result;
 //    }
-
-    public HISEDao(EntityManager entityManager) {
-        super();
-        this.entityManager = entityManager;
-    }
-
 //    /**
 //     * Checks if given task exists.
 //     * @param primaryKey Primary key of the entity
@@ -233,19 +215,6 @@ public class HISEDao {
 //    /**
 //     * {@inheritDoc}
 //     */
-//    public Person getPerson(String name) {
-//
-//        Query query = entityManager.createQuery("SELECT p FROM Person p WHERE p.name = :name");
-//        query.setParameter("name", name);
-//        
-//        try {
-//            
-//            return (Person) query.getSingleResult();
-//        } catch (NoResultException e) {
-//            
-//            return null;
-//        }
-//    }
 //
 //    /**
 //     * {@inheritDoc}
@@ -319,16 +288,23 @@ public class HISEDao {
 //    }
 //    
 
+    
+    
     public Task loadTask(Long taskId) {
-        return entityManager.find(Task.class, taskId);
+        return getJpaTemplate().find(Task.class, taskId);
     }
     
     public void saveTask(Task t) {
-        entityManager.persist(t);
+        getJpaTemplate().persist(t);
     }
 
-    public Person loadUser(String userId) {
-        return entityManager.find(Person.class, userId);
-    }
+//    public Person loadUser(String userId) {
+//        return getJpaTemplate().find(Person.class, userId);
+//    }
     
+    public Person getPerson(String name) {
+        Query query = getJpaTemplate().getEntityManager().createQuery("SELECT p FROM Person p WHERE p.name = :name");
+        query.setParameter("name", name);
+        return (Person) query.getSingleResult();
+    }
 }

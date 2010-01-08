@@ -23,12 +23,18 @@
     <property name="passwords" ref="hiseLoginProperties"/>
   </bean>
 
+<!-- 
   <bean id="transactionHandler" class="org.apache.hise.engine.jaxws.TransactionHandler">
     <property name="transactionManager" ref="transactionManager"/>
   </bean>
+   -->
+
+  <bean id="hiseDao" class="org.apache.hise.dao.HISEDao">
+    <property name="entityManagerFactory" ref="htEntityManagerFactory"/>
+  </bean>
 
   <bean id="hiseEngine" class="org.apache.hise.engine.HISEEngine">
-    <property name="entityManagerFactory" ref="htEntityManagerFactory"/>
+    <property name="hiseDao" ref="hiseDao"/>
   </bean>
 
   <tx:annotation-driven transaction-manager="transactionManager"/>
@@ -49,9 +55,11 @@
   </bean>
 
   <jaxws:endpoint id="taskOperationsEndpoint" name="taskOperationsEndpoint" address="/taskOperations/" implementor="#taskOperations" serviceName="htdaw:taskOperations" publish="true"  wsdlLocation="classpath:ws-humantask.wsdl">
+  <!-- 
     <jaxws:handlers>
       <ref bean="transactionHandler"/>
     </jaxws:handlers>
+     -->
     <jaxws:inInterceptors>
       <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
         <constructor-arg>

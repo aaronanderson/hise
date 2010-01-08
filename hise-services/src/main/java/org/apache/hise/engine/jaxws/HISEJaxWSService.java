@@ -20,6 +20,8 @@
 package org.apache.hise.engine.jaxws;
 
 import javax.annotation.Resource;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceException;
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPMessage;
@@ -33,29 +35,37 @@ import javax.xml.ws.handler.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.engine.HISEEngine;
+import org.springframework.orm.jpa.JpaCallback;
+import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.w3c.dom.Element;
 
-
 @WebServiceProvider
-@ServiceMode(value=Service.Mode.MESSAGE)
+@ServiceMode(value = Service.Mode.MESSAGE)
 public class HISEJaxWSService implements Provider<SOAPMessage> {
     private static Log __log = LogFactory.getLog(HISEJaxWSService.class);
-    
+
     private HISEEngine hiseEngine;
     private WebServiceContext context;
     private JpaTransactionManager transactionManager;
     private MessageFactory messageFactory;
+    private TransactionTemplate transactionTemplate;
 
     public HISEJaxWSService() throws Exception {
         messageFactory = MessageFactory.newInstance();
+    }
+
+    public void init() {
+        transactionTemplate = new TransactionTemplate(transactionManager);
     }
     
     public void setHiseEngine(HISEEngine hiseEngine) {
         this.hiseEngine = hiseEngine;
     }
-
-
 
     public WebServiceContext getContext() {
         return context;
@@ -70,24 +80,28 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
         this.context = context;
     }
 
-    public SOAPMessage invoke(SOAPMessage request) {
-        try {
-//            TransactionStatus tx = transactionManager.getTransaction(new DefaultTransactionDefinition());
-            assert transactionManager.isValidateExistingTransaction();
-            MessageContext c = context.getMessageContext();
-            Object operationInfo = c.get("org.apache.cxf.service.model.OperationInfo");
-            QName operation = (QName) operationInfo.getClass().getMethod("getName").invoke(operationInfo);
-            QName portType = (QName) c.get("javax.xml.ws.wsdl.interface");
-            QName operation2 = (QName) c.get("javax.xml.ws.wsdl.operation");
-            
-            Element body = request.getSOAPBody();
-            __log.debug("invoking " + request + " operation:" + operation + " portType:" + portType + " operation2:" + operation2);
-            hiseEngine.receive(portType, operation.getLocalPart(), body, context.getUserPrincipal().getName());
-            SOAPMessage m = messageFactory.createMessage();
-//            transactionManager.commit(tx);
-            return m;
-        } catch (Exception e) {
-            throw new RuntimeException("Error during receiving message ", e);
-        }
+    public SOAPMessage invoke(final SOAPMessage request) {
+        return (SOAPMessage) transactionTemplate.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus arg0) {
+                try {
+                    // TransactionStatus tx = transactionManager.getTransaction(new DefaultTransactionDefinition());
+                    assert transactionManager.isValidateExistingTransaction();
+                    MessageContext c = context.getMessageContext();
+                    Object operationInfo = c.get("org.apache.cxf.service.model.OperationInfo");
+                    QName operation = (QName) operationInfo.getClass().getMethod("getName").invoke(operationInfo);
+                    QName portType = (QName) c.get("javax.xml.ws.wsdl.interface");
+                    QName operation2 = (QName) c.get("javax.xml.ws.wsdl.operation");
+
+                    Element body = request.getSOAPBody();
+                    __log.debug("invoking " + request + " operation:" + operation + " portType:" + portType + " operation2:" + operation2);
+                    hiseEngine.receive(portType, operation.getLocalPart(), body, context.getUserPrincipal().getName());
+                    SOAPMessage m = messageFactory.createMessage();
+                    return m;
+                    // transactionManager.commit(tx);
+                } catch (Exception e) {
+                    throw new RuntimeException("Error during receiving message ", e);
+                }
+            }
+        });
     }
 }

@@ -45,6 +45,7 @@ import org.apache.hise.lang.xsd.htda.TTaskAbstract;
 import org.apache.hise.lang.xsd.htda.TTaskQueryResultSet;
 import org.apache.hise.lang.xsd.htdt.TTime;
 import org.apache.hise.runtime.Task;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of WS-HT API. Operations are executed by end users, i.e. actual or potential owners. The identity of the user is implicitly passed when invoking any of the operations listed in the table below. The participant operations listed below only apply to tasks unless explicitly noted otherwise. The authorization column indicates people of which roles are authorized to perform the operation. Stakeholders of the task are not mentioned explicitly. They have the same authorization rights as business administrators.
@@ -52,28 +53,33 @@ import org.apache.hise.runtime.Task;
  * @author Witek Wołejszo
  * @author Warren Crossing
  */
+@Transactional
 @WebService
 public class TaskOperationsImpl implements TaskOperations {
 
     private HISEEngine hiseEngine;
 
     private WebServiceContext context;
-    
+
+    public TaskOperationsImpl() throws Exception {
+        context = (WebServiceContext) Class.forName("org.apache.cxf.jaxws.context.WebServiceContextImpl").newInstance();
+    }
+
     public void setHiseEngine(HISEEngine hiseEngine) {
         this.hiseEngine = hiseEngine;
     }
 
-    @Resource
-    public void setContext(WebServiceContext context) {
-        this.context = context;
-    }
+//    @Resource
+//    public void setContext(WebServiceContext context) {
+//        this.context = context;
+//    }
 
     private String getUserString() {
         return context.getUserPrincipal().getName();
     }
     
     private Person loadUser() {
-        return hiseEngine.getSession().loadUser(getUserString());
+        return hiseEngine.getHiseDao().getPerson(getUserString());
     }
 
     public void claim(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {

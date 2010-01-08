@@ -28,15 +28,17 @@
     </property>
   </bean>
 
-  <bean id="hiseJaxWSService1" class="org.apache.hise.engine.jaxws.HISEJaxWSService">
+  <bean id="hiseJaxWSService1" class="org.apache.hise.engine.jaxws.HISEJaxWSService" init-method="init">
     <property name="hiseEngine" ref="hiseEngine"/>
     <property name="transactionManager" ref="transactionManager"></property>
   </bean>
 
   <jaxws:endpoint id="testHtd1" address="/ClaimsHandlingService/" implementor="#hiseJaxWSService1" serviceName="ins:ClaimsHandlingService" endpointName="ins:ClaimsHandlingPort" publish="true" wsdlLocation="classpath:ExampleTasks.wsdl">
+  <!-- 
     <jaxws:handlers>
       <ref bean="transactionHandler"/>
     </jaxws:handlers>
+     -->
     <jaxws:inInterceptors>
       <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
         <constructor-arg>

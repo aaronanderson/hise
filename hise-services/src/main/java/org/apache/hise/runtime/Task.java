@@ -93,7 +93,7 @@ public class Task {
 
     public static Task load(HISEEngine engine, Long id) {
         Task t = new Task(engine);
-        HISEDao dao = engine.getSession();
+        HISEDao dao = engine.getHiseDao();
         t.taskDto = dao.loadTask(id);
 //        t.setTaskDto(em.find(Task.class, , arg1)engine.taskDao.fetch(id));
         t.taskDefinition = engine.getTaskDefinition(t.taskDto.getTaskDefinitionName());
@@ -120,7 +120,7 @@ public class Task {
         u.setNotification(false);
         u.setStatus(Status.CREATED);
         t.taskDto = u;
-        engine.getSession().saveTask(u);
+        engine.getHiseDao().saveTask(u);
         
         return t;
         
@@ -409,9 +409,9 @@ public class Task {
 
 //        this.checkCanClaim(person);
 //
-//        this.actualOwner = person;
-//        this.addOperationComment(Operations.CLAIM, person);
-//        this.setStatus(Task.Status.RESERVED);
+        taskDto.setActualOwner(person);
+        //taskDto.addOperationComment(Operations.CLAIM, person);
+        taskDto.setStatus(Status.RESERVED);
     }
 //
 //    /**
