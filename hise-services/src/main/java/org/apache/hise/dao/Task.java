@@ -244,7 +244,7 @@ public class Task extends JpaBase {
         return notification;
     }
 
-    @OneToMany(mappedBy="task")
+    @OneToMany(mappedBy="task", cascade = {CascadeType.PERSIST, CascadeType.MERGE })
     private Set<TaskOrgEntity> peopleAssignments;
 
 //    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
