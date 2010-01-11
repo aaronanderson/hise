@@ -49,6 +49,7 @@ import org.apache.hise.lang.xsd.htda.TTaskAbstract;
 import org.apache.hise.lang.xsd.htda.TTaskQueryResultSet;
 import org.apache.hise.lang.xsd.htdt.TTime;
 import org.apache.hise.runtime.Task;
+import org.springframework.beans.BeanUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -65,7 +66,10 @@ public class TaskOperationsImpl implements TaskOperations {
 
     private WebServiceContext context;
 
-    public TaskOperationsImpl() throws Exception {
+    public TaskOperationsImpl()  {
+    }
+    
+    public void init() throws Exception {
         context = (WebServiceContext) Class.forName("org.apache.cxf.jaxws.context.WebServiceContextImpl").newInstance();
     }
 
@@ -78,17 +82,17 @@ public class TaskOperationsImpl implements TaskOperations {
 //        this.context = context;
 //    }
 
-    private String getUserString() {
+    protected String getUserString() {
         return context.getUserPrincipal().getName();
     }
     
-    private OrgEntity loadUser() {
+    protected OrgEntity loadUser() {
         return hiseEngine.getHiseDao().getOrgEntity(getUserString());
     }
     
     public void claim(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {
         Task task = Task.load(hiseEngine, Long.valueOf(identifier));
-        task.claim(getUserString());
+        task.claim(loadUser());
     }
 
     public List<org.apache.hise.lang.xsd.htda.TTask> getMyTasks(String taskType, String genericHumanRole, String workQueue, List<TStatus> status, String whereClause, String createdOnClause, Integer maxTasks) throws IllegalArgumentFault, IllegalStateFault {
@@ -98,6 +102,13 @@ public class TaskOperationsImpl implements TaskOperations {
         for (org.apache.hise.dao.Task u : k) {
             TTask t = new TTask();
             t.setId("" + u.getId());
+            t.setTaskType("TASK");
+            t.setCreatedOn(u.getCreatedOn());
+            t.setActivationTime(u.getActivationTime());
+            if (u.getActualOwner() != null) t.setActualOwner(u.getActualOwner().getName());
+            t.setCreatedBy(u.getCreatedBy());
+            t.setName(u.getTaskDefinitionName());
+            t.setStatus(TStatus.valueOf(u.getStatus().toString()));
             l.add(t);
         }
         return l;
@@ -235,22 +246,16 @@ public class TaskOperationsImpl implements TaskOperations {
         return null;
     }
 
-    /**
-     * Releases a task by its identifier.
-     * 
-     * @param identifier
-     *            task identifier
-     * @throws org.example.ws_ht.api.wsdl.IllegalArgumentFault
-     *             Identifier is invalid
-     * @throws org.example.ws_ht.api.wsdl.IllegalStateFault
-     *             The current state of the task doesn't allow to release it
-     * @throws org.example.ws_ht.api.wsdl.IllegalAccessFault
-     *             The logged in user has no right to release the task
-     */
     public void release(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {
+        OrgEntity user = loadUser();
+        Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.release(user);
     }
 
     public void start(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {
+        OrgEntity user = loadUser();
+        Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.start(user);
     }
 
     public void activate(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
@@ -364,8 +369,9 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public void resume(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
-        // TODO Auto-generated method stub
-
+        OrgEntity user = loadUser();
+        Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.resume(user);
     }
 
     public void setFault(String identifier, String faultName, Object faultData) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault, IllegalOperationFault {
@@ -393,13 +399,15 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public void stop(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
-        // TODO Auto-generated method stub
-
+        OrgEntity user = loadUser();
+        Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.stop(user);
     }
 
     public void suspend(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
-        // TODO Auto-generated method stub
-
+        OrgEntity user = loadUser();
+        Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.suspend(user);
     }
 
     public void suspendUntil(String identifier, TTime time) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {

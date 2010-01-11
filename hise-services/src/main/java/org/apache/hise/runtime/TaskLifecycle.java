@@ -44,6 +44,13 @@ public class TaskLifecycle implements TaskStateListener {
 
                 break;
 
+            case SUSPENDED:
+                if (newStatus == task.getTaskDto().getStatusBeforeSuspend()) {
+                    isOk = true;
+                }
+
+                break;
+
             default:
                 break;
 
@@ -53,8 +60,11 @@ public class TaskLifecycle implements TaskStateListener {
 
                 __log.debug("Changing Task status : " + task + " status from: " + oldStatus + " to: " + newStatus);
 
-                if (newStatus.equals(Status.SUSPENDED)) {
+                if (newStatus == Status.SUSPENDED) {
                     task.getTaskDto().setStatusBeforeSuspend(oldStatus);
+                } else if (oldStatus == Status.SUSPENDED) {
+                    Validate.isTrue(task.getTaskDto().getStatusBeforeSuspend() == newStatus);
+                    task.getTaskDto().setStatusBeforeSuspend(null);
                 } else {
                     Validate.isTrue(task.getTaskDto().getStatusBeforeSuspend() == null);
                 }

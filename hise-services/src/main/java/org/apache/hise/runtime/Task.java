@@ -444,7 +444,7 @@ public class Task {
      * @throws HTIllegalAccessException
      *             Thrown when task is in illegal state for claim i.e. not READY or person cannot become actual owner i.e. not potential owner or excluded.
      */
-    public void claim(String user) {
+    public void claim(OrgEntity user) {
 
         if (taskDto.getActualOwner() != null) {
             throw new IllegalStateException("Actual owner already set " + taskDto.getActualOwner());
@@ -465,14 +465,34 @@ public class Task {
         // throw new HTIllegalAccessException("Person is excluded from potential owners.", person.getName());
         // }
 
-        OrgEntity t = hiseEngine.getHiseDao().getOrgEntity(user);
-        Validate.isTrue(t.getType() == TaskOrgEntity.OrgEntityType.USER);
+        Validate.isTrue(user.getType() == TaskOrgEntity.OrgEntityType.USER);
 
-        taskDto.setActualOwner(t);
+        taskDto.setActualOwner(user);
 
         // taskDto.addOperationComment(Operations.CLAIM, person);
         setStatus(Status.RESERVED);
     }
+    
+    public void start(OrgEntity user) {
+        setStatus(Status.IN_PROGRESS);
+    }
+
+    public void stop(OrgEntity user) {
+        setStatus(Status.RESERVED);
+    }
+
+    public void release(OrgEntity user) {
+        setStatus(Status.READY);
+    }
+    
+    public void suspend(OrgEntity user) {
+        setStatus(Status.SUSPENDED);
+    }
+    
+    public void resume(OrgEntity user) {
+        setStatus(taskDto.getStatusBeforeSuspend());
+    }
+    
     //    
     // /**
     // * Releases the Task.
