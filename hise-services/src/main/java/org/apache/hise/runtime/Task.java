@@ -37,6 +37,7 @@ import net.sf.saxon.trans.XPathException;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.HISEDao;
 import org.apache.hise.dao.Message;
 import org.apache.hise.dao.OrgEntity;
@@ -130,7 +131,7 @@ public class Task {
             int poSize = 0;
             TaskOrgEntity selected = null;
             for (TaskOrgEntity e : u.getPeopleAssignments()) {
-                if (e.getAssignmentRole() == TaskOrgEntity.AssignmentRole.POTENTIALOWNERS) {
+                if (e.getGenericHumanRole() == GenericHumanRole.POTENTIALOWNERS) {
                     poSize ++;
                     if (e.getType() == TaskOrgEntity.OrgEntityType.USER) {
                         selected = e;

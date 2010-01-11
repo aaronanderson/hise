@@ -20,7 +20,7 @@ import net.sf.saxon.trans.XPathException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.TaskOrgEntity;
-import org.apache.hise.dao.TaskOrgEntity.AssignmentRole;
+import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
 import org.apache.hise.lang.xsd.htd.ObjectFactory;
 import org.apache.hise.lang.xsd.htd.TExpression;
@@ -80,7 +80,7 @@ public class TaskEvaluator {
         TPeopleAssignments p = task.getTaskDefinition().gettTask().getPeopleAssignments();
 
         for (JAXBElement<TGenericHumanRole> r : p.getGenericHumanRole()) {
-            AssignmentRole assignmentRole = TaskOrgEntity.AssignmentRole.valueOf(r.getName().getLocalPart().toUpperCase());
+            GenericHumanRole assignmentRole = GenericHumanRole.valueOf(r.getName().getLocalPart().toUpperCase());
             TGenericHumanRole role = r.getValue();
             TFrom f = role.getFrom();
             if (f.getLogicalPeopleGroup() != null) {
@@ -90,7 +90,7 @@ public class TaskEvaluator {
                 if (e != null) {
                     for (String user : (List<String>) evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:users/htd:user return string($i)", e)) {
                         TaskOrgEntity x = new TaskOrgEntity();
-                        x.setAssignmentRole(assignmentRole);
+                        x.setGenericHumanRole(assignmentRole);
                         x.setName(user);
                         x.setType(OrgEntityType.USER);
                         x.setTask(task.getTaskDto());
@@ -98,7 +98,7 @@ public class TaskEvaluator {
                     }
                     for (String group : (List<String>) evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:groups/htd:group return string($i)", e)) {
                         TaskOrgEntity x = new TaskOrgEntity();
-                        x.setAssignmentRole(assignmentRole);
+                        x.setGenericHumanRole(assignmentRole);
                         x.setName(group);
                         x.setType(OrgEntityType.GROUP);
                         x.setTask(task.getTaskDto());

@@ -48,15 +48,6 @@ public class TaskOrgEntity extends JpaBase {
     @ManyToOne
     private Task task;
 
-    public static enum AssignmentRole {
-        TASKSTAKEHOLDERS,
-        POTENTIALOWNERS,
-        EXCLUDEDOWNERS,
-        BUSINESSADMINISTRATORS,
-        TASKINITIATOR,
-        RECIPIENTS
-    }
-    
     private String name;
     
     public static enum OrgEntityType {
@@ -67,7 +58,7 @@ public class TaskOrgEntity extends JpaBase {
     private OrgEntityType type;
 
     @Enumerated(value = EnumType.STRING)
-    private AssignmentRole assignmentRole;
+    private GenericHumanRole genericHumanRole;
     
     public Task getTask() {
         return task;
@@ -100,12 +91,12 @@ public class TaskOrgEntity extends JpaBase {
     }
     
 
-    public AssignmentRole getAssignmentRole() {
-        return assignmentRole;
+    public GenericHumanRole getGenericHumanRole() {
+        return genericHumanRole;
     }
 
-    public void setAssignmentRole(AssignmentRole assignmentRole) {
-        this.assignmentRole = assignmentRole;
+    public void setGenericHumanRole(GenericHumanRole genericHumanRole) {
+        this.genericHumanRole = genericHumanRole;
     }
 
     @Override
