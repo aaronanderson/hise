@@ -26,9 +26,12 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hise.lang.xsd.htd.TFrom;
+import org.apache.hise.lang.xsd.htd.TLiteral;
 import org.apache.hise.lang.xsd.htd.TTask;
 import org.apache.hise.lang.xsd.htd.TTaskInterface;
 import org.apache.hise.utils.DOMUtils;
+import org.w3c.dom.Element;
 
 /**
  * Holds information about task version runnable in TouK Human Task engine. Task
@@ -294,5 +297,4 @@ public class TaskDefinition {
     public String getNamespaceURI(String prefix) {
         return this.xmlNamespaces == null ? null : this.xmlNamespaces.get(prefix);
     }
-    
 }

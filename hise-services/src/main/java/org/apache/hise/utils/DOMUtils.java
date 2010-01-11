@@ -18,6 +18,7 @@
  */
 
 package org.apache.hise.utils;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -91,6 +92,19 @@ public class DOMUtils {
         return null;
     }
     
+    public static Element findElement(QName elementName, List<Object> content) {
+        for (Object o : content) {
+            if (o instanceof Element) {
+                Element u = (Element) o;
+                QName n = new QName(u.getNamespaceURI(), u.getLocalName());
+                if (n.equals(elementName)) {
+                    return u;
+                }
+            }
+        }
+        return null;
+    }
+    
     /**
      * Convert a DOM node to a stringified XML representation.
      */
@@ -146,5 +160,17 @@ public class DOMUtils {
     
     public static XPathFactory getXPathFactory() {
         return new net.sf.saxon.xpath.XPathFactoryImpl();
+    }
+    
+    public static Document parse(InputStream in) throws Exception {
+        DocumentBuilderFactory f = DOMUtils.getDocumentBuilderFactory();
+        f.setNamespaceAware(true);
+        DocumentBuilder b = f.newDocumentBuilder();
+        Document d = b.parse(in);
+        return d;
+    }
+
+    public static Document parse(String in) throws Exception {
+        return parse(new ByteArrayInputStream(in.getBytes()));
     }
 }

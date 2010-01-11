@@ -245,7 +245,7 @@ public class Task extends JpaBase {
     }
 
     @OneToMany(mappedBy="task")
-    private Set<TaskOrgEntity> potentialOwners;
+    private Set<TaskOrgEntity> peopleAssignments;
 
 //    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 //    @JoinTable(name = "TASK_EXCLUDED_OWNERS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
@@ -419,13 +419,7 @@ public class Task extends JpaBase {
         this.escalated = escalated;
     }
 
-    public Set<TaskOrgEntity> getPotentialOwners() {
-        return potentialOwners;
-    }
-
-    public void setPotentialOwners(Set<TaskOrgEntity> potentialOwners) {
-        this.potentialOwners = potentialOwners;
-    }
+    
 
 //    public Set<TaskOrgEntity> getExcludedOwners() {
 //        return excludedOwners;
@@ -458,6 +452,14 @@ public class Task extends JpaBase {
 //    public void setNotificationRecipients(Set<TaskOrgEntity> notificationRecipients) {
 //        this.notificationRecipients = notificationRecipients;
 //    }
+
+    public Set<TaskOrgEntity> getPeopleAssignments() {
+        return peopleAssignments;
+    }
+
+    public void setPeopleAssignments(Set<TaskOrgEntity> peopleAssignments) {
+        this.peopleAssignments = peopleAssignments;
+    }
 
     public List<Comment> getComments() {
         return comments;

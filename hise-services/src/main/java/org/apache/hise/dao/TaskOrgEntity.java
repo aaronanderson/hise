@@ -21,6 +21,8 @@ package org.apache.hise.dao;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,6 +31,8 @@ import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.annotation.XmlElementRef;
 
 /**
  * Task Assignee - member of generic human role.
@@ -43,6 +47,15 @@ public class TaskOrgEntity extends JpaBase {
 
     @ManyToOne
     private Task task;
+
+    public static enum AssignmentRole {
+        TASKSTAKEHOLDERS,
+        POTENTIALOWNERS,
+        EXCLUDEDOWNERS,
+        BUSINESSADMINISTRATORS,
+        TASKINITIATOR,
+        RECIPIENTS
+    }
     
     private String name;
     
@@ -50,8 +63,11 @@ public class TaskOrgEntity extends JpaBase {
         USER, GROUP;
     }
     
+    @Enumerated(value = EnumType.STRING)
     private OrgEntityType type;
 
+    @Enumerated(value = EnumType.STRING)
+    private AssignmentRole assignmentRole;
     
     public Task getTask() {
         return task;
@@ -82,7 +98,15 @@ public class TaskOrgEntity extends JpaBase {
     public void setType(OrgEntityType type) {
         this.type = type;
     }
+    
 
+    public AssignmentRole getAssignmentRole() {
+        return assignmentRole;
+    }
+
+    public void setAssignmentRole(AssignmentRole assignmentRole) {
+        this.assignmentRole = assignmentRole;
+    }
 
     @Override
     public Object[] getKeys() {

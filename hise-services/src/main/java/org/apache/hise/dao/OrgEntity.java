@@ -21,6 +21,8 @@ package org.apache.hise.dao;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -45,11 +47,10 @@ public class OrgEntity extends JpaBase {
     @Id
     protected String name;
 
+    @Enumerated(value = EnumType.STRING)
     private TaskOrgEntity.OrgEntityType type;
 
-    private String userGroup;
     private String userPassword;
-
 
     public String getName() {
         return name;

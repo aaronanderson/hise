@@ -121,22 +121,33 @@ public class Task {
         u.setNotification(false);
         t.taskDto = u;
         t.setStatus(Status.CREATED);
+
+        u.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
         
-        u.setPotentialOwners(t.getTaskEvaluator().evaluatePotentialOwners());
+        t.setStatus(Status.READY);
         
-        if (u.getPotentialOwners().size() == 1) {
-            TaskOrgEntity o = u.getPotentialOwners().iterator().next();
-            if (o.getType() == OrgEntityType.USER) {
-                OrgEntity a = t.hiseEngine.getHiseDao().getOrgEntity(o.getName());
-                if (a.getType() == o.getType()) {
-                    u.setActualOwner(a);
+        {
+            int poSize = 0;
+            TaskOrgEntity selected = null;
+            for (TaskOrgEntity e : u.getPeopleAssignments()) {
+                if (e.getAssignmentRole() == TaskOrgEntity.AssignmentRole.POTENTIALOWNERS) {
+                    poSize ++;
+                    if (e.getType() == TaskOrgEntity.OrgEntityType.USER) {
+                        selected = e;
+                    }
+                }
+            }
+            
+            if (poSize == 1 && selected != null) {
+                //Nominate a single potential owner
+                OrgEntity a = t.hiseEngine.getHiseDao().getOrgEntity(selected.getName());
+                if (a.getType() == TaskOrgEntity.OrgEntityType.USER) {
+                    t.setActualOwner(a);
                 }
             }
         }
         
         engine.getHiseDao().saveTask(u);
-
-        
         
         return t;
 
@@ -182,6 +193,12 @@ public class Task {
         //        
         // recalculatePriority();
     }
+    
+    public void setActualOwner(OrgEntity user) {
+        taskDto.setActualOwner(user);
+        setStatus(Status.RESERVED);
+    }
+    
 
     public TaskDefinition getTaskDefinition() {
         return taskDefinition;
