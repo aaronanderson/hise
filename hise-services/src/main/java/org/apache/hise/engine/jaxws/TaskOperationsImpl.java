@@ -29,6 +29,8 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
+import org.apache.hise.dao.GenericHumanRole;
+import org.apache.hise.dao.OrgEntity;
 import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.engine.HISEEngine;
 import org.apache.hise.engine.wsdl.IllegalAccessFault;
@@ -80,6 +82,10 @@ public class TaskOperationsImpl implements TaskOperations {
         return context.getUserPrincipal().getName();
     }
     
+    private OrgEntity loadUser() {
+        return hiseEngine.getHiseDao().getOrgEntity(getUserString());
+    }
+    
     public void claim(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {
         Task task = Task.load(hiseEngine, Long.valueOf(identifier));
         task.claim(getUserString());
@@ -87,8 +93,8 @@ public class TaskOperationsImpl implements TaskOperations {
 
     public List<org.apache.hise.lang.xsd.htda.TTask> getMyTasks(String taskType, String genericHumanRole, String workQueue, List<TStatus> status, String whereClause, String createdOnClause, Integer maxTasks) throws IllegalArgumentFault, IllegalStateFault {
         List<org.apache.hise.lang.xsd.htda.TTask> l = new ArrayList<org.apache.hise.lang.xsd.htda.TTask>();
-        String user = getUserString();
-        List<org.apache.hise.dao.Task> k = hiseEngine.getHiseDao().getUserTasks(user, taskType, genericHumanRole, workQueue, status, whereClause, createdOnClause, maxTasks);
+        OrgEntity user = loadUser();
+        List<org.apache.hise.dao.Task> k = hiseEngine.getHiseDao().getUserTasks(user, taskType, GenericHumanRole.valueOf(genericHumanRole), workQueue, status, whereClause, createdOnClause, maxTasks);
         for (org.apache.hise.dao.Task u : k) {
             TTask t = new TTask();
             t.setId("" + u.getId());
