@@ -3,7 +3,6 @@ package org.apache.hise.engine;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManagerFactory;
 import javax.xml.namespace.QName;
 
 import org.apache.commons.lang.Validate;
@@ -15,7 +14,6 @@ import org.apache.hise.engine.store.TaskDD;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.runtime.Task;
 import org.apache.hise.utils.DOMUtils;
-import org.springframework.orm.jpa.support.JpaDaoSupport;
 import org.w3c.dom.Element;
 
 public class HISEEngine {

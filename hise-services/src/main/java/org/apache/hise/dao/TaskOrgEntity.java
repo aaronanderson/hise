@@ -26,6 +26,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -34,49 +35,57 @@ import javax.persistence.Table;
  * @author Witek Wołejszo
  */
 @Entity
-@Table(name = "ORG_ENTITY")
-public class OrgEntity extends JpaBase {
-
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO, generator = "asgn_seq")
-//    @SequenceGenerator(name = "asgn_seq", sequenceName = "asgn_seq")
-//    protected Long id;
+public class TaskOrgEntity extends JpaBase {
 
     @Id
-    protected String name;
+    @GeneratedValue
+    private Long id;
 
-    private TaskOrgEntity.OrgEntityType type;
+    @ManyToOne
+    private Task task;
+    
+    private String name;
+    
+    public static enum OrgEntityType {
+        USER, GROUP;
+    }
+    
+    private OrgEntityType type;
 
-    private String userGroup;
-    private String userPassword;
+    
+    public Task getTask() {
+        return task;
+    }
 
+    public void setTask(Task task) {
+        this.task = task;
+    }
 
     public String getName() {
         return name;
     }
 
+
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getUserPassword() {
-        return userPassword;
-    }
 
-    public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
-    }
 
-    public TaskOrgEntity.OrgEntityType getType() {
+    public OrgEntityType getType() {
         return type;
     }
 
-    public void setType(TaskOrgEntity.OrgEntityType type) {
+
+
+    public void setType(OrgEntityType type) {
         this.type = type;
     }
 
+
     @Override
     public Object[] getKeys() {
-        return new Object[] {name} ;
+        return new Object[] {id} ;
     }
 }

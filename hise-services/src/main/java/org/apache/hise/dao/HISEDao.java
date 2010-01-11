@@ -19,12 +19,18 @@
 
 package org.apache.hise.dao;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hise.engine.wsdl.IllegalArgumentFault;
+import org.apache.hise.engine.wsdl.IllegalStateFault;
+import org.apache.hise.lang.xsd.htd.TTask;
+import org.apache.hise.lang.xsd.htda.TStatus;
 import org.springframework.orm.jpa.EntityManagerFactoryUtils;
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.support.JpaDaoSupport;
@@ -305,13 +311,21 @@ public class HISEDao extends JpaDaoSupport {
 //        return getJpaTemplate().find(Person.class, userId);
 //    }
     
-    public Person getPerson(final String name) {
-        return (Person) getJpaTemplate().execute(new JpaCallback() {
+    public OrgEntity getOrgEntity(final String name) {
+        return (OrgEntity) getJpaTemplate().execute(new JpaCallback() {
             public Object doInJpa(EntityManager e) throws PersistenceException {
-                Query query = e.createQuery("SELECT p FROM org_entity o WHERE p.name = :name");
+                Query query = e.createQuery("FROM OrgEntity o WHERE o.name = :name");
                 query.setParameter("name", name);
                 return  query.getSingleResult();
             }
         });
+    }
+    
+    public List<Task> getUserTasks(String user, String taskType, String genericHumanRole, String workQueue, List<TStatus> status, String whereClause, String createdOnClause, Integer maxTasks) {
+        return (List<Task>) getJpaTemplate().find("select t from Task t where t.owner = ?", user);
+    }
+    
+    public void saveOrgEntity(OrgEntity o) {
+        getJpaTemplate().persist(o);
     }
 }

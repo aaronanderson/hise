@@ -71,6 +71,8 @@ public class TaskDefinition {
         return tTask.getInterface();
     }
     
+    
+    
 //    /**
 //     * Returns description of the Task.
 //     * @param lang
@@ -119,7 +121,6 @@ public class TaskDefinition {
 //        
 //        return null;
 //    }
-    
 //    /**
 //     * Returns values of Task presentation parameters.
 //     * @param task      The task presentation parameters values are evaluated for.
@@ -293,5 +294,5 @@ public class TaskDefinition {
     public String getNamespaceURI(String prefix) {
         return this.xmlNamespaces == null ? null : this.xmlNamespaces.get(prefix);
     }
-
+    
 }

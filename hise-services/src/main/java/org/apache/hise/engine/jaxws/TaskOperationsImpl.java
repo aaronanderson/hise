@@ -20,6 +20,7 @@
 package org.apache.hise.engine.jaxws;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -28,7 +29,7 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
-import org.apache.hise.dao.Person;
+import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.engine.HISEEngine;
 import org.apache.hise.engine.wsdl.IllegalAccessFault;
 import org.apache.hise.engine.wsdl.IllegalArgumentFault;
@@ -41,6 +42,7 @@ import org.apache.hise.lang.xsd.htda.TAttachment;
 import org.apache.hise.lang.xsd.htda.TAttachmentInfo;
 import org.apache.hise.lang.xsd.htda.TComment;
 import org.apache.hise.lang.xsd.htda.TStatus;
+import org.apache.hise.lang.xsd.htda.TTask;
 import org.apache.hise.lang.xsd.htda.TTaskAbstract;
 import org.apache.hise.lang.xsd.htda.TTaskQueryResultSet;
 import org.apache.hise.lang.xsd.htdt.TTime;
@@ -78,17 +80,21 @@ public class TaskOperationsImpl implements TaskOperations {
         return context.getUserPrincipal().getName();
     }
     
-    private Person loadUser() {
-        return hiseEngine.getHiseDao().getPerson(getUserString());
-    }
-
     public void claim(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {
         Task task = Task.load(hiseEngine, Long.valueOf(identifier));
-        task.claim(loadUser());
+        task.claim(getUserString());
     }
 
     public List<org.apache.hise.lang.xsd.htda.TTask> getMyTasks(String taskType, String genericHumanRole, String workQueue, List<TStatus> status, String whereClause, String createdOnClause, Integer maxTasks) throws IllegalArgumentFault, IllegalStateFault {
-        return null;
+        List<org.apache.hise.lang.xsd.htda.TTask> l = new ArrayList<org.apache.hise.lang.xsd.htda.TTask>();
+        String user = getUserString();
+        List<org.apache.hise.dao.Task> k = hiseEngine.getHiseDao().getUserTasks(user, taskType, genericHumanRole, workQueue, status, whereClause, createdOnClause, maxTasks);
+        for (org.apache.hise.dao.Task u : k) {
+            TTask t = new TTask();
+            t.setId("" + u.getId());
+            l.add(t);
+        }
+        return l;
     }
 
     // private void translateIllegalStateException(HTException xHT) throws IllegalStateFault {

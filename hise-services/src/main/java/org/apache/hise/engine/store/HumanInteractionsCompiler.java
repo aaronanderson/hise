@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.lang.HumanInteractions;
 import org.apache.hise.lang.TaskDefinition;
+import org.apache.hise.lang.xsd.htd.TGenericHumanRole;
 import org.apache.hise.lang.xsd.htd.THumanInteractions;
 import org.apache.hise.lang.xsd.htd.TTask;
 import org.apache.hise.utils.DOMUtils;
@@ -77,6 +78,8 @@ public class HumanInteractionsCompiler {
 
         for (TTask tTask : hiDoc.getTasks().getTask()) {
             TaskDefinition taskDefinition = new TaskDefinition(tTask, this.xmlNamespaces, hiDoc.getTargetNamespace());
+            compileTaskDef(taskDefinition);
+            
             QName name = taskDefinition.getTaskName();
             if (humanInteractions.getTaskDefinitions().containsKey(name)) {
                 throw new RuntimeException("Duplicate task found, name: " + name + " resource: " + resource);
@@ -87,6 +90,12 @@ public class HumanInteractionsCompiler {
         return humanInteractions;
     }
 
+    void compileTaskDef(TaskDefinition t) {
+        for (JAXBElement<TGenericHumanRole> e: t.gettTask().getPeopleAssignments().getGenericHumanRole()) {
+            log.debug(e);
+        }
+    }
+    
     // /**
     // * Creates HumanInteractions instance, passing DOM Document instance to its constructor.
     // *

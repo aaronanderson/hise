@@ -99,4 +99,9 @@
         <property name="autoCommit" value="false" />
         <property name="suppressClose" value="true" />
     </bean>
+    
+    <bean id="sampleUsers" class="org.apache.hise.SampleUsers" init-method="init">
+        <property name="hiseDao" ref="hiseDao"></property>
+        <property name="transactionManager" ref="transactionManager"></property>
+    </bean>
  </beans>

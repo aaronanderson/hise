@@ -53,7 +53,7 @@ public class DeadlineController implements TaskStateListener {
     private void computeDeadlines(Task task, List<TDeadline> deadlines, boolean isCompletion) {
         for (TDeadline deadline : deadlines) {
             TExpression expr = deadline.getFor();
-            Object v = task.evaluateExpression(expr);
+            Object v = task.getTaskEvaluator().evaluateExpression(expr);
             __log.debug("deadline " + v);
         }
     }

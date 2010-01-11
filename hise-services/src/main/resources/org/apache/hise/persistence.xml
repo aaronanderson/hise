@@ -24,11 +24,10 @@
         <class>org.apache.hise.dao.Comment</class>
         <class>org.apache.hise.dao.Deadline</class>
         <class>org.apache.hise.dao.Fault</class>
-        <class>org.apache.hise.dao.Group</class>
         <class>org.apache.hise.dao.JpaBase</class>
         <class>org.apache.hise.dao.Message</class>
         <class>org.apache.hise.dao.OrgEntity</class>
-        <class>org.apache.hise.dao.Person</class>
+        <class>org.apache.hise.dao.TaskOrgEntity</class>
         <class>org.apache.hise.dao.PresentationParameter</class>
         <class>org.apache.hise.dao.Task</class>
         <exclude-unlisted-classes/>

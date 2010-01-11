@@ -209,7 +209,7 @@ public class Task extends JpaBase {
      * People assigned to different generic human roles.
      */
     @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    private Person actualOwner;
+    private OrgEntity actualOwner;
 
     /**
      * This element is used to specify the priority of the task. It is an optional element which value is an integer expression. If not present, the priority of
@@ -244,25 +244,24 @@ public class Task extends JpaBase {
         return notification;
     }
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name = "TASK_POTENTIAL_OWNERS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
-    private Set<OrgEntity> potentialOwners;
+    @OneToMany(mappedBy="task")
+    private Set<TaskOrgEntity> potentialOwners;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name = "TASK_EXCLUDED_OWNERS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
-    private Set<OrgEntity> excludedOwners;
-
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name = "TASK_STAKEHOLDERS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
-    private Set<OrgEntity> taskStakeholders;
-
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name = "TASK_BUSINESS_AMINISTRATORS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
-    private Set<OrgEntity> businessAdministrators;
-
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    @JoinTable(name = "TASK_NOTIFICATION_RECIPIENTS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
-    private Set<OrgEntity> notificationRecipients;
+//    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+//    @JoinTable(name = "TASK_EXCLUDED_OWNERS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
+//    private Set<TaskOrgEntity> excludedOwners;
+//
+//    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+//    @JoinTable(name = "TASK_STAKEHOLDERS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
+//    private Set<TaskOrgEntity> taskStakeholders;
+//
+//    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+//    @JoinTable(name = "TASK_BUSINESS_AMINISTRATORS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
+//    private Set<TaskOrgEntity> businessAdministrators;
+//
+//    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+//    @JoinTable(name = "TASK_NOTIFICATION_RECIPIENTS", joinColumns = @JoinColumn(name = "TASK"), inverseJoinColumns = @JoinColumn(name = "ASSIGNEE"))
+//    private Set<TaskOrgEntity> notificationRecipients;
 
     @OneToMany(mappedBy = "task", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Comment> comments = new ArrayList<Comment>();
@@ -348,11 +347,11 @@ public class Task extends JpaBase {
         this.statusBeforeSuspend = statusBeforeSuspend;
     }
 
-    public Person getActualOwner() {
+    public OrgEntity getActualOwner() {
         return actualOwner;
     }
 
-    public void setActualOwner(Person actualOwner) {
+    public void setActualOwner(OrgEntity actualOwner) {
         this.actualOwner = actualOwner;
     }
 
@@ -420,45 +419,45 @@ public class Task extends JpaBase {
         this.escalated = escalated;
     }
 
-    public Set<OrgEntity> getPotentialOwners() {
+    public Set<TaskOrgEntity> getPotentialOwners() {
         return potentialOwners;
     }
 
-    public void setPotentialOwners(Set<OrgEntity> potentialOwners) {
+    public void setPotentialOwners(Set<TaskOrgEntity> potentialOwners) {
         this.potentialOwners = potentialOwners;
     }
 
-    public Set<OrgEntity> getExcludedOwners() {
-        return excludedOwners;
-    }
-
-    public void setExcludedOwners(Set<OrgEntity> excludedOwners) {
-        this.excludedOwners = excludedOwners;
-    }
-
-    public Set<OrgEntity> getTaskStakeholders() {
-        return taskStakeholders;
-    }
-
-    public void setTaskStakeholders(Set<OrgEntity> taskStakeholders) {
-        this.taskStakeholders = taskStakeholders;
-    }
-
-    public Set<OrgEntity> getBusinessAdministrators() {
-        return businessAdministrators;
-    }
-
-    public void setBusinessAdministrators(Set<OrgEntity> businessAdministrators) {
-        this.businessAdministrators = businessAdministrators;
-    }
-
-    public Set<OrgEntity> getNotificationRecipients() {
-        return notificationRecipients;
-    }
-
-    public void setNotificationRecipients(Set<OrgEntity> notificationRecipients) {
-        this.notificationRecipients = notificationRecipients;
-    }
+//    public Set<TaskOrgEntity> getExcludedOwners() {
+//        return excludedOwners;
+//    }
+//
+//    public void setExcludedOwners(Set<TaskOrgEntity> excludedOwners) {
+//        this.excludedOwners = excludedOwners;
+//    }
+//
+//    public Set<TaskOrgEntity> getTaskStakeholders() {
+//        return taskStakeholders;
+//    }
+//
+//    public void setTaskStakeholders(Set<TaskOrgEntity> taskStakeholders) {
+//        this.taskStakeholders = taskStakeholders;
+//    }
+//
+//    public Set<TaskOrgEntity> getBusinessAdministrators() {
+//        return businessAdministrators;
+//    }
+//
+//    public void setBusinessAdministrators(Set<TaskOrgEntity> businessAdministrators) {
+//        this.businessAdministrators = businessAdministrators;
+//    }
+//
+//    public Set<TaskOrgEntity> getNotificationRecipients() {
+//        return notificationRecipients;
+//    }
+//
+//    public void setNotificationRecipients(Set<TaskOrgEntity> notificationRecipients) {
+//        this.notificationRecipients = notificationRecipients;
+//    }
 
     public List<Comment> getComments() {
         return comments;
