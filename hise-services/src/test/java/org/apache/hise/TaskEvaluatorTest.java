@@ -22,4 +22,11 @@ public class TaskEvaluatorTest {
         Object r = e.evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:users/htd:user return string($i)", DOMUtils.parse(getClass().getResourceAsStream("/taskEvaluator.xml")));
         Assert.assertTrue(r.toString().equals("[user1, user2]"));
     }
+
+    @Test
+    public void testEval3() throws Exception {
+        TaskEvaluator e = new TaskEvaluator(null);
+        Object r = e.evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:users/htd:user return string($i)", DOMUtils.parse(getClass().getResourceAsStream("/taskEvaluator.xml")).getFirstChild());
+        Assert.assertTrue(r.toString().equals("[user1, user2]"));
+    }
 }

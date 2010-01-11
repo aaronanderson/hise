@@ -30,6 +30,8 @@ import org.apache.hise.lang.xsd.htd.TLiteral;
 import org.apache.hise.lang.xsd.htd.TPeopleAssignments;
 import org.apache.hise.utils.DOMUtils;
 import org.apache.hise.utils.XmlUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 
 public class TaskEvaluator {
@@ -52,7 +54,12 @@ public class TaskEvaluator {
         try {
             XQueryExpression e = sqc.compileQuery(expr);
             if (contextNode != null) {
-                dqc.setContextItem(new DocumentWrapper((org.w3c.dom.Node) contextNode, "", config));
+                if (!(contextNode instanceof Document || contextNode instanceof DocumentFragment) ) {
+                    DocumentFragment frag = contextNode.getOwnerDocument().createDocumentFragment();
+                    frag.appendChild(contextNode);
+                    contextNode = frag;
+                }
+                dqc.setContextItem(new DocumentWrapper(contextNode, "", config));
             }
 
             List value = e.evaluate(dqc);
