@@ -46,7 +46,7 @@
     <property name="dataSource" ref="htDataSource"/>
   </bean>
 
-  <bean name="taskOperations" class="org.apache.hise.engine.jaxws.TaskOperationsImpl">
+  <bean name="taskOperations" class="org.apache.hise.engine.jaxws.TaskOperationsImpl" init-method="init">
     <property name="hiseEngine" ref="hiseEngine"/>
   </bean>
 
