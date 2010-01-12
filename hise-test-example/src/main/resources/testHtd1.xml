@@ -42,7 +42,7 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
         <htd:task name="Task1">
             
             <htd:documentation xml:lang="en-US">This task is used to handle claims that require manual approval. </htd:documentation>
-            <htd:interface portType="tns:ClaimsHandlingPT" operation="approve" responsePortType="tns:ClaimsHandlingCallbackPT" responseOperation="approvalResponse"/>
+            <htd:interface portType="tns:ClaimsHandlingPT" operation="approve" responsePortType="tns:ClaimsResolvingPT" responseOperation="resolve"/>
             <htd:priority> htd:getInput("ClaimApprovalRequest")/priority </htd:priority>
             
             <htd:peopleAssignments>

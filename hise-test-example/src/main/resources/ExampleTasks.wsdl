@@ -71,17 +71,19 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
       <wsdl:output message="tns:ClaimResolveResponse" />
     </wsdl:operation>
   </wsdl:portType>
+  <!-- 
   <wsdl:portType name="ClaimApprovalReminderPT">
     <wsdl:operation name="notify">
       <wsdl:input message="tns:notifyRequest" />
       <wsdl:output message="tns:notifyResponse" />
     </wsdl:operation>
   </wsdl:portType>
+   -->
 
   <wsdl:binding name="ClaimsHandlingBinding" type="tns:ClaimsHandlingPT">
     <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="approve">
-      <soap:operation soapAction="http://www.insurance.example.com/claims/approve" />
+      <soap:operation />
       <wsdl:input>
         <soap:body use="literal" namespace="http://www.insurance.example.com/claims" />
       </wsdl:input>
@@ -90,7 +92,7 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
       </wsdl:output>
     </wsdl:operation>
     <wsdl:operation name="escalate">
-      <soap:operation soapAction="http://www.insurance.example.com/claims/escalate" />
+      <soap:operation />
       <wsdl:input>
         <soap:body use="literal" namespace="http://www.insurance.example.com/claims" />
       </wsdl:input>
@@ -108,7 +110,7 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
   <wsdl:binding name="ClaimsResolvingBinding" type="tns:ClaimsResolvingPT">
     <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="resolve">
-      <soap:operation soapAction="http://www.insurance.example.com/claims/resolve" />
+      <soap:operation/>
       <wsdl:input>
         <soap:body use="literal" namespace="http://www.insurance.example.com/claims" />
       </wsdl:input>
