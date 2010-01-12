@@ -29,6 +29,9 @@ import javax.persistence.EntityManager;
 import javax.xml.namespace.QName;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.dom.NodeOverNodeInfo;
+import net.sf.saxon.dom.NodeWrapper;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
@@ -48,7 +51,10 @@ import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
 import org.apache.hise.engine.HISEEngine;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.lang.xsd.htd.TExpression;
+import org.apache.hise.utils.DOMUtils;
 import org.apache.hise.utils.XmlUtils;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * Holds task instance information. Provides task business operations.
@@ -70,7 +76,9 @@ public class Task {
     private TaskEvaluator taskEvaluator;
 
     private List<TaskStateListener> taskStateListeners;
-
+    
+    protected Task() {}
+    
     private Task(HISEEngine engine) {
         this.hiseEngine = engine;
         Validate.notNull(hiseEngine);
@@ -94,6 +102,10 @@ public class Task {
         return taskEvaluator;
     }
 
+    public void setTaskEvaluator(TaskEvaluator taskEvaluator) {
+        this.taskEvaluator = taskEvaluator;
+    }
+
     public static Task load(HISEEngine engine, Long id) {
         Task t = new Task(engine);
         HISEDao dao = engine.getHiseDao();
@@ -103,11 +115,7 @@ public class Task {
         return t;
     }
 
-    public static Task create(HISEEngine engine, QName taskName, String createdBy, String requestXml) {
-        return create(engine, engine.getTaskDefinition(taskName), createdBy, requestXml);
-    }
-
-    public static Task create(HISEEngine engine, TaskDefinition taskDefinition, String createdBy, String requestXml) {
+    public static Task create(HISEEngine engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
         Task t = new Task(engine);
         Validate.notNull(taskDefinition);
         t.taskDefinition = taskDefinition;
@@ -115,7 +123,8 @@ public class Task {
         u.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
         u.setCreatedBy(createdBy);
         u.setStatus(null);
-        u.getInput().put("request", new Message(requestXml));
+        u.getInput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
+        u.getInput().put("requestHeader", new Message("requestHeader", DOMUtils.domToString(requestHeader)));
         u.setCreatedOn(new Date());
         u.setActivationTime(new Date());
         u.setEscalated(false);
@@ -492,7 +501,30 @@ public class Task {
     public void resume(OrgEntity user) {
         setStatus(taskDto.getStatusBeforeSuspend());
     }
+
+    public void fail(OrgEntity user) {
+        setStatus(Status.FAILED);
+        sendResponse();
+    }
+
+    public void complete(OrgEntity user) {
+        setStatus(Status.COMPLETED);
+        sendResponse();
+    }
     
+    private void sendResponse() {
+        try {
+            Document response;
+            response = DOMUtils.parse("<resp>" + taskDto.getStatus().toString() + "</resp>");
+            
+            hiseEngine.sendResponse(getTaskDefinition().getTaskName(), 
+                    response.getDocumentElement(),
+                    taskEvaluator.createEprFromHeader(DOMUtils.parse(taskDto.getInput().get("requestHeader").getMessage()).getDocumentElement()));
+        } catch (Exception e) {
+            throw new RuntimeException("Sending response failed", e);
+        }
+    }
+
     //    
     // /**
     // * Releases the Task.

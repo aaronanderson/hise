@@ -94,7 +94,7 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
 
                     Element body = request.getSOAPBody();
                     __log.debug("invoking " + request + " operation:" + operation + " portType:" + portType + " operation2:" + operation2);
-                    hiseEngine.receive(portType, operation.getLocalPart(), body, context.getUserPrincipal().getName());
+                    hiseEngine.receive(portType, operation.getLocalPart(), body, context.getUserPrincipal().getName(), request.getSOAPHeader());
                     SOAPMessage m = messageFactory.createMessage();
                     return m;
                     // transactionManager.commit(tx);

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Header xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+  <wsse:Security soapenv:mustUnderstand="1" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+    <wsse:UsernameToken wsu:Id="UsernameToken-14728487" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+      <wsse:Username>user2</wsse:Username>
+      <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest">25T8md2OY7AKF4I9wPVsSjow9YI=</wsse:Password>
+      <wsse:Nonce>RCZ1KP85PrRcQrYHT94ZTQ==</wsse:Nonce>
+      <wsu:Created>2010-01-12T12:34:03.568Z</wsu:Created>
+    </wsse:UsernameToken>
+  </wsse:Security>
+  <wsa:Action xmlns:wsa="http://www.w3.org/2005/08/addressing">http://www.insurance.example.com/claims/ClaimsHandlingPT/approveRequest</wsa:Action>
+  <wsa:ReplyTo xmlns:wsa="http://www.w3.org/2005/08/addressing">
+    <wsa:Address>http://localhost:8082/ClaimsResponseService/</wsa:Address>
+  </wsa:ReplyTo>
+</soapenv:Header>

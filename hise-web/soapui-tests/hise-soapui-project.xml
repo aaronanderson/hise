@@ -2741,7 +2741,26 @@
          <xsd:maxTasks>10</xsd:maxTasks>
       </xsd:getMyTasks>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:credentials><con:username>user1</con:username><con:password>user1pass</con:password><con:domain/></con:credentials><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.example.org/WS-HT/api/wsdl/taskOperations/getMyTasksRequest"/></con:call></con:operation><con:operation isOneWay="false" action="http://www.example.org/WS-HT/api/wsdl/getOutput" name="getOutput" bindingOperationName="getOutput" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/taskOperations/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.example.org/WS-HT/api/xsd">
+</soapenv:Envelope>]]></con:request><con:credentials><con:username>user1</con:username><con:password>user1pass</con:password><con:domain/></con:credentials><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.example.org/WS-HT/api/wsdl/taskOperations/getMyTasksRequest"/></con:call><con:call name="Request 2"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/taskOperations/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.example.org/WS-HT/api/xsd">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <xsd:getMyTasks>
+         <xsd:taskType>?</xsd:taskType>
+         <!--Optional:-->
+         <xsd:genericHumanRole>?</xsd:genericHumanRole>
+         <!--Optional:-->
+         <xsd:workQueue>?</xsd:workQueue>
+         <!--Zero or more repetitions:-->
+         <xsd:status>?</xsd:status>
+         <!--Optional:-->
+         <xsd:whereClause>?</xsd:whereClause>
+         <!--Optional:-->
+         <xsd:createdOnClause>?</xsd:createdOnClause>
+         <!--Optional:-->
+         <xsd:maxTasks>?</xsd:maxTasks>
+      </xsd:getMyTasks>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.example.org/WS-HT/api/wsdl/taskOperations/getMyTasksRequest"/></con:call></con:operation><con:operation isOneWay="false" action="http://www.example.org/WS-HT/api/wsdl/getOutput" name="getOutput" bindingOperationName="getOutput" type="Request-Response" inputName="" receivesAttachments="false" sendsAttachments="false" anonymous="optional"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/taskOperations/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.example.org/WS-HT/api/xsd">
    <soapenv:Header/>
    <soapenv:Body>
       <xsd:getOutput>
@@ -3033,7 +3052,7 @@
    <soapenv:Body>
       <xsd:getMyTasks>
          <xsd:taskType>ALL</xsd:taskType>
-         <xsd:genericHumanRole>ACTUAL_OWNER</xsd:genericHumanRole>
+         <xsd:genericHumanRole>ACTUALOWNER</xsd:genericHumanRole>
          <xsd:maxTasks>10</xsd:maxTasks>
       </xsd:getMyTasks>
    </soapenv:Body>
@@ -3055,11 +3074,11 @@ count(*/*/htd:getMyTasksResponse)</path><content>&lt;xml-fragment>1&lt;/xml-frag
          </ClaimApprovalRequest>
       </cla:approve>
    </soapenv:Body>
-</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="SOAP Fault Assertion"/><con:credentials><con:username>user2</con:username><con:password>user2pass</con:password></con:credentials><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.insurance.example.com/claims/ClaimsHandlingPT/approveRequest"/></con:request></con:config></con:testStep><con:testStep type="request" name="getMyTasks - Request 1" disabled="true"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>taskOperationsSOAP</con:interface><con:operation>getMyTasks</con:operation><con:request name="getMyTasks - Request 1" outgoingWss="" incomingWss="" wssPasswordType="PasswordDigest"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@wss-time-to-live"/></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/taskOperations/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.example.org/WS-HT/api/xsd">
+</soapenv:Envelope>]]></con:request><con:assertion type="SOAP Response"/><con:assertion type="SOAP Fault Assertion"/><con:credentials><con:username>user2</con:username><con:password>user2pass</con:password></con:credentials><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.insurance.example.com/claims/ClaimsHandlingPT/approveRequest"/></con:request></con:config></con:testStep><con:testStep type="request" name="getMyTasks - Request 1"><con:settings/><con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><con:interface>taskOperationsSOAP</con:interface><con:operation>getMyTasks</con:operation><con:request name="getMyTasks - Request 1" outgoingWss="" incomingWss="" wssPasswordType="PasswordDigest"><con:settings><con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@wss-time-to-live"/></con:settings><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/taskOperations/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.example.org/WS-HT/api/xsd">
    <soapenv:Body>
       <xsd:getMyTasks>
          <xsd:taskType>ALL</xsd:taskType>
-         <xsd:genericHumanRole>ACTUAL_OWNER</xsd:genericHumanRole>
+         <xsd:genericHumanRole>ACTUALOWNER</xsd:genericHumanRole>
          <xsd:maxTasks>10</xsd:maxTasks>
       </xsd:getMyTasks>
    </soapenv:Body>

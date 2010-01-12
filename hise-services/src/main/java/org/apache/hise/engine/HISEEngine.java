@@ -9,12 +9,14 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.HISEDao;
+import org.apache.hise.engine.jaxws.HISEJaxWSClient;
 import org.apache.hise.engine.store.HISEDD;
 import org.apache.hise.engine.store.TaskDD;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.runtime.Task;
 import org.apache.hise.utils.DOMUtils;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 public class HISEEngine {
     private static Log log = LogFactory.getLog(HISEEngine.class);
@@ -72,11 +74,18 @@ public class HISEEngine {
         return n;
     }
     
-    public void receive(QName portType, String operation, Element body, String createdBy) {
+    public void receive(QName portType, String operation, Element body, String createdBy, Node requestHeader) {
         QName taskName = getTaskName(portType, operation);
         assert(taskName != null);
         log.debug("routed " + portType + " " + operation + " -> " + taskName);
-        Task.create(this, taskName, createdBy, DOMUtils.domToString(DOMUtils.getFirstElement(DOMUtils.getFirstElement(body))));
+        Task.create(this, getTaskDefinition(taskName), createdBy, DOMUtils.getFirstElement(DOMUtils.getFirstElement(body)), requestHeader);
+    }
+    
+    public void sendResponse(QName taskName, Node body, Node epr) {
+        TaskInfo ti = tasks.get(taskName);
+        log.debug("sending response for " + taskName + " to " + DOMUtils.domToString(epr) + " body " + DOMUtils.domToString(body) + " " + ti.dd.sender);
+        HISEJaxWSClient c = (HISEJaxWSClient) ti.dd.sender;
+        log.debug("result: " + c.invoke(body, epr));
     }
     
 //    /**

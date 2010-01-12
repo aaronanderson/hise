@@ -177,7 +177,7 @@ public class Task extends JpaBase {
      * document style Web HumanTaskServicesImpl are used to start Task, part name
      * should be set to {@link Message.DEFAULT_PART_NAME_KEY}.
      */
-    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @OneToMany(cascade = { CascadeType.ALL })
     @MapKey(name = "partName")
     @JoinTable(name = "TASK_MSG_INPUT")
     private Map<String, Message> input = new HashMap<String, Message>();

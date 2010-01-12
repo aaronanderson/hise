@@ -274,8 +274,9 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public void complete(String identifier, Object taskData) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
-        // TODO Auto-generated method stub
-
+        OrgEntity user = loadUser();
+        Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.complete(user);
     }
 
     public void delegate(String identifier, TOrganizationalEntity organizationalEntity) throws IllegalAccessFault, IllegalStateFault, RecipientNotAllowed, IllegalArgumentFault {

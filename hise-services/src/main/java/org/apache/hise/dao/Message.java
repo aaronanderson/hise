@@ -31,6 +31,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -69,8 +71,11 @@ public class Message extends JpaBase {
     @Lob
     private String message;
     
-    public Message(String message) {
+    public Message() {}
+    
+    public Message(String partName, String message) {
         Validate.notNull(message);
+        this.partName = partName;
         this.message = message;
     }
     

@@ -20,7 +20,8 @@
                   <constructor-arg type="java.lang.String" value="{http://www.insurance.example.com/claims}Task1"></constructor-arg>
                 </bean>
               </property>
-              <property name="handler" ref="testHtd1"/>
+              <property name="handler" ref="hiseJaxWSService1"/>
+              <property name="sender" ref="hiseJaxWSSender1"/>
             </bean>
           </list>
         </property>
@@ -54,8 +55,17 @@
     </jaxws:inInterceptors>
   </jaxws:endpoint>
 
-  <!-- 
-  <jaxws:client id="helloClient" serviceClass="demo.spring.HelloWorld" address="http://localhost:9999" wsdlLocation="classpath:ExampleTasks.wsdl"/>
+  <bean id="hiseJaxWSSender1" class="org.apache.hise.engine.jaxws.HISEJaxWSClient" init-method="init">
+    <property name="wsdlDocumentLocation" value="classpath:ExampleTasks.wsdl"></property>
+    <property name="serviceName">
+      <bean class="javax.xml.namespace.QName" factory-method="valueOf">
+        <constructor-arg type="java.lang.String" value="{http://www.insurance.example.com/claims}ClaimsResolvingService"></constructor-arg>
+      </bean>
+    </property>
+  </bean>
+
+<!-- 
+  <jaxws:client id="testHtd1Sender" address="http://localhost:9999" wsdlLocation="classpath:ExampleTasks.wsdl"/>
    -->
 </beans>    
 
