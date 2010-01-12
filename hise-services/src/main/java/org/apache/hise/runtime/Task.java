@@ -515,7 +515,18 @@ public class Task {
     private void sendResponse() {
         try {
             Document response;
-            response = DOMUtils.parse("<resp>" + taskDto.getStatus().toString() + "</resp>");
+          response = DOMUtils.parse("<cla:resolve xmlns:cla=\"http://www.insurance.example.com/claims\"><ok>true</ok></cla:resolve>");
+            
+//            response = DOMUtils.parse("<resp>" + taskDto.getStatus().toString() + "</resp>");
+          
+//            <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cla="http://www.insurance.example.com/claims">
+//            <soapenv:Header/>
+//            <soapenv:Body>
+//               <cla:resolve>
+//                  <ok>?</ok>
+//               </cla:resolve>
+//            </soapenv:Body>
+//         </soapenv:Envelope>
             
             hiseEngine.sendResponse(getTaskDefinition().getTaskName(), 
                     response.getDocumentElement(),

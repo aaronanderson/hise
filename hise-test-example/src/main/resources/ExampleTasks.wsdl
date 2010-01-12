@@ -108,7 +108,7 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
   <wsdl:binding name="ClaimsResolvingBinding" type="tns:ClaimsResolvingPT">
     <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http" />
     <wsdl:operation name="resolve">
-      <soap:operation soapAction="http://www.insurance.example.com/claims/approve" />
+      <soap:operation soapAction="http://www.insurance.example.com/claims/resolve" />
       <wsdl:input>
         <soap:body use="literal" namespace="http://www.insurance.example.com/claims" />
       </wsdl:input>
