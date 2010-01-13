@@ -46,6 +46,7 @@ public class TaskEvaluator {
         XQueryEvaluator evaluator = new XQueryEvaluator();
         evaluator.setContextObject(this);
         evaluator.declareJavaClass("http://www.example.org/WS-HT", HtdFunctions.class);
+        evaluator.bindVariable(QName.valueOf("taskId"), task.getTaskDto().getId());
         return evaluator;
     }
     
@@ -112,6 +113,11 @@ public class TaskEvaluator {
         XQueryEvaluator evaluator = buildQueryEvaluator();
         evaluator.bindVariable(QName.valueOf("outcome"), outcome);
         return (Node) evaluator.evaluateExpression(task.getTaskDefinition().getOutcomeExpression(), null).get(0);
+    }
+    
+    public Node evaluateApproveResponseHeader() {
+        XQueryEvaluator evaluator = buildQueryEvaluator();
+        return (Node) evaluator.evaluateExpression("<htd:taskId xmlns:htd=\"xmlns:htd=http://www.example.org/WS-HT\">{$taskId}</htd:taskId>", null).get(0);
     }
 
 }

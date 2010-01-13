@@ -74,11 +74,12 @@ public class HISEEngine {
         return n;
     }
     
-    public void receive(QName portType, String operation, Element body, String createdBy, Node requestHeader) {
+    public Node receive(QName portType, String operation, Element body, String createdBy, Node requestHeader) {
         QName taskName = getTaskName(portType, operation);
         assert(taskName != null);
         log.debug("routed " + portType + " " + operation + " -> " + taskName);
-        Task.create(this, getTaskDefinition(taskName), createdBy, DOMUtils.getFirstElement(body), requestHeader);
+        Task t = Task.create(this, getTaskDefinition(taskName), createdBy, DOMUtils.getFirstElement(body), requestHeader);
+        return t.getTaskEvaluator().evaluateApproveResponseHeader();
     }
     
     public void sendResponse(QName taskName, Node body, Node epr) {

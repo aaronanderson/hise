@@ -54,6 +54,7 @@ public class XQueryEvaluator {
 
     public static ValueRepresentation convertJavaToSaxon(Object obj) {
         try {
+            if (obj == null) obj = "";
             return JPConverter.allocate(obj.getClass(), null).convert(obj, null);
         } catch (XPathException e) {
             throw new RuntimeException("", e);

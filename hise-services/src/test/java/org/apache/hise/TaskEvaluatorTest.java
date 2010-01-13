@@ -9,6 +9,7 @@ import junit.framework.Assert;
 import net.sf.saxon.dom.NodeOverNodeInfo;
 import net.sf.saxon.om.NodeInfo;
 
+import org.apache.hise.runtime.Task;
 import org.apache.hise.runtime.TaskEvaluator;
 import org.apache.hise.utils.DOMUtils;
 import org.apache.hise.utils.XQueryEvaluator;
@@ -26,6 +27,7 @@ public class TaskEvaluatorTest {
     @Test
     public void testEval2() throws Exception {
         XQueryEvaluator e = new XQueryEvaluator();
+        e.bindVariable(QName.valueOf("abc"), null);
         Object r = e.evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:users/htd:user return string($i)", DOMUtils.parse(getClass().getResourceAsStream("/taskEvaluator.xml")));
         Assert.assertTrue(r.toString().equals("[user1, user2]"));
     }
@@ -43,4 +45,17 @@ public class TaskEvaluatorTest {
         e.bindVariable(QName.valueOf("outcome"), true);
         Assert.assertEquals(true, e.evaluateExpression("$outcome", null).get(0));
     }
+    
+    @Test
+    public void testEvaluateApproveResponseHeader() throws Exception {
+        Task t = new MockTask();
+        org.apache.hise.dao.Task t2 = new org.apache.hise.dao.Task();
+        t2.setId(1234L);
+        t.setTaskDto(t2);
+        
+        TaskEvaluator te = new TaskEvaluator(t);
+        Node n = te.evaluateApproveResponseHeader();
+        Assert.assertTrue(DOMUtils.domToString(n).contains(">1234<"));
+    }
+
 }

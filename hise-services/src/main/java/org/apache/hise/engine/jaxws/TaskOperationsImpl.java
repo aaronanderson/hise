@@ -300,8 +300,9 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public void fail(String identifier, String faultName, Object faultData) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault, IllegalOperationFault {
-        // TODO Auto-generated method stub
-
+        OrgEntity user = loadUser();
+        Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.fail(user);
     }
 
     public void forward(String identifier, TOrganizationalEntity organizationalEntity) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {

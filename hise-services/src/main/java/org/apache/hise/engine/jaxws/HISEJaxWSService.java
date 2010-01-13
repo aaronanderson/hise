@@ -42,7 +42,9 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 @WebServiceProvider
 @ServiceMode(value = Service.Mode.MESSAGE)
@@ -94,10 +96,12 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
 
                     Element body = request.getSOAPBody();
                     __log.debug("invoking " + request + " operation:" + operation + " portType:" + portType + " operation2:" + operation2);
-                    hiseEngine.receive(portType, operation.getLocalPart(), body, context.getUserPrincipal().getName(), request.getSOAPHeader());
+                    Node approveResponseHeader = hiseEngine.receive(portType, operation.getLocalPart(), body, context.getUserPrincipal().getName(), request.getSOAPHeader());
                     SOAPMessage m = messageFactory.createMessage();
+                    
+                    Document doc = m.getSOAPHeader().getOwnerDocument();
+                    m.getSOAPHeader().appendChild(doc.importNode(approveResponseHeader, true));
                     return m;
-                    // transactionManager.commit(tx);
                 } catch (Exception e) {
                     throw new RuntimeException("Error during receiving message ", e);
                 }

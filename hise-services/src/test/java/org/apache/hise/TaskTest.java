@@ -11,6 +11,10 @@ public class TaskTest {
     @Test
     public void testEpr() throws Exception {
         Task t = new MockTask();
+        org.apache.hise.dao.Task t2 = new org.apache.hise.dao.Task();
+        t2.setId(1234L);
+        t.setTaskDto(t2);
+
         TaskEvaluator e = new TaskEvaluator(t);
         String r = DOMUtils.domToString(e.createEprFromHeader(DOMUtils.parse(getClass().getResourceAsStream("/epr.xml")).getDocumentElement()));
         System.out.println(r);
