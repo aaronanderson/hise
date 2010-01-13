@@ -57,7 +57,7 @@ public class TaskEvaluator {
     public List evaluateExpression(TExpression expr) {
         return buildQueryEvaluator().evaluateExpression(XmlUtils.getStringContent(expr.getContent()), null);
     }
-
+    
     public Set<TaskOrgEntity> evaluatePeopleAssignments() {
         Set<TaskOrgEntity> result = new HashSet<TaskOrgEntity>();
         TPeopleAssignments p = task.getTaskDefinition().gettTask().getPeopleAssignments();

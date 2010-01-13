@@ -302,8 +302,8 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public void forward(String identifier, TOrganizationalEntity organizationalEntity) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
-        // TODO Auto-generated method stub
-
+        Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.forward(organizationalEntity);
     }
 
     public List<TAttachmentInfo> getAttachmentInfos(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {

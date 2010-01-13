@@ -51,6 +51,7 @@ import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
 import org.apache.hise.engine.HISEEngine;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.lang.xsd.htd.TExpression;
+import org.apache.hise.lang.xsd.htd.TOrganizationalEntity;
 import org.apache.hise.utils.DOMUtils;
 import org.apache.hise.utils.XmlUtils;
 import org.w3c.dom.Document;
@@ -520,6 +521,32 @@ public class Task {
                     taskEvaluator.createEprFromHeader(DOMUtils.parse(taskDto.getInput().get("requestHeader").getMessage()).getDocumentElement()));
         } catch (Exception e) {
             throw new RuntimeException("Sending response failed", e);
+        }
+    }
+    
+    public void forward(TOrganizationalEntity target) {
+        if (taskDto.getStatus() == Status.RESERVED || taskDto.getStatus() == Status.IN_PROGRESS) {
+            setStatus(Status.READY);
+        }
+        
+        taskDto.getPeopleAssignments().clear();
+        
+        for (String user : target.getUsers().getUser()) {
+            TaskOrgEntity x = new TaskOrgEntity();
+            x.setGenericHumanRole(GenericHumanRole.POTENTIALOWNERS);
+            x.setName(user);
+            x.setType(OrgEntityType.USER);
+            x.setTask(taskDto);
+            taskDto.getPeopleAssignments().add(x);
+        }
+
+        for (String group : target.getGroups().getGroup()) {
+            TaskOrgEntity x = new TaskOrgEntity();
+            x.setGenericHumanRole(GenericHumanRole.POTENTIALOWNERS);
+            x.setName(group);
+            x.setType(OrgEntityType.GROUP);
+            x.setTask(taskDto);
+            taskDto.getPeopleAssignments().add(x);
         }
     }
 
