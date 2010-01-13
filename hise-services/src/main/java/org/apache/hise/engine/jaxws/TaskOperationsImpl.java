@@ -100,15 +100,7 @@ public class TaskOperationsImpl implements TaskOperations {
         OrgEntity user = loadUser();
         List<org.apache.hise.dao.Task> k = hiseEngine.getHiseDao().getUserTasks(user, taskType, GenericHumanRole.valueOf(genericHumanRole), workQueue, status, whereClause, createdOnClause, maxTasks);
         for (org.apache.hise.dao.Task u : k) {
-            TTask t = new TTask();
-            t.setId("" + u.getId());
-            t.setTaskType("TASK");
-            t.setCreatedOn(u.getCreatedOn());
-            t.setActivationTime(u.getActivationTime());
-            if (u.getActualOwner() != null) t.setActualOwner(u.getActualOwner().getName());
-            t.setCreatedBy(u.getCreatedBy());
-            t.setName(u.getTaskDefinitionName());
-            t.setStatus(TStatus.valueOf(u.getStatus().toString()));
+            TTask t = convertTask(u);
             l.add(t);
         }
         return l;
@@ -227,18 +219,22 @@ public class TaskOperationsImpl implements TaskOperations {
     // private TStatus translateStatusAPI(Task.Status in) {
     // return TStatus.fromValue(in.toString());
     // }
+    
+    private static TTask convertTask(org.apache.hise.dao.Task u) {
+        TTask t = new TTask();
+        t.setId("" + u.getId());
+        t.setTaskType("TASK");
+        t.setCreatedOn(u.getCreatedOn());
+        t.setActivationTime(u.getActivationTime());
+        if (u.getActualOwner() != null) t.setActualOwner(u.getActualOwner().getName());
+        t.setCreatedBy(u.getCreatedBy());
+        t.setName(u.getTaskDefinitionName());
+        t.setStatus(TStatus.valueOf(u.getStatus().toString()));
+        return t;
+    }
 
-    /**
-     * Gets task information by a given identifier.
-     * 
-     * @param identifier
-     *            task identifier as a number
-     * @return task info
-     * @throws org.example.ws_ht.api.wsdl.IllegalArgumentFault
-     *             the number format is invalid or the task does not exist
-     */
     public org.apache.hise.lang.xsd.htda.TTask getTaskInfo(String identifier) throws IllegalArgumentFault {
-        return null;
+        return convertTask(hiseEngine.getHiseDao().loadTask(Long.parseLong(identifier)));
     }
 
     public TTaskQueryResultSet query(String selectClause, String whereClause, String orderByClause, Integer maxTasks, Integer taskIndexOffset) throws IllegalArgumentFault, IllegalStateFault {
