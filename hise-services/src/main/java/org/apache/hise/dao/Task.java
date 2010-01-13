@@ -45,6 +45,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -231,8 +232,8 @@ public class Task extends JpaBase {
     @Temporal(javax.persistence.TemporalType.TIMESTAMP)
     private Date expirationTime;
 
-    @Temporal(javax.persistence.TemporalType.TIMESTAMP)
-    private Date suspensionTime;
+    @OneToOne
+    private Job suspendUntil;
 
     private boolean skippable;
 
@@ -395,13 +396,6 @@ public class Task extends JpaBase {
         this.expirationTime = expirationTime;
     }
 
-    public Date getSuspensionTime() {
-        return suspensionTime;
-    }
-
-    public void setSuspensionTime(Date suspensionTime) {
-        this.suspensionTime = suspensionTime;
-    }
 
     public boolean isSkippable() {
         return skippable;
@@ -495,6 +489,15 @@ public class Task extends JpaBase {
 
     public void setNotification(boolean notification) {
         this.notification = notification;
+    }
+
+    
+    public Job getSuspendUntil() {
+        return suspendUntil;
+    }
+
+    public void setSuspendUntil(Job suspendUntil) {
+        this.suspendUntil = suspendUntil;
     }
 
     @Override

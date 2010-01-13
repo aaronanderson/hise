@@ -21,6 +21,7 @@ package org.apache.hise.dao;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -361,6 +362,17 @@ public class HISEDao extends JpaDaoSupport {
             throw new IllegalStateException();
         }
     }
+    
+    public List<Job> listJobs(final Date until, final int maxResult) {
+        return (List<Job>) getJpaTemplate().executeFind(new JpaCallback() {
+            public Object doInJpa(EntityManager em) throws PersistenceException {
+                return em.createQuery("select j from Job j where j.fire < :until order by j.fire")
+                .setParameter("until", until)
+                .setMaxResults(maxResult)
+                .getResultList();
+            }
+        });
+    }
 
     public void saveOrgEntity(OrgEntity o) {
         getJpaTemplate().persist(o);
@@ -368,5 +380,9 @@ public class HISEDao extends JpaDaoSupport {
     
     public void remove(Object o) {
         getJpaTemplate().remove(o);
+    }
+
+    public void persist(Object o) {
+        getJpaTemplate().persist(o);
     }
 }

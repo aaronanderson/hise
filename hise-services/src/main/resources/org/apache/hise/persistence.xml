@@ -30,6 +30,7 @@
         <class>org.apache.hise.dao.TaskOrgEntity</class>
         <class>org.apache.hise.dao.PresentationParameter</class>
         <class>org.apache.hise.dao.Task</class>
+        <class>org.apache.hise.dao.Job</class>
         <exclude-unlisted-classes/>
     </persistence-unit>
 </persistence>

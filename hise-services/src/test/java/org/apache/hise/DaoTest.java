@@ -1,12 +1,14 @@
 package org.apache.hise;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.HISEDao;
+import org.apache.hise.dao.Job;
 import org.apache.hise.dao.Message;
 import org.apache.hise.dao.OrgEntity;
 import org.apache.hise.dao.Task;
@@ -142,5 +144,16 @@ public class DaoTest extends AbstractTransactionalJUnit4SpringContextTests {
         addTask3();
         List<Task> r = hiseDao.getUserTasks(o, "", GenericHumanRole.POTENTIALOWNERS, "", Collections.EMPTY_LIST, "", null, 100);
         Assert.assertEquals("asd3", r.get(0).getTaskDefinitionKey());
+    }
+
+    @Test 
+    public void testJobs() throws Exception {
+        Job j = new Job();
+        j.setFire(new Date(1213L));
+        j.setAction("abc");
+        hiseDao.persist(j);
+        
+        List<Job> r = hiseDao.listJobs(new Date(1214L), 12);
+        Assert.assertEquals("abc", r.get(0).getAction());
     }
 }

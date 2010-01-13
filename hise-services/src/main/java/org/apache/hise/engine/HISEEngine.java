@@ -1,5 +1,6 @@
 package org.apache.hise.engine;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.HISEDao;
+import org.apache.hise.dao.Job;
 import org.apache.hise.engine.jaxws.HISEJaxWSClient;
 import org.apache.hise.engine.store.HISEDD;
 import org.apache.hise.engine.store.TaskDD;
@@ -87,6 +89,17 @@ public class HISEEngine {
         log.debug("sending response for " + taskName + " to " + DOMUtils.domToString(epr) + " body " + DOMUtils.domToString(body) + " " + ti.dd.sender);
         HISEJaxWSClient c = (HISEJaxWSClient) ti.dd.sender;
         log.debug("result: " + c.invoke(body, epr));
+    }
+    
+    
+    public void executeJob(Job job) {
+        Task t = Task.load(this, job.getTask().getId());
+        try {
+            t.setCurrentJob(job);
+            t.getClass().getMethod("jobAction" + job.getAction()).invoke(t);
+        } catch (Exception e) {
+            throw new RuntimeException("timer job failed", e);
+        }
     }
     
 //    /**

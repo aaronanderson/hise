@@ -42,6 +42,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.HISEDao;
+import org.apache.hise.dao.Job;
 import org.apache.hise.dao.Message;
 import org.apache.hise.dao.OrgEntity;
 import org.apache.hise.dao.PresentationParameter;
@@ -80,8 +81,19 @@ public class Task {
 
     private List<TaskStateListener> taskStateListeners;
     
+    private Job currentJob;
+    
     protected Task() {}
     
+    public Job getCurrentJob() {
+        return currentJob;
+    }
+    
+    public void setCurrentJob(Job currentJob) {
+        this.currentJob = currentJob;
+    }
+
+
     private Task(HISEEngine engine) {
         this.hiseEngine = engine;
         Validate.notNull(hiseEngine);
@@ -1015,4 +1027,12 @@ public class Task {
     // return result;
     // }
 
+    
+    public void handleTimer() {
+        
+    }
+    
+    public Date calculateWakeupTime() {
+        return null;
+    }
 }
