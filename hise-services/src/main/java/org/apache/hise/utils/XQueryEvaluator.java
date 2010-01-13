@@ -73,11 +73,15 @@ public class XQueryEvaluator {
             for (Object o : value) {
                 Object o2 = o;
                 if (o2 instanceof NodeInfo) {
-                    o2 = (Node) NodeOverNodeInfo.wrap((NodeInfo) o2);
+                    try {
+                        o2 = DOMUtils.parse(DOMUtils.domToString(NodeOverNodeInfo.wrap((NodeInfo) o2)));
+                    } catch (Exception e1) {
+                        throw new RuntimeException("Error converting result", e1);
+                    }
                 }
                 value2.add(o2);
             }
-            __log.debug("result for expression " + expr + " " + value + " value class " + (value == null ? null : value.getClass()));
+            __log.debug("result for expression " + expr + " " + value2 + " value class " + (value2 == null ? null : value2.getClass()));
             return value2;
         } catch (XPathException e) {
             __log.error("", e);

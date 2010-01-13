@@ -41,7 +41,6 @@ public class TaskEvaluatorTest {
     public void testEvalOutcome() throws Exception {
         XQueryEvaluator e = new XQueryEvaluator();
         e.bindVariable(QName.valueOf("outcome"), true);
-        Node v = (Node) e.evaluateExpression("<v>{$outcome}</v>", null).get(0);
-        System.out.println(DOMUtils.domToString(v));
+        Assert.assertEquals(true, e.evaluateExpression("$outcome", null).get(0));
     }
 }

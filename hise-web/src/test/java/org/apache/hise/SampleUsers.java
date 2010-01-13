@@ -26,11 +26,25 @@ public class SampleUsers {
         
         transactionTemplate.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {
+                OrgEntity g = new OrgEntity();
+                {
+                    g.setName("group1");
+                    g.setType(TaskOrgEntity.OrgEntityType.GROUP);
+                    hiseDao.saveOrgEntity(g);
+                }
                 {
                     OrgEntity o = new OrgEntity();
                     o.setName("user1");
                     o.setType(TaskOrgEntity.OrgEntityType.USER);
                     o.setUserPassword("user1pass");
+                    hiseDao.saveOrgEntity(o);
+                }
+                {
+                    OrgEntity o = new OrgEntity();
+                    o.setName("user2");
+                    o.setType(TaskOrgEntity.OrgEntityType.USER);
+                    o.setUserPassword("user2pass");
+                    o.getUserGroups().add(g);
                     hiseDao.saveOrgEntity(o);
                 }
                 return null;

@@ -40,7 +40,7 @@ public class TaskEvaluator {
         return Integer.parseInt("" + evaluateExpression(task.getTaskDefinition().gettTask().getPriority()));
     }
 
-    public Object evaluateExpression(TExpression expr) {
+    public List evaluateExpression(TExpression expr) {
         return buildQueryEvaluator().evaluateExpression(XmlUtils.getStringContent(expr.getContent()), null);
     }
 
@@ -96,7 +96,7 @@ public class TaskEvaluator {
     // }
     
     public Node evaluateOutcome(boolean outcome) {
-        XQueryEvaluator evaluator = new XQueryEvaluator();
+        XQueryEvaluator evaluator = buildQueryEvaluator();
         evaluator.bindVariable(QName.valueOf("outcome"), outcome);
         return (Node) evaluator.evaluateExpression(task.getTaskDefinition().getOutcomeExpression(), null).get(0);
     }
