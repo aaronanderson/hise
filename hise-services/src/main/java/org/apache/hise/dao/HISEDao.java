@@ -365,4 +365,8 @@ public class HISEDao extends JpaDaoSupport {
     public void saveOrgEntity(OrgEntity o) {
         getJpaTemplate().persist(o);
     }
+    
+    public void remove(Object o) {
+        getJpaTemplate().remove(o);
+    }
 }

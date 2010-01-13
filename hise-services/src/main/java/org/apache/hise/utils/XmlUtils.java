@@ -98,4 +98,8 @@ public class XmlUtils {
 //          
 //      }
 //  }
+    
+    public static <T> T notNull(T a, T defaultValue) {
+        return a == null ? defaultValue : a;
+    }
 }

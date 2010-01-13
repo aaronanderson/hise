@@ -51,7 +51,9 @@ import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
 import org.apache.hise.engine.HISEEngine;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.lang.xsd.htd.TExpression;
+import org.apache.hise.lang.xsd.htd.TGrouplist;
 import org.apache.hise.lang.xsd.htd.TOrganizationalEntity;
+import org.apache.hise.lang.xsd.htd.TUserlist;
 import org.apache.hise.utils.DOMUtils;
 import org.apache.hise.utils.XmlUtils;
 import org.w3c.dom.Document;
@@ -116,6 +118,29 @@ public class Task {
         return t;
     }
 
+    private void tryNominateOwner() {
+        {
+            int poSize = 0;
+            TaskOrgEntity selected = null;
+            for (TaskOrgEntity e : taskDto.getPeopleAssignments()) {
+                if (e.getGenericHumanRole() == GenericHumanRole.POTENTIALOWNERS) {
+                    poSize ++;
+                    if (e.getType() == TaskOrgEntity.OrgEntityType.USER) {
+                        selected = e;
+                    }
+                }
+            }
+            
+            if (poSize == 1 && selected != null) {
+                //Nominate a single potential owner
+                OrgEntity a = hiseEngine.getHiseDao().getOrgEntity(selected.getName());
+                if (a.getType() == TaskOrgEntity.OrgEntityType.USER) {
+                    setActualOwner(a);
+                }
+            }
+        }
+    }
+    
     public static Task create(HISEEngine engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
         Task t = new Task(engine);
         Validate.notNull(taskDefinition);
@@ -136,27 +161,7 @@ public class Task {
         u.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
         
         t.setStatus(Status.READY);
-        
-        {
-            int poSize = 0;
-            TaskOrgEntity selected = null;
-            for (TaskOrgEntity e : u.getPeopleAssignments()) {
-                if (e.getGenericHumanRole() == GenericHumanRole.POTENTIALOWNERS) {
-                    poSize ++;
-                    if (e.getType() == TaskOrgEntity.OrgEntityType.USER) {
-                        selected = e;
-                    }
-                }
-            }
-            
-            if (poSize == 1 && selected != null) {
-                //Nominate a single potential owner
-                OrgEntity a = t.hiseEngine.getHiseDao().getOrgEntity(selected.getName());
-                if (a.getType() == TaskOrgEntity.OrgEntityType.USER) {
-                    t.setActualOwner(a);
-                }
-            }
-        }
+        t.tryNominateOwner();
         
         engine.getHiseDao().saveTask(u);
         
@@ -523,15 +528,22 @@ public class Task {
             throw new RuntimeException("Sending response failed", e);
         }
     }
+
+    private void releaseOwner() {
+        setStatus(Status.READY);
+        taskDto.setActualOwner(null);
+    }
     
     public void forward(TOrganizationalEntity target) {
-        if (taskDto.getStatus() == Status.RESERVED || taskDto.getStatus() == Status.IN_PROGRESS) {
-            setStatus(Status.READY);
-        }
+        releaseOwner();
         
+        for (TaskOrgEntity x : taskDto.getPeopleAssignments()) {
+            x.setTask(null);
+            hiseEngine.getHiseDao().remove(x);
+        }
         taskDto.getPeopleAssignments().clear();
         
-        for (String user : target.getUsers().getUser()) {
+        for (String user : XmlUtils.notNull(target.getUsers(), new TUserlist()).getUser()) {
             TaskOrgEntity x = new TaskOrgEntity();
             x.setGenericHumanRole(GenericHumanRole.POTENTIALOWNERS);
             x.setName(user);
@@ -540,7 +552,7 @@ public class Task {
             taskDto.getPeopleAssignments().add(x);
         }
 
-        for (String group : target.getGroups().getGroup()) {
+        for (String group : XmlUtils.notNull(target.getGroups(), new TGrouplist()).getGroup()) {
             TaskOrgEntity x = new TaskOrgEntity();
             x.setGenericHumanRole(GenericHumanRole.POTENTIALOWNERS);
             x.setName(group);
@@ -548,6 +560,8 @@ public class Task {
             x.setTask(taskDto);
             taskDto.getPeopleAssignments().add(x);
         }
+        
+        tryNominateOwner();
     }
 
     //    
