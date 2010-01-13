@@ -19,8 +19,14 @@
   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
   <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
 
+<!-- 
   <bean id="hisePasswordCallback" class="org.apache.hise.engine.MapPasswordCallback">
     <property name="passwords" ref="hiseLoginProperties"/>
+  </bean>
+   -->
+
+  <bean id="hisePasswordCallback" class="org.apache.hise.engine.HISEDaoPasswordCallback">
+    <property name="hiseDao" ref="hiseDao"/>
   </bean>
 
 <!-- 
