@@ -20,6 +20,7 @@
 package org.apache.hise.runtime;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -82,6 +83,7 @@ public class Task {
     private List<TaskStateListener> taskStateListeners;
     
     private Job currentJob;
+    private Date currentEventDateTime = Calendar.getInstance().getTime();
     
     protected Task() {}
     
@@ -516,7 +518,25 @@ public class Task {
         setStatus(Status.SUSPENDED);
     }
     
-    public void resume(OrgEntity user) {
+    private Job createJob(Date when, String action) {
+        Job job = new Job();
+        job.setFire(when);
+        job.setTask(taskDto);
+        return job;
+    }
+    
+    public void suspendUntil(Date when) {
+        setStatus(Status.SUSPENDED);
+        Job job = createJob(when, "suspendUntil");
+        taskDto.setSuspendUntil(job);
+    }
+    
+    public void suspendUntilJobAction() {
+        resume();
+    }
+    
+    
+    public void resume() {
         setStatus(taskDto.getStatusBeforeSuspend());
     }
 

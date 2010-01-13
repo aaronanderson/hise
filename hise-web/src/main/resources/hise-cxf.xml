@@ -43,6 +43,11 @@
     <property name="hiseDao" ref="hiseDao"/>
   </bean>
 
+  <bean id="hiseScheduler" class="org.apache.hise.engine.Scheduler" init-method="init" destroy-method="destroy">
+    <property name="hiseEngine" ref="hiseEngine"/>
+    <property name="transactionManager" ref="transactionManager"/>
+  </bean>
+
   <tx:annotation-driven transaction-manager="transactionManager"/>
 
   <util:properties id="hiseLoginProperties" location="classpath:hise-login.properties"/>

@@ -39,6 +39,7 @@ public class Scheduler {
                         public Object doInTransaction(TransactionStatus ts) {
                             __log.debug("Executing job " + j2);
                             hiseEngine.executeJob(j2);
+                            hiseEngine.getHiseDao().remove(j2);
                             return null;
                         }
                         

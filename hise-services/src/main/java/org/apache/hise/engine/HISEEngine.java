@@ -96,7 +96,7 @@ public class HISEEngine {
         Task t = Task.load(this, job.getTask().getId());
         try {
             t.setCurrentJob(job);
-            t.getClass().getMethod("jobAction" + job.getAction()).invoke(t);
+            t.getClass().getMethod(job.getAction() + "JobAction").invoke(t);
         } catch (Exception e) {
             throw new RuntimeException("timer job failed", e);
         }
