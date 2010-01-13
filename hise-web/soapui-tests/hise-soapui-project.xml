@@ -2649,7 +2649,7 @@
    <soapenv:Header/>
    <soapenv:Body>
       <xsd:fail>
-         <xsd:identifier>?</xsd:identifier>
+         <xsd:identifier>3</xsd:identifier>
          <!--Optional:-->
          <xsd:faultName>?</xsd:faultName>
          <!--Optional:-->
@@ -2965,6 +2965,7 @@
   <wsdl:message name="ClaimResolveResponse"></wsdl:message>
   <wsdl:message name="notifyResponse"></wsdl:message>
   <wsdl:message name="ClaimResolveRequest">
+    <wsdl:part name="claimId" type="xsd:int"></wsdl:part>
     <wsdl:part name="ok" type="xsd:boolean"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="ClaimApprovalResponse"></wsdl:message>
@@ -3086,6 +3087,23 @@
          </ClaimApprovalRequest>
       </cla:approve>
    </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.insurance.example.com/claims/ClaimsHandlingPT/approveRequest"/></con:call><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/ClaimsHandlingService/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cla="http://www.insurance.example.com/claims">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cla:approve>
+         <ClaimApprovalRequest>
+            <cla:cust>
+               <cla:id>?</cla:id>
+               <cla:firstname>?</cla:firstname>
+               <cla:lastname>?</cla:lastname>
+            </cla:cust>
+            <cla:amount>?</cla:amount>
+            <cla:region>?</cla:region>
+            <cla:prio>?</cla:prio>
+            <cla:activateAt>?</cla:activateAt>
+         </ClaimApprovalRequest>
+      </cla:approve>
+   </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.insurance.example.com/claims/ClaimsHandlingPT/approveRequest"/></con:call></con:operation><con:operation isOneWay="false" action="" name="escalate" bindingOperationName="escalate" type="Request-Response" inputName="" sendsAttachments="false" anonymous="optional" receivesAttachments="false"><con:settings/><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/ClaimsHandlingService/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cla="http://www.insurance.example.com/claims">
    <soapenv:Header/>
    <soapenv:Body>
@@ -3104,6 +3122,23 @@
       </cla:escalate2>
    </soapenv:Body>
 </soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.insurance.example.com/claims/ClaimsHandlingPT/escalateRequest2"/></con:call><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/ClaimsHandlingService/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cla="http://www.insurance.example.com/claims">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cla:escalate>
+         <ClaimApprovalRequest>
+            <cla:cust>
+               <cla:id>?</cla:id>
+               <cla:firstname>?</cla:firstname>
+               <cla:lastname>?</cla:lastname>
+            </cla:cust>
+            <cla:amount>?</cla:amount>
+            <cla:region>?</cla:region>
+            <cla:prio>?</cla:prio>
+            <cla:activateAt>?</cla:activateAt>
+         </ClaimApprovalRequest>
+      </cla:escalate>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.insurance.example.com/claims/ClaimsHandlingPT/escalateRequest"/></con:call><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:8080/ClaimsHandlingService/</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cla="http://www.insurance.example.com/claims">
    <soapenv:Header/>
    <soapenv:Body>
       <cla:escalate>
@@ -3162,6 +3197,7 @@
   <wsdl:message name="ClaimResolveResponse"></wsdl:message>
   <wsdl:message name="notifyResponse"></wsdl:message>
   <wsdl:message name="ClaimResolveRequest">
+    <wsdl:part name="claimId" type="xsd:int"></wsdl:part>
     <wsdl:part name="ok" type="xsd:boolean"></wsdl:part>
   </wsdl:message>
   <wsdl:message name="ClaimApprovalResponse"></wsdl:message>
@@ -3243,6 +3279,14 @@
    <soapenv:Header/>
    <soapenv:Body>
       <cla:resolve>
+         <ok>?</ok>
+      </cla:resolve>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request><con:wsaConfig mustUnderstand="NONE" version="200508" action="http://www.insurance.example.com/claims/ClaimsResolvingPT/resolveRequest"/></con:call><con:call name="Request 1"><con:settings/><con:encoding>UTF-8</con:encoding><con:endpoint>http://localhost:9999</con:endpoint><con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cla="http://www.insurance.example.com/claims">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <cla:resolve>
+         <claimId>?</claimId>
          <ok>?</ok>
       </cla:resolve>
    </soapenv:Body>
