@@ -223,7 +223,7 @@ public class TaskOperationsImpl implements TaskOperations {
     private static TTask convertTask(org.apache.hise.dao.Task u) {
         TTask t = new TTask();
         t.setId("" + u.getId());
-        t.setTaskType("TASK");
+        t.setTaskType(u.isNotification() ? "NOTIFICATION" : "TASK");
         t.setCreatedOn(u.getCreatedOn());
         t.setActivationTime(u.getActivationTime());
         if (u.getActualOwner() != null) t.setActualOwner(u.getActualOwner().getName());
