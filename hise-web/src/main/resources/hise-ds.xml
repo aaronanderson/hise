@@ -27,6 +27,14 @@
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
     ">
 
+    <bean id="htEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="htDataSource" />
+        <property name="jpaVendorAdapter" ref="htJPAVendorAdapter"/>
+        <property name="jpaPropertyMap" ref="htJPAPropertyMap"/>
+        <property name="persistenceXmlLocation" value="classpath:/org/apache/hise/persistence.xml" />
+        <property name="persistenceUnitName" value="org.apache.hise"/>
+    </bean>
+
     <util:map id="htJPAPropertyMap">
         <!-- 
             <entry key="hibernate.search.default.directory_provider" value="org.hibernate.search.store.RAMDirectoryProvider"  />   

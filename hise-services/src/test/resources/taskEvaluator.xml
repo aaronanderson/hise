@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<htd:literal xmlns:htd="http://www.example.org/WS-HT">
+  <htd:organizationalEntity>
+    <htd:users>
+      <htd:user>user1</htd:user>
+      <htd:user>user2</htd:user>
+    </htd:users>
+  </htd:organizationalEntity>
+</htd:literal>

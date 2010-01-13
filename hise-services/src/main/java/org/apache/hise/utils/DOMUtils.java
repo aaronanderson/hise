@@ -18,6 +18,7 @@
  */
 
 package org.apache.hise.utils;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -75,12 +76,30 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class DOMUtils {
-    
+    public static QName uniqueQName(QName q) {
+        String s = q.getNamespaceURI();
+        while (s.endsWith("/")) { s = s.substring(0, s.length() - 1); }
+        return new QName(s, q.getLocalPart());
+    }
+
     public static Element getFirstElement(Node node) {
         NodeList l = node.getChildNodes();
         for (int i = 0; i < l.getLength(); i++) {
             if (l.item(i) instanceof Element) {
                 return (Element) l.item(i);
+            }
+        }
+        return null;
+    }
+    
+    public static Element findElement(QName elementName, List<Object> content) {
+        for (Object o : content) {
+            if (o instanceof Element) {
+                Element u = (Element) o;
+                QName n = new QName(u.getNamespaceURI(), u.getLocalName());
+                if (n.equals(elementName)) {
+                    return u;
+                }
             }
         }
         return null;
@@ -141,5 +160,17 @@ public class DOMUtils {
     
     public static XPathFactory getXPathFactory() {
         return new net.sf.saxon.xpath.XPathFactoryImpl();
+    }
+    
+    public static Document parse(InputStream in) throws Exception {
+        DocumentBuilderFactory f = DOMUtils.getDocumentBuilderFactory();
+        f.setNamespaceAware(true);
+        DocumentBuilder b = f.newDocumentBuilder();
+        Document d = b.parse(in);
+        return d;
+    }
+
+    public static Document parse(String in) throws Exception {
+        return parse(new ByteArrayInputStream(in.getBytes()));
     }
 }

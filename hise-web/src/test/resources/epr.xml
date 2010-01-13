@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsa:EndpointReference 
+  xmlns:wsa="http://www.w3.org/2005/08/addressing"
+  xmlns:wsa2="http://www.w3.org/2005/02/addressing/wsdl"
+  >
+  <wsa:Address>http://localhost:8082/ClaimsResponseService/</wsa:Address>
+  <wsa:To>http://localhost:8082/ClaimsHandlingService/</wsa:To>
+  <!-- 
+  <wsa:Metadata>
+    <wsa2:ServiceName xmlns:ins="http://www.insurance.example.com/claims" EndpointName="ClaimsResolvingPort">ins:ClaimsResolvingService</wsa2:ServiceName>
+  </wsa:Metadata>
+   -->
+</wsa:EndpointReference>

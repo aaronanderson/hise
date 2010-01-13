@@ -23,10 +23,10 @@ import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hise.dao.Task.Status;
 import org.apache.hise.lang.xsd.htd.TDeadline;
 import org.apache.hise.lang.xsd.htd.TDeadlines;
 import org.apache.hise.lang.xsd.htd.TExpression;
-import org.apache.hise.runtime.Task.Status;
 
 public class DeadlineController implements TaskStateListener {
     private static Log __log = LogFactory.getLog(DeadlineController.class);
@@ -53,7 +53,7 @@ public class DeadlineController implements TaskStateListener {
     private void computeDeadlines(Task task, List<TDeadline> deadlines, boolean isCompletion) {
         for (TDeadline deadline : deadlines) {
             TExpression expr = deadline.getFor();
-            Object v = task.evaluateExpression(expr);
+            Object v = task.getTaskEvaluator().evaluateExpression(expr);
             __log.debug("deadline " + v);
         }
     }

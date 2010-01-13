@@ -1,0 +1,11 @@
+package org.apache.hise.dao;
+
+public enum GenericHumanRole {
+    ACTUALOWNER,
+    TASKSTAKEHOLDERS,
+    POTENTIALOWNERS,
+    EXCLUDEDOWNERS,
+    BUSINESSADMINISTRATORS,
+    TASKINITIATOR,
+    RECIPIENTS
+}

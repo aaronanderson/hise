@@ -27,10 +27,8 @@
       <param-name>contextConfigLocation</param-name>
       <param-value>
         classpath:/hise-ds.xml,
-        classpath:/hise-config.xml,
-        classpath:/cxf-server.xml,
-        classpath:/hise/applicationContext.xml,
-        classpath:/*-hise-endpoint.xml
+        classpath:/hise-cxf.xml,
+        classpath:/*-hise-dd.xml
       </param-value>
     </context-param>
 
@@ -56,15 +54,21 @@
         <display-name>HTTP Request Interceptor</display-name>
 
         <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
+        <!--
         <init-param>
           <param-name>config-location</param-name>
-          <param-value>classpath:/cxf-server.xml</param-value>
+          <param-value>
+            classpath:/hise-ds.xml,
+            classpath:/hise-cxf.xml,
+            classpath:/*-hise-dd.xml
+          </param-value>
         </init-param>
         <init-param>
           <param-name>bus.id</param-name>
           <param-value>cxf</param-value>
         </init-param>
         <load-on-startup>999</load-on-startup>
+        -->
       </servlet>
       <servlet-mapping>
         <servlet-name>HTTP Request Interceptor</servlet-name>

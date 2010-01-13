@@ -19,11 +19,10 @@
 
 package org.apache.hise.lang;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.apache.hise.api.HumanInteractionsManager;
-import org.apache.hise.api.PeopleQuery;
-import org.w3c.dom.Document;
+import javax.xml.namespace.QName;
 
 
 /**
@@ -36,43 +35,9 @@ import org.w3c.dom.Document;
  */
 public class HumanInteractions {
 
-    private Document document;
+    private final Map<QName, TaskDefinition> taskDefinitions = new HashMap<QName, TaskDefinition>();
 
-    private List<TaskDefinition> taskDefinitions;
-    
-    private PeopleQuery peopleQuery;
-
-    /**
-     * Private constructor to prevent instantiation.
-     */
-    private HumanInteractions() {
-    }
-
-    /**
-     * Constructor called by {@link HumanInteractionsManager implementation}.
-     * @param document the human interactions DOM document
-     * @param peopleQuery
-     */
-    public HumanInteractions(Document document, PeopleQuery peopleQuery) {
-        super();
-        this.setDocument(document);
-        this.peopleQuery = peopleQuery;
-    }
-
-    public void setTaskDefinitions(List<TaskDefinition> taskDefinitions) {
-        this.taskDefinitions = taskDefinitions;
-    }
-
-    public void setDocument(Document document) {
-        this.document = document;
-    }
-
-    public Document getDocument() {
-        return document;
-    }
-
-    public List<TaskDefinition> getTaskDefinitions() {
+    public Map<QName, TaskDefinition> getTaskDefinitions() {
         return taskDefinitions;
     }
-
 }

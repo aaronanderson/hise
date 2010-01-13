@@ -28,7 +28,7 @@
 		<module>hise-test-example</module>
 		<module>hise-wsdl-classes</module>
 		<module>hise-services</module>
-		<module>hise-web</module>
+        <module>hise-web</module>
 	</modules>
 	<properties>
 		<cxf.version>2.2.4</cxf.version>
@@ -45,6 +45,11 @@
 						<encoding>UTF-8</encoding>
 					</configuration>
 				</plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-eclipse-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>

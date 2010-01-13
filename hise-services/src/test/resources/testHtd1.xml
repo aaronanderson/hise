@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+https://www.sdn.sap.com/irj/sdn/go/portal/prtroot/docs/library/uuid/a0c9ce4c-ee02-2a10-4b96-cb205464aa02
+
+© 2007 Active Endpoints Inc., Adobe Systems Inc., BEA Systems Inc., International
+Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
+ -->
+<htd:humanInteractions xmlns:htd="http://www.example.org/WS-HT"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://www.insurance.example.com/claims/"
+    targetNamespace="http://www.insurance.example.com/claims/"
+    xsi:schemaLocation="http://www.example.org/WS-HT file:/usr/share/schemas/ws-humantask.xsd">
+    
+    <!-- 
+        
+        Test human task definition. Contains: task definitions, different human roles definitions,
+        descriptions with parameters.
+        
+        TODO:
+         
+         - matching business request
+        
+    -->
+    
+    <htd:import importType="http://schemas.xmlsoap.org/wsdl/" location="ExampleTasks.wsdl" namespace="http://www.insurance.example.com/claims/"/>
+    
+    <htd:logicalPeopleGroups>
+    
+    	<htd:logicalPeopleGroup name="lpg1">
+            <htd:documentation xml:lang="en-US">Employee group.</htd:documentation>
+            <htd:parameter name="region" type="xsd:string"/>
+        </htd:logicalPeopleGroup>
+
+    </htd:logicalPeopleGroups>
+    
+    <htd:tasks>
+    
+        <!-- Please change properties other than potential owners i both Task1 and Task2 -->
+        
+        <!-- One potential owners -->
+        <htd:task name="Task1">
+            
+            <htd:documentation xml:lang="en-US">This task is used to handle claims that require manual approval. </htd:documentation>
+            <htd:interface portType="tns:ClaimsHandlingPT" operation="approve" responsePortType="tns:ClaimsHandlingCallbackPT" responseOperation="approvalResponse"/>
+            <htd:priority> htd:getInput("ClaimApprovalRequest")/priority </htd:priority>
+            
+            <htd:peopleAssignments>
+            	<htd:potentialOwners>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:users>
+                                <htd:user>user1</htd:user>
+                            </htd:users>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>
+                </htd:potentialOwners>
+                
+                <htd:businessAdministrators>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:groups>
+                                <htd:group>group1</htd:group>
+                                <htd:group>group2</htd:group>
+                            </htd:groups>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>
+                </htd:businessAdministrators>
+
+                <htd:businessAdministrators>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:users>
+                                <htd:user>user1</htd:user>
+                                <htd:user>user2</htd:user>
+                            </htd:users>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>
+                </htd:businessAdministrators>
+
+                <htd:businessAdministrators>
+                    <htd:from logicalPeopleGroup="lpg1">
+                        <htd:argument name="region"> htd:getInput("ClahimApprovalRequest")/region </htd:argument>
+                    </htd:from>
+                </htd:businessAdministrators>
+                
+            	<htd:taskStakeholders>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:users>
+                                <htd:user>user3</htd:user>
+                            </htd:users>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>
+                </htd:taskStakeholders>
+                
+            </htd:peopleAssignments>
+            
+            <htd:delegation potentialDelegatees="nobody"/>
+            
+            <htd:presentationElements>
+                
+                <htd:name xml:lang="en-US"> Approve Claim </htd:name>
+                
+                <htd:presentationParameters>
+                    
+                    <htd:presentationParameter name="firstname" type="xsd:string">
+                        htd:getInput("ClaimApprovalRequest")/cust/firstname </htd:presentationParameter>
+                    
+                    <htd:presentationParameter name="lastname" type="xsd:string">
+                        htd:getInput("ClaimApprovalRequest")/cust/lastname </htd:presentationParameter>
+                    
+                    <htd:presentationParameter name="euroAmount" type="xsd:double">
+                        htd:getInput("ClaimApprovalRequest")/amount </htd:presentationParameter>
+                        
+                </htd:presentationParameters>
+                
+                <htd:subject xml:lang="en-US"> Approve the insurance claim for PLN $euroAmount$ on behalf of $firstname$ $lastname$ </htd:subject>
+
+                <htd:description xml:lang="en-US" contentType="text/plain"> Approve this claim following corporate guideline #4711.0815/7 ... </htd:description>
+
+            </htd:presentationElements>
+            <htd:outcome>someOutput</htd:outcome>
+            
+  <htd:deadlines>
+    <htd:startDeadline>
+      <htd:for>'PT5S'</htd:for>
+      <htd:escalation name="reassignTask3">
+        <htd:reassignment>
+          <htd:potentialOwners>
+            <htd:from>
+              <htd:literal>
+                <htd:organizationalEntity>
+                  <htd:users>
+                    <htd:user>user3</htd:user>
+                  </htd:users>
+                </htd:organizationalEntity>
+
+              </htd:literal>
+            </htd:from>
+          </htd:potentialOwners>
+        </htd:reassignment>
+      </htd:escalation>
+    </htd:startDeadline>
+    <htd:completionDeadline>
+      <htd:for>'PT10S'</htd:for>
+      <htd:escalation name="reassignTask3Completion">
+        <htd:reassignment>
+          <htd:potentialOwners>
+            <htd:from>
+              <htd:literal>
+                <htd:organizationalEntity>
+                  <htd:users>
+                    <htd:user>user4</htd:user>
+                  </htd:users>
+                </htd:organizationalEntity>
+              </htd:literal>
+            </htd:from>
+          </htd:potentialOwners>
+        </htd:reassignment>
+      </htd:escalation>
+    </htd:completionDeadline>
+  </htd:deadlines>
+        </htd:task>    
+        
+        <!-- Two potential owners -->
+        <htd:task name="Task2">
+            
+            <htd:documentation xml:lang="en-US">This task is used to handle claims that require manual approval. </htd:documentation>
+            <htd:interface portType="tns:ClaimsHandlingPT" operation="approve2" responsePortType="tns:ClaimsHandlingCallbackPT" responseOperation="approvalResponse"/>
+            <htd:priority> htd:getInput("ClaimApprovalRequest")/prio </htd:priority>
+            
+            <htd:peopleAssignments>
+            	
+            	<htd:potentialOwners>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:users>
+                                <htd:user>user1</htd:user>
+                                <htd:user>user2</htd:user>
+                            </htd:users>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>
+                </htd:potentialOwners>
+                
+                <htd:businessAdministrators>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:groups>
+                                <htd:group>group1</htd:group>
+                                <htd:group>group2</htd:group>
+                            </htd:groups>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>  
+                </htd:businessAdministrators>
+
+                <htd:businessAdministrators>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:users>
+                                <htd:user>user1</htd:user>
+                                <htd:user>user2</htd:user>
+                            </htd:users>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>  
+                </htd:businessAdministrators>
+
+                <htd:businessAdministrators>
+                    <htd:from logicalPeopleGroup="lpg1">
+                        <htd:argument name="region"> htd:getInput("ClahimApprovalRequest")/region </htd:argument>
+                    </htd:from>
+                </htd:businessAdministrators>
+                
+            	<htd:taskStakeholders>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:users>
+                                <htd:user>user3</htd:user>
+                            </htd:users>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>  
+                </htd:taskStakeholders>
+                
+            </htd:peopleAssignments>
+            
+            <htd:delegation potentialDelegatees="nobody"/>
+            
+            <htd:presentationElements>
+                
+                <htd:name xml:lang="en-US"> Approve Claim </htd:name>
+                
+                <htd:presentationParameters>
+                    
+                    <htd:presentationParameter name="firstname" type="xsd:string">
+                        htd:getInput("ClaimApprovalRequest")/cust/firstname </htd:presentationParameter>
+                    
+                    <htd:presentationParameter name="lastname" type="xsd:string">
+                        htd:getInput("ClaimApprovalRequest")/cust/lastname </htd:presentationParameter>
+                    
+                    <htd:presentationParameter name="euroAmount" type="xsd:double">
+                        htd:getInput("ClaimApprovalRequest")/amount </htd:presentationParameter>
+                        
+                </htd:presentationParameters>
+                
+                <htd:subject xml:lang="en-US"> Approve the insurance claim for PLN $euroAmount$ on behalf of $firstname$ $lastname$ </htd:subject>
+
+                <htd:description xml:lang="en-US" contentType="text/plain"> Approve this claim following corporate guideline #4711.0815/7 ... </htd:description>
+
+            </htd:presentationElements>
+            
+        </htd:task>    
+
+
+        <!-- Escalation -->
+        <htd:task name="Task3">
+            
+            <htd:documentation xml:lang="en-US">This task is used to handle claims that require manual approval. </htd:documentation>
+            <htd:interface portType="tns:ClaimsHandlingPT" operation="approve3"/>
+            
+            <htd:peopleAssignments>
+              <htd:potentialOwners>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:users>
+                                <htd:user>user1</htd:user>
+                            </htd:users>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>
+                </htd:potentialOwners>
+
+                <htd:businessAdministrators>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:users>
+                                <htd:user>user2</htd:user>
+                            </htd:users>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>
+                </htd:businessAdministrators>
+            </htd:peopleAssignments>
+            
+            <htd:presentationElements>
+                
+                <htd:name xml:lang="en-US"> Approve Claim </htd:name>
+                
+                <htd:presentationParameters>
+                    
+                    <htd:presentationParameter name="firstname" type="xsd:string">
+                        htd:getInput("ClaimApprovalRequest")/cust/firstname </htd:presentationParameter>
+                    
+                    <htd:presentationParameter name="lastname" type="xsd:string">
+                        htd:getInput("ClaimApprovalRequest")/cust/lastname </htd:presentationParameter>
+                    
+                    <htd:presentationParameter name="euroAmount" type="xsd:double">
+                        htd:getInput("ClaimApprovalRequest")/amount </htd:presentationParameter>
+                        
+                </htd:presentationParameters>
+                
+                <htd:subject xml:lang="en-US"> Approve the insurance claim for PLN $euroAmount$ on behalf of $firstname$ $lastname$ </htd:subject>
+
+                <htd:description xml:lang="en-US" contentType="text/plain"> Approve this claim following corporate guideline #4711.0815/7 ... </htd:description>
+
+            </htd:presentationElements>
+
+  <htd:deadlines>
+    <htd:startDeadline>
+      <htd:for>PT5S</htd:for>
+      <htd:escalation name="reassignTask3">
+        <htd:reassignment>
+          <htd:potentialOwners>
+            <htd:from>
+              <htd:literal>
+                <htd:organizationalEntity>
+                  <htd:users>
+                    <htd:user>user3</htd:user>
+                  </htd:users>
+                </htd:organizationalEntity>
+
+              </htd:literal>
+            </htd:from>
+          </htd:potentialOwners>
+        </htd:reassignment>
+      </htd:escalation>
+    </htd:startDeadline>
+    <htd:completionDeadline>
+      <htd:for>PT10S</htd:for>
+      <htd:escalation name="reassignTask3Completion">
+        <htd:reassignment>
+          <htd:potentialOwners>
+            <htd:from>
+              <htd:literal>
+                <htd:organizationalEntity>
+                  <htd:users>
+                    <htd:user>user4</htd:user>
+                  </htd:users>
+                </htd:organizationalEntity>
+              </htd:literal>
+            </htd:from>
+          </htd:potentialOwners>
+        </htd:reassignment>
+      </htd:escalation>
+    </htd:completionDeadline>
+  </htd:deadlines>
+        </htd:task>    
+    </htd:tasks>    
+</htd:humanInteractions>
