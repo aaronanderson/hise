@@ -74,7 +74,8 @@ public class XQueryEvaluator {
                 Object o2 = o;
                 if (o2 instanceof NodeInfo) {
                     try {
-                        o2 = DOMUtils.parse(DOMUtils.domToString(NodeOverNodeInfo.wrap((NodeInfo) o2)));
+                        Node o3 = DOMUtils.parse(DOMUtils.domToString(NodeOverNodeInfo.wrap((NodeInfo) o2))).getDocumentElement();
+                        o2 = o3;
                     } catch (Exception e1) {
                         throw new RuntimeException("Error converting result", e1);
                     }
