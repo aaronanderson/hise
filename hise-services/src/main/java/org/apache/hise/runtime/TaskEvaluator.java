@@ -31,8 +31,21 @@ public class TaskEvaluator {
         this.task = task;
     }
 
+    public static class HtdFunctions {
+        public static Node getInput(String part) {
+            TaskEvaluator te = (TaskEvaluator) XQueryEvaluator.contextObjectTL.get();
+            try {
+                return DOMUtils.parse(te.task.getTaskDto().getInput().get(part).getMessage()).getDocumentElement();
+            } catch (Exception e) {
+                throw new RuntimeException("", e);
+            }
+        }
+    }
+    
     public XQueryEvaluator buildQueryEvaluator() {
         XQueryEvaluator evaluator = new XQueryEvaluator();
+        evaluator.setContextObject(this);
+        evaluator.declareJavaClass("http://www.example.org/WS-HT", HtdFunctions.class);
         return evaluator;
     }
     

@@ -78,7 +78,7 @@ public class HISEEngine {
         QName taskName = getTaskName(portType, operation);
         assert(taskName != null);
         log.debug("routed " + portType + " " + operation + " -> " + taskName);
-        Task.create(this, getTaskDefinition(taskName), createdBy, DOMUtils.getFirstElement(DOMUtils.getFirstElement(body)), requestHeader);
+        Task.create(this, getTaskDefinition(taskName), createdBy, DOMUtils.getFirstElement(body), requestHeader);
     }
     
     public void sendResponse(QName taskName, Node body, Node epr) {

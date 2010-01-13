@@ -11,6 +11,9 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.dom.DocumentWrapper;
 import net.sf.saxon.dom.NodeOverNodeInfo;
 import net.sf.saxon.expr.JPConverter;
+import net.sf.saxon.functions.FunctionLibrary;
+import net.sf.saxon.functions.FunctionLibraryList;
+import net.sf.saxon.functions.JavaExtensionLibrary;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.om.ValueRepresentation;
@@ -29,11 +32,24 @@ import org.w3c.dom.Node;
 public class XQueryEvaluator {
     private static Log __log = LogFactory.getLog(XQueryEvaluator.class);
 
-
+    public static ThreadLocal<Object> contextObjectTL = new ThreadLocal<Object>() ;
+    
     private Map<QName, Object> vars = new HashMap<QName, Object>();
+    private Configuration config = Configuration.makeConfiguration(null, null);
+    private JavaExtensionLibrary jel = new JavaExtensionLibrary(config);
+    
+    private Object contextObject;
     
     public void bindVariable(QName var, Object value) {
         vars.put(var, value);
+    }
+    
+    public void declareJavaClass(String uri, Class clazz) {
+        jel.declareJavaClass(uri, clazz);
+    }
+
+    public void setContextObject(Object contextObject) {
+        this.contextObject = contextObject;
     }
 
     public static ValueRepresentation convertJavaToSaxon(Object obj) {
@@ -46,7 +62,13 @@ public class XQueryEvaluator {
     
     public List evaluateExpression(String expr, org.w3c.dom.Node contextNode) {
         try {
-            Configuration config = Configuration.makeConfiguration(null, null);
+            contextObjectTL.set(contextObject);
+            {
+                FunctionLibraryList fll = new FunctionLibraryList();
+                fll.addFunctionLibrary(jel);
+                config.setExtensionBinder("java", fll);
+            }
+
             StaticQueryContext sqc = new StaticQueryContext(config);
             for (QName var : vars.keySet()) {
                 sqc.declareGlobalVariable(StructuredQName.fromClarkName(var.toString()), SequenceType.SINGLE_ITEM, convertJavaToSaxon(vars.get(var)) , false);
@@ -87,6 +109,8 @@ public class XQueryEvaluator {
         } catch (XPathException e) {
             __log.error("", e);
             throw new RuntimeException(e);
+        } finally {
+            contextObjectTL.set(null);
         }
     }
 }
