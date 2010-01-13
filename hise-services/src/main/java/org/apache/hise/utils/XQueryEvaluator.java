@@ -1,28 +1,59 @@
 package org.apache.hise.utils;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.xml.namespace.QName;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.dom.DocumentWrapper;
+import net.sf.saxon.dom.NodeOverNodeInfo;
+import net.sf.saxon.expr.JPConverter;
+import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.om.ValueRepresentation;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.StaticQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.value.SequenceType;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Node;
 
 public class XQueryEvaluator {
     private static Log __log = LogFactory.getLog(XQueryEvaluator.class);
+
+
+    private Map<QName, Object> vars = new HashMap<QName, Object>();
+    
+    public void bindVariable(QName var, Object value) {
+        vars.put(var, value);
+    }
+
+    public static ValueRepresentation convertJavaToSaxon(Object obj) {
+        try {
+            return JPConverter.allocate(obj.getClass(), null).convert(obj, null);
+        } catch (XPathException e) {
+            throw new RuntimeException("", e);
+        }
+    }
     
     public List evaluateExpression(String expr, org.w3c.dom.Node contextNode) {
-        Configuration config = Configuration.makeConfiguration(null, null);
-        StaticQueryContext sqc = new StaticQueryContext(config);
-        DynamicQueryContext dqc = new DynamicQueryContext(config);
         try {
+            Configuration config = Configuration.makeConfiguration(null, null);
+            StaticQueryContext sqc = new StaticQueryContext(config);
+            for (QName var : vars.keySet()) {
+                sqc.declareGlobalVariable(StructuredQName.fromClarkName(var.toString()), SequenceType.SINGLE_ITEM, convertJavaToSaxon(vars.get(var)) , false);
+            }
+            DynamicQueryContext dqc = new DynamicQueryContext(config);
             XQueryExpression e = sqc.compileQuery(expr);
+            
             if (contextNode != null) {
                 if (!(contextNode instanceof Document || contextNode instanceof DocumentFragment) ) {
                     try {
@@ -38,8 +69,16 @@ public class XQueryEvaluator {
             }
 
             List value = e.evaluate(dqc);
+            List value2 = new ArrayList();
+            for (Object o : value) {
+                Object o2 = o;
+                if (o2 instanceof NodeInfo) {
+                    o2 = (Node) NodeOverNodeInfo.wrap((NodeInfo) o2);
+                }
+                value2.add(o2);
+            }
             __log.debug("result for expression " + expr + " " + value + " value class " + (value == null ? null : value.getClass()));
-            return value;
+            return value2;
         } catch (XPathException e) {
             __log.error("", e);
             throw new RuntimeException(e);

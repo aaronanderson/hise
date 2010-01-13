@@ -514,22 +514,9 @@ public class Task {
     
     private void sendResponse() {
         try {
-            Document response;
-          response = DOMUtils.parse("<cla:resolve xmlns:cla=\"http://www.insurance.example.com/claims\"><ok>true</ok></cla:resolve>");
-            
-//            response = DOMUtils.parse("<resp>" + taskDto.getStatus().toString() + "</resp>");
-          
-//            <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cla="http://www.insurance.example.com/claims">
-//            <soapenv:Header/>
-//            <soapenv:Body>
-//               <cla:resolve>
-//                  <ok>?</ok>
-//               </cla:resolve>
-//            </soapenv:Body>
-//         </soapenv:Envelope>
-            
+            Node response = taskEvaluator.evaluateOutcome(taskDto.getStatus() == Status.COMPLETED);
             hiseEngine.sendResponse(getTaskDefinition().getTaskName(), 
-                    response.getDocumentElement(),
+                    response,
                     taskEvaluator.createEprFromHeader(DOMUtils.parse(taskDto.getInput().get("requestHeader").getMessage()).getDocumentElement()));
         } catch (Exception e) {
             throw new RuntimeException("Sending response failed", e);

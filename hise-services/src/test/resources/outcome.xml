@@ -1,0 +1,5 @@
+<cla:resolve xmlns:cla="http://www.insurance.example.com/claims">
+  <claimId>htd:getInput("ClaimApprovalRequest")/cla:cust/cla:id/text()</claimId>
+  <ok>{$outcome}</ok>
+</cla:resolve>
+                  

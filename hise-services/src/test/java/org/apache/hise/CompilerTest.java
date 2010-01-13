@@ -43,6 +43,7 @@ public class CompilerTest {
         Assert.assertTrue(s.contains(QName.valueOf("{http://www.insurance.example.com/claims}Task1")));
         Assert.assertTrue(s.contains(QName.valueOf("{http://www.insurance.example.com/claims}Task2")));
         Assert.assertTrue(s.contains(QName.valueOf("{http://www.insurance.example.com/claims}Task3")));
+        Assert.assertEquals("someOutput", hi.getTaskDefinitions().get(QName.valueOf("{http://www.insurance.example.com/claims}Task1")).getOutcomeExpression());
     }
     
     @Test

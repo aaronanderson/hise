@@ -129,6 +129,15 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
 
             </htd:presentationElements>
             
+            <htd:outcome>
+                <![CDATA[
+                  <cla:resolve xmlns:cla="http://www.insurance.example.com/claims">
+                     <claimId>{htd:getInput("ClaimApprovalRequest")/cla:cust/cla:id/text()}</claimId>
+                     <ok>{$outcome}</ok>
+                  </cla:resolve>
+                ]]>
+            </htd:outcome>
+            
   <htd:deadlines>
     <htd:startDeadline>
       <htd:for>'PT5S'</htd:for>

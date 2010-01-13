@@ -45,6 +45,7 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
   <wsdl:message name="ClaimApprovalResponse">
   </wsdl:message>
   <wsdl:message name="ClaimResolveRequest">
+    <wsdl:part name="claimId" type="xsd:int" />
     <wsdl:part name="ok" type="xsd:boolean" />
   </wsdl:message>
   <wsdl:message name="ClaimResolveResponse">

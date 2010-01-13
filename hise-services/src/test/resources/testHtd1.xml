@@ -128,6 +128,7 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
                 <htd:description xml:lang="en-US" contentType="text/plain"> Approve this claim following corporate guideline #4711.0815/7 ... </htd:description>
 
             </htd:presentationElements>
+            <htd:outcome>someOutput</htd:outcome>
             
   <htd:deadlines>
     <htd:startDeadline>

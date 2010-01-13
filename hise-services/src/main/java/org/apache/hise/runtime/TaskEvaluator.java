@@ -7,34 +7,18 @@ import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
-import net.sf.saxon.Configuration;
-import net.sf.saxon.dom.DocumentWrapper;
-import net.sf.saxon.dom.NodeOverNodeInfo;
-import net.sf.saxon.dom.NodeWrapper;
-import net.sf.saxon.om.Item;
-import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.query.DynamicQueryContext;
-import net.sf.saxon.query.StaticQueryContext;
-import net.sf.saxon.query.XQueryExpression;
-import net.sf.saxon.trans.XPathException;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.dao.GenericHumanRole;
+import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
-import org.apache.hise.lang.xsd.htd.ObjectFactory;
 import org.apache.hise.lang.xsd.htd.TExpression;
 import org.apache.hise.lang.xsd.htd.TFrom;
 import org.apache.hise.lang.xsd.htd.TGenericHumanRole;
-import org.apache.hise.lang.xsd.htd.TLiteral;
 import org.apache.hise.lang.xsd.htd.TPeopleAssignments;
 import org.apache.hise.utils.DOMUtils;
 import org.apache.hise.utils.XQueryEvaluator;
 import org.apache.hise.utils.XmlUtils;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentFragment;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -96,7 +80,7 @@ public class TaskEvaluator {
     }
 
     public Node createEprFromHeader(Node header) {
-        return NodeOverNodeInfo.wrap((NodeInfo) evaluator.evaluateExpression("<wsa:EndpointReference xmlns:wsa=\"http://www.w3.org/2005/08/addressing\">{ */wsa:ReplyTo/* }</wsa:EndpointReference>", header).get(0));
+        return (Node) evaluator.evaluateExpression("<wsa:EndpointReference xmlns:wsa=\"http://www.w3.org/2005/08/addressing\">{ */wsa:ReplyTo/* }</wsa:EndpointReference>", header).get(0);
     }
     
     // private Set<TaskOrgEntity> evaluatePeopleGroup(String groupName) {
@@ -107,5 +91,11 @@ public class TaskEvaluator {
     // s.add(o);
     // return s;
     // }
+    
+    public Node evaluateOutcome(boolean outcome) {
+        XQueryEvaluator evaluator = new XQueryEvaluator();
+        evaluator.bindVariable(QName.valueOf("outcome"), outcome);
+        return (Node) evaluator.evaluateExpression(task.getTaskDefinition().getOutcomeExpression(), null).get(0);
+    }
 
 }

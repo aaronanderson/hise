@@ -68,7 +68,6 @@ public class HISEJaxWSClient {
             __log.debug("sending to address " + address);
             dispatch.getRequestContext().put(Dispatch.ENDPOINT_ADDRESS_PROPERTY, address);
             
-            dispatch.
             SOAPMessage m;
             m = messageFactory.createMessage();
             Document doc = m.getSOAPBody().getOwnerDocument();

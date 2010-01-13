@@ -288,6 +288,10 @@ public class TaskDefinition {
     public TTask gettTask() {
         return tTask;
     }
+    
+    public String getOutcomeExpression() {
+        return tTask.getOutcome().getContent().get(0).toString();
+    }
 
     /**
      * Returns namespace URI for namespace registered in HumanInteractionsManager.
