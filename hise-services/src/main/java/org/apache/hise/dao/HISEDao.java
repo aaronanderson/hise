@@ -19,14 +19,20 @@
 
 package org.apache.hise.dao;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
+import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
 import org.apache.hise.engine.wsdl.IllegalArgumentFault;
 import org.apache.hise.engine.wsdl.IllegalStateFault;
 import org.apache.hise.lang.xsd.htd.TTask;
@@ -318,13 +324,39 @@ public class HISEDao extends JpaDaoSupport {
         });
     }
 
-    public List<Task> getUserTasks(OrgEntity user, String taskType, GenericHumanRole genericHumanRole, String workQueue, List<TStatus> status, String whereClause, String createdOnClause, Integer maxTasks) {
+    private Collection<String> getUserGroups(OrgEntity user) {
+        Collection<String> r = new ArrayList<String>();
+        for (OrgEntity g : user.getUserGroups()) {
+            Validate.isTrue(g.getType() == OrgEntityType.GROUP);
+            r.add(g.getName());
+        }
+        return r;
+    }
+    
+    public List<Task> getUserTasks(final OrgEntity user, String taskType, final GenericHumanRole genericHumanRole, String workQueue, List<TStatus> status, String whereClause, String createdOnClause, final Integer maxTasks) {
 //        TaskOrgEntity to;to.g
         switch (genericHumanRole) {
         case ACTUALOWNER:
-            return (List<Task>) getJpaTemplate().find("select distinct t from Task t where t.actualOwner = ?", user);
+            return (List<Task>) getJpaTemplate().executeFind(new JpaCallback() {
+                public Object doInJpa(EntityManager em) throws PersistenceException {
+                    return em.createQuery("select distinct t from Task t where t.actualOwner.name = :user")
+                    .setParameter("user", user.name)
+                    .setMaxResults(maxTasks)
+                    .getResultList();
+                }
+            });
         case POTENTIALOWNERS:
-            return (List<Task>) getJpaTemplate().find("select distinct t from Task t, TaskOrgEntity e where e.task = t and e.name = ? and e.genericHumanRole = ?", user.getName(), genericHumanRole);
+//            return (List<Task>) getJpaTemplate().find("select distinct t from Task t, TaskOrgEntity e where e.task = t and (e.name = ? and e.type = 'USER' or e.name in (?) and e.type = 'GROUP') and e.genericHumanRole = ?", user.getName(), getUserGroups(user), genericHumanRole);
+            return (List<Task>) getJpaTemplate().executeFind(new JpaCallback() {
+                public Object doInJpa(EntityManager em) throws PersistenceException {
+                    return em.createQuery("select distinct t from Task t, TaskOrgEntity e where e.task = t and (e.name = :user and e.type = 'USER' or e.name in (:groups) and e.type = 'GROUP') and e.genericHumanRole = :role")
+                    .setParameter("user", user.name)
+                    .setParameter("groups", getUserGroups(user))
+                    .setParameter("role", genericHumanRole)
+                    .setMaxResults(maxTasks)
+                    .getResultList();
+                }
+            });
         default:
             throw new IllegalStateException();
         }

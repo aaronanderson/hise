@@ -16,7 +16,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-//@Ignore
+@Ignore
 public class Client2Test {
     @Test
     public void testClient() throws Exception {

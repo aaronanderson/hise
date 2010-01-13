@@ -19,6 +19,10 @@
 
 package org.apache.hise.dao;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -28,6 +32,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -51,6 +56,13 @@ public class OrgEntity extends JpaBase {
     private TaskOrgEntity.OrgEntityType type;
 
     private String userPassword;
+    
+    @OneToMany(mappedBy="name", cascade = {CascadeType.ALL})
+    private Set<OrgEntity> userGroups = new HashSet<OrgEntity>();
+    
+    public Set<OrgEntity> getUserGroups() {
+        return userGroups;
+    }
 
     public String getName() {
         return name;

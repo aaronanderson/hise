@@ -27,18 +27,21 @@ public class TaskEvaluator {
 
     private Task task;
     
-    private XQueryEvaluator evaluator = new XQueryEvaluator();
-
     public TaskEvaluator(Task task) {
         this.task = task;
     }
 
+    public XQueryEvaluator buildQueryEvaluator() {
+        XQueryEvaluator evaluator = new XQueryEvaluator();
+        return evaluator;
+    }
+    
     public Integer evaluatePriority() {
         return Integer.parseInt("" + evaluateExpression(task.getTaskDefinition().gettTask().getPriority()));
     }
 
     public Object evaluateExpression(TExpression expr) {
-        return evaluator.evaluateExpression(XmlUtils.getStringContent(expr.getContent()), null);
+        return buildQueryEvaluator().evaluateExpression(XmlUtils.getStringContent(expr.getContent()), null);
     }
 
     public Set<TaskOrgEntity> evaluatePeopleAssignments() {
@@ -54,7 +57,7 @@ public class TaskEvaluator {
             } else {
                 Element e = DOMUtils.findElement(QName.valueOf("{http://www.example.org/WS-HT}literal"), f.getContent());
                 if (e != null) {
-                    for (String user : (List<String>) evaluator.evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:users/htd:user return string($i)", e)) {
+                    for (String user : (List<String>) buildQueryEvaluator().evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:users/htd:user return string($i)", e)) {
                         TaskOrgEntity x = new TaskOrgEntity();
                         x.setGenericHumanRole(assignmentRole);
                         x.setName(user);
@@ -62,7 +65,7 @@ public class TaskEvaluator {
                         x.setTask(task.getTaskDto());
                         result.add(x);
                     }
-                    for (String group : (List<String>) evaluator.evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:groups/htd:group return string($i)", e)) {
+                    for (String group : (List<String>) buildQueryEvaluator().evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:groups/htd:group return string($i)", e)) {
                         TaskOrgEntity x = new TaskOrgEntity();
                         x.setGenericHumanRole(assignmentRole);
                         x.setName(group);
@@ -80,7 +83,7 @@ public class TaskEvaluator {
     }
 
     public Node createEprFromHeader(Node header) {
-        return (Node) evaluator.evaluateExpression("<wsa:EndpointReference xmlns:wsa=\"http://www.w3.org/2005/08/addressing\">{ */wsa:ReplyTo/* }</wsa:EndpointReference>", header).get(0);
+        return (Node) buildQueryEvaluator().evaluateExpression("<wsa:EndpointReference xmlns:wsa=\"http://www.w3.org/2005/08/addressing\">{ */wsa:ReplyTo/* }</wsa:EndpointReference>", header).get(0);
     }
     
     // private Set<TaskOrgEntity> evaluatePeopleGroup(String groupName) {

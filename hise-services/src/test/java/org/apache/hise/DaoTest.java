@@ -33,15 +33,21 @@ public class DaoTest extends AbstractTransactionalJUnit4SpringContextTests {
     @Autowired
     private JpaTransactionManager transactionManager;
     
-    private OrgEntity o;
+    private OrgEntity o, o2;
     
     private Long addTask() throws Exception {
         Assert.assertTrue(hiseDao != null);
         
+        o2 = new OrgEntity();
+        o2.setName("group1");
+        o2.setType(OrgEntityType.GROUP);
+        hiseDao.saveOrgEntity(o2);
+
         o = new OrgEntity();
         o.setName("user1");
         o.setType(OrgEntityType.USER);
         o.setUserPassword("abc");
+        o.getUserGroups().add(o2);
         hiseDao.saveOrgEntity(o);
         
         Task t = new Task();
@@ -70,6 +76,23 @@ public class DaoTest extends AbstractTransactionalJUnit4SpringContextTests {
         hiseDao.saveTask(t);
     }
 
+    private void addTask3() throws Exception {
+        addTask();
+        Task t = new Task();
+        t.setStatus(Status.READY);
+        t.setTaskDefinitionKey("asd3");
+        Set<TaskOrgEntity> pa = new HashSet<TaskOrgEntity>();
+        TaskOrgEntity x = new TaskOrgEntity();
+        x.setName("group1");
+        x.setType(OrgEntityType.GROUP);
+        x.setGenericHumanRole(GenericHumanRole.POTENTIALOWNERS);
+        x.setTask(t);
+        pa.add(x);
+        t.setPeopleAssignments(pa);
+        hiseDao.saveTask(t);
+    }
+
+    
     @Test
     public void testDao() throws Exception {
         addTask();
@@ -112,5 +135,12 @@ public class DaoTest extends AbstractTransactionalJUnit4SpringContextTests {
             }
         });
         
+    }
+    
+    @Test 
+    public void testGrupQuery() throws Exception {
+        addTask3();
+        List<Task> r = hiseDao.getUserTasks(o, "", GenericHumanRole.POTENTIALOWNERS, "", Collections.EMPTY_LIST, "", null, 100);
+        Assert.assertEquals("asd3", r.get(0).getTaskDefinitionKey());
     }
 }
