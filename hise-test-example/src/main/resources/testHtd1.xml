@@ -131,7 +131,7 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
             
             <htd:outcome>
                 <![CDATA[
-                  <cla:resolve xmlns:cla="http://www.insurance.example.com/claims">
+                  <cla:resolve xmlns:cla="http://www.insurance.example.com/claims" xmlns:htd="http://www.example.org/WS-HT">
                      <claimId>{htd:getInput("request")/ClaimApprovalRequest/cla:cust/cla:id/text()}</claimId>
                      <ok>{$outcome}</ok>
                   </cla:resolve>
