@@ -31,8 +31,26 @@
   </bean>
 
   <util:map id="htJPAPropertyMap">
-    <entry key="hibernate.hbm2ddl.auto" value="create-drop"/>
+    <entry key="hibernate.hbm2ddl.auto" value="create"/>
   </util:map>
+  
+  <!-- 
+      <bean id="htJPAVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="showSql" value="true" />
+        <property name="generateDdl" value="true" />
+        <property name="databasePlatform" value="org.hibernate.dialect.OracleDialect" />
+    </bean>
+
+    <bean id="htDataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+        <property name="username" value="hise" />
+        <property name="password" value="hise"/>
+        <property name="autoCommit" value="false" />
+        <property name="suppressClose" value="true" />
+    </bean>
+     -->
+  
 
   <bean id="htJPAVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
     <property name="showSql" value="true"/>
@@ -49,6 +67,7 @@
     <property name="autoCommit" value="false"/>
     <property name="suppressClose" value="true"/>
   </bean>
+  
 
   <!--
     <bean id="htJPAVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"> <property name="showSql" value="false"/> <property name="generateDdl" value="true"/> <property name="databasePlatform" value="org.hibernate.dialect.OracleDialect"/> </bean> <bean id="htDataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true"> <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/> <property name="url" value="jdbc:oracle:thin:@localhost:1521:XE"/> <property name="username" value="hise"/> <property name="password" value="hise"/> <property name="autoCommit" value="false"/> <property name="suppressClose" value="true"/> </bean>

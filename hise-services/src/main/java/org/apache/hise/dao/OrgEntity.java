@@ -19,11 +19,14 @@
 
 package org.apache.hise.dao;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -32,6 +35,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -50,18 +54,25 @@ public class OrgEntity extends JpaBase {
 //    protected Long id;
 
     @Id
-    protected String name;
+    private String name;
 
     @Enumerated(value = EnumType.STRING)
     private TaskOrgEntity.OrgEntityType type;
 
     private String userPassword;
     
-    @OneToMany(mappedBy="name", cascade = {CascadeType.ALL})
-    private Set<OrgEntity> userGroups = new HashSet<OrgEntity>();
+    @OneToMany(cascade = {CascadeType.ALL})
+    @JoinTable(name="USER_GROUPS")
+    private Collection<OrgEntity> userGroups = new HashSet<OrgEntity>();
+
     
-    public Set<OrgEntity> getUserGroups() {
+    public Collection<OrgEntity> getUserGroups() {
         return userGroups;
+    }
+
+    public void addToGroup(OrgEntity group) {
+//        userGroups.add(group.getName());
+        userGroups.add(group);
     }
 
     public String getName() {

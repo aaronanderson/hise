@@ -345,7 +345,7 @@ public class HISEDao extends JpaDaoSupport {
             return (List<Task>) getJpaTemplate().executeFind(new JpaCallback() {
                 public Object doInJpa(EntityManager em) throws PersistenceException {
                     return em.createQuery("select distinct t from Task t where t.actualOwner.name = :user")
-                    .setParameter("user", user.name)
+                    .setParameter("user", user.getName())
                     .setMaxResults(maxTasks)
                     .getResultList();
                 }
@@ -355,7 +355,7 @@ public class HISEDao extends JpaDaoSupport {
             return (List<Task>) getJpaTemplate().executeFind(new JpaCallback() {
                 public Object doInJpa(EntityManager em) throws PersistenceException {
                     return em.createQuery("select distinct t from Task t, TaskOrgEntity e where e.task = t and (e.name = :user and e.type = 'USER' or e.name in (:groups) and e.type = 'GROUP') and e.genericHumanRole = :role")
-                    .setParameter("user", user.name)
+                    .setParameter("user", user.getName())
                     .setParameter("groups", getUserGroups(user))
                     .setParameter("role", genericHumanRole)
                     .setMaxResults(maxTasks)
@@ -388,5 +388,12 @@ public class HISEDao extends JpaDaoSupport {
 
     public void persist(Object o) {
         getJpaTemplate().persist(o);
+    }
+    
+    public <T> void clearAllRecords(Class<T> clazz) {
+        log.debug("select t from " + clazz.getName());
+        for (Object o : getJpaTemplate().find("select t from " + clazz.getName() + " t")) {
+            getJpaTemplate().remove(o);
+        }
     }
 }

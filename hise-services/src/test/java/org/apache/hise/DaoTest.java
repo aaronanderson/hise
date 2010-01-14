@@ -21,13 +21,14 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @ContextConfiguration(locations = "classpath:/dao.xml")
-public class DaoTest extends AbstractTransactionalJUnit4SpringContextTests {
+public class DaoTest extends AbstractJUnit4SpringContextTests {
     
     @Autowired
     private HISEDao hiseDao;
@@ -35,10 +36,16 @@ public class DaoTest extends AbstractTransactionalJUnit4SpringContextTests {
     @Autowired
     private JpaTransactionManager transactionManager;
     
-    private OrgEntity o, o2;
+    private void cleanup() throws Exception {
+        hiseDao.clearAllRecords(OrgEntity.class);
+        hiseDao.clearAllRecords(Task.class);
+        hiseDao.clearAllRecords(Job.class);
+    }
     
     private Long addTask() throws Exception {
         Assert.assertTrue(hiseDao != null);
+        
+        OrgEntity o, o2;
         
         o2 = new OrgEntity();
         o2.setName("group1");
@@ -49,7 +56,8 @@ public class DaoTest extends AbstractTransactionalJUnit4SpringContextTests {
         o.setName("user1");
         o.setType(OrgEntityType.USER);
         o.setUserPassword("abc");
-        o.getUserGroups().add(o2);
+        
+        o.addToGroup(o2);
         hiseDao.saveOrgEntity(o);
         
         Task t = new Task();
@@ -100,18 +108,51 @@ public class DaoTest extends AbstractTransactionalJUnit4SpringContextTests {
         addTask();
     }
     
+    
+    
     @Test 
     public void testUserTasks() throws Exception {
-        addTask();
-        List<Task> r = hiseDao.getUserTasks(o, "", GenericHumanRole.ACTUALOWNER, "", Collections.EMPTY_LIST, "", null, 100);
-        Assert.assertEquals("asd", r.get(0).getTaskDefinitionKey());
+        TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        final Long tid = (Long) tt.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus arg0) {
+                try {
+                    return addTask();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        tt.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus arg0) {
+                try {
+                    OrgEntity o = hiseDao.load(OrgEntity.class, "user1");
+                    List<Task> r = hiseDao.getUserTasks(o, "", GenericHumanRole.ACTUALOWNER, "", Collections.EMPTY_LIST, "", null, 100);
+                    Assert.assertEquals("asd", r.get(0).getTaskDefinitionKey());
+                    return null;
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     @Test 
     public void testUserTasks2() throws Exception {
-        addTask2();
-        List<Task> r = hiseDao.getUserTasks(o, "", GenericHumanRole.POTENTIALOWNERS, "", Collections.EMPTY_LIST, "", null, 100);
-        Assert.assertEquals("asd2", r.get(0).getTaskDefinitionKey());
+        TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        final Long tid = (Long) tt.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus arg0) {
+                try{
+                    cleanup();
+                    addTask2();
+                    OrgEntity o = hiseDao.load(OrgEntity.class, "user1");
+                    List<Task> r = hiseDao.getUserTasks(o, "", GenericHumanRole.POTENTIALOWNERS, "", Collections.EMPTY_LIST, "", null, 100);
+                    Assert.assertEquals("asd2", r.get(0).getTaskDefinitionKey());
+                    return null;
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
     
     @Test
@@ -120,6 +161,7 @@ public class DaoTest extends AbstractTransactionalJUnit4SpringContextTests {
         final Long tid = (Long) tt.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {
                 try {
+                    cleanup();
                     return addTask();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -141,19 +183,52 @@ public class DaoTest extends AbstractTransactionalJUnit4SpringContextTests {
     
     @Test 
     public void testGrupQuery() throws Exception {
-        addTask3();
-        List<Task> r = hiseDao.getUserTasks(o, "", GenericHumanRole.POTENTIALOWNERS, "", Collections.EMPTY_LIST, "", null, 100);
-        Assert.assertEquals("asd3", r.get(0).getTaskDefinitionKey());
+        TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        tt.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus arg0) {
+                try {
+                    cleanup();
+                    addTask3();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                return null;
+            }
+        });
+                
+        tt.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus arg0) {
+                try {
+                    OrgEntity o = hiseDao.load(OrgEntity.class, "user1");
+                    List<Task> r = hiseDao.getUserTasks(o, "", GenericHumanRole.POTENTIALOWNERS, "", Collections.EMPTY_LIST, "", null, 100);
+                    Assert.assertEquals("asd3", r.get(0).getTaskDefinitionKey());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                return null;
+            }
+        });
     }
 
     @Test 
     public void testJobs() throws Exception {
-        Job j = new Job();
-        j.setFire(new Date(1213L));
-        j.setAction("abc");
-        hiseDao.persist(j);
-        
-        List<Job> r = hiseDao.listJobs(new Date(1214L), 12);
-        Assert.assertEquals("abc", r.get(0).getAction());
+        TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        tt.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus arg0) {
+                try {
+                    cleanup();
+                    Job j = new Job();
+                    j.setFire(new Date(1213L));
+                    j.setAction("abc");
+                    hiseDao.persist(j);
+                    
+                    List<Job> r = hiseDao.listJobs(new Date(1214L), 12);
+                    Assert.assertEquals("abc", r.get(0).getAction());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                return null;
+            }
+        });
     }
 }

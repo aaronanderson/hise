@@ -46,7 +46,7 @@
             <entry key="hibernate.jdbc.batch_size" value="0" />
             <entry key="hibernate.default_batch_fetch_size" value="20"/>
              -->
-            <entry key="hibernate.hbm2ddl.auto" value="create-drop" />
+            <entry key="hibernate.hbm2ddl.auto" value="create" />
     </util:map>
     
     <!-- 
