@@ -1,0 +1,6 @@
+<xsd:suspendUntil xmlns:xsd="http://www.example.org/WS-HT/api/xsd">
+  <xsd:identifier>123</xsd:identifier>
+  <xsd:time>
+    <xsd:timePeriod>P3D</xsd:timePeriod>
+  </xsd:time>
+</xsd:suspendUntil>

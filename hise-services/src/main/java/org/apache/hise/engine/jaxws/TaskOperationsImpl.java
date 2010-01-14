@@ -21,10 +21,13 @@ package org.apache.hise.engine.jaxws;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.jws.WebService;
+import javax.xml.datatype.Duration;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
@@ -367,9 +370,9 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public void resume(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
-        OrgEntity user = loadUser();
+//        OrgEntity user = loadUser();
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
-        t.resume(user);
+        t.resume();
     }
 
     public void setFault(String identifier, String faultName, Object faultData) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault, IllegalOperationFault {
@@ -409,8 +412,15 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public void suspendUntil(String identifier, TTime time) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
-        // TODO Auto-generated method stub
-
+        Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        Date when = time.getPointOfTime();
+        if (when == null) {
+            Duration when2 = time.getTimePeriod();
+            when = Calendar.getInstance().getTime();
+            when2.addTo(when);
+        }
+        
+        t.suspendUntil(when);
     }
 
 }

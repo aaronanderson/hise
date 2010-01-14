@@ -51,6 +51,7 @@ import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.dao.Task.Status;
 import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
 import org.apache.hise.engine.HISEEngine;
+import org.apache.hise.engine.Scheduler;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.lang.xsd.htd.TExpression;
 import org.apache.hise.lang.xsd.htd.TGrouplist;
@@ -83,7 +84,7 @@ public class Task {
     private List<TaskStateListener> taskStateListeners;
     
     private Job currentJob;
-    private Date currentEventDateTime = Calendar.getInstance().getTime();
+//    private Date currentEventDateTime = Calendar.getInstance().getTime();
     
     protected Task() {}
     
@@ -94,7 +95,6 @@ public class Task {
     public void setCurrentJob(Job currentJob) {
         this.currentJob = currentJob;
     }
-
 
     private Task(HISEEngine engine) {
         this.hiseEngine = engine;
@@ -518,23 +518,18 @@ public class Task {
         setStatus(Status.SUSPENDED);
     }
     
-    private Job createJob(Date when, String action) {
-        Job job = new Job();
-        job.setFire(when);
-        job.setTask(taskDto);
-        return job;
-    }
-    
     public void suspendUntil(Date when) {
+        Validate.notNull(when);
+
         setStatus(Status.SUSPENDED);
-        Job job = createJob(when, "suspendUntil");
+        Job job = hiseEngine.getScheduler().createJob(when, "suspendUntil", taskDto);
         taskDto.setSuspendUntil(job);
     }
     
     public void suspendUntilJobAction() {
+        taskDto.setSuspendUntil(null);
         resume();
     }
-    
     
     public void resume() {
         setStatus(taskDto.getStatusBeforeSuspend());

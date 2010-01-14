@@ -310,6 +310,10 @@ public class HISEDao extends JpaDaoSupport {
     public void saveTask(Task t) {
         getJpaTemplate().persist(t);
     }
+    
+    public <T> T load(Class<T> what, Object id) {
+        return getJpaTemplate().find(what, id);
+    }
 
     // public Person loadUser(String userId) {
     // return getJpaTemplate().find(Person.class, userId);

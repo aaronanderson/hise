@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.Job;
+import org.apache.hise.dao.Task;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -25,21 +26,30 @@ public class Scheduler {
     private class CheckJobs implements Runnable {
 
         public void run() {
-            Date currentEventDateTime = Calendar.getInstance().getTime();
+            final Date currentEventDateTime = Calendar.getInstance().getTime();
             __log.debug("scheduler CheckJobs at " + currentEventDateTime);
-            List<Job> jobs = hiseEngine.getHiseDao().listJobs(currentEventDateTime, 50);
-            __log.debug("jobs: " + jobs);
+            TransactionTemplate tt = new TransactionTemplate(transactionManager);
+            List<Job> jobs = (List<Job>) tt.execute(new TransactionCallback() {
+                public Object doInTransaction(TransactionStatus ts) {
+                    return hiseEngine.getHiseDao().listJobs(currentEventDateTime, 50);
+                }
+            });
+            
+            __log.debug("dequeued jobs: " + jobs);
 
             for (Job j : jobs) {
                 try {
                     final Job j2 = j;
-                    TransactionTemplate t = new TransactionTemplate(transactionManager);
-                    t.execute(new TransactionCallback() {
+                    tt.execute(new TransactionCallback() {
 
                         public Object doInTransaction(TransactionStatus ts) {
-                            __log.debug("Executing job " + j2);
-                            hiseEngine.executeJob(j2);
-                            hiseEngine.getHiseDao().remove(j2);
+                            if (hiseEngine.getHiseDao().load(Job.class, j2.getId()) == null) {
+                                __log.debug("Skipping job " + j2 + " - it's no longer id DB");
+                            } else {
+                                __log.debug("Executing job " + j2);
+                                hiseEngine.executeJob(j2);
+                                hiseEngine.getHiseDao().remove(j2);
+                            }
                             return null;
                         }
                         
@@ -53,7 +63,7 @@ public class Scheduler {
     
     public void init() {
         executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleWithFixedDelay(new CheckJobs(), 10000, 10000, TimeUnit.MILLISECONDS);
+        executor.scheduleWithFixedDelay(new CheckJobs(), 1000, 1000, TimeUnit.MILLISECONDS);
     }
     
     
@@ -64,6 +74,15 @@ public class Scheduler {
     public void setHiseEngine(HISEEngine hiseEngine) {
         this.hiseEngine = hiseEngine;
     }
+    
+    public Job createJob(Date when, String action, Task task) {
+        Job job = new Job();
+        job.setFire(when);
+        job.setTask(task);
+        
+        return job;
+    }
+    
 
     public void destroy() {
         executor.shutdown();
