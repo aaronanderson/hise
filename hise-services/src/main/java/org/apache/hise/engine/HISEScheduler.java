@@ -16,13 +16,17 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-public class Scheduler {
-    private static Log __log = LogFactory.getLog(Scheduler.class);
+public class HISEScheduler {
+    private static Log __log = LogFactory.getLog(HISEScheduler.class);
     
     private HISEEngine hiseEngine;
     private ScheduledExecutorService executor;
     private PlatformTransactionManager transactionManager;
     
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
+
     private class CheckJobs implements Runnable {
 
         public void run() {
@@ -39,16 +43,17 @@ public class Scheduler {
 
             for (Job j : jobs) {
                 try {
-                    final Job j2 = j;
+                    final Long j2 = j.getId();
                     tt.execute(new TransactionCallback() {
 
                         public Object doInTransaction(TransactionStatus ts) {
-                            if (hiseEngine.getHiseDao().load(Job.class, j2.getId()) == null) {
-                                __log.debug("Skipping job " + j2 + " - it's no longer id DB");
+                            Job j3 = hiseEngine.getHiseDao().load(Job.class, j2); 
+                            if (j3 == null) {
+                                __log.debug("Skipping job " + j3 + " - it's no longer id DB");
                             } else {
-                                __log.debug("Executing job " + j2);
-                                hiseEngine.executeJob(j2);
-                                hiseEngine.getHiseDao().remove(j2);
+                                __log.debug("Executing job " + j3);
+                                hiseEngine.executeJob(j3);
+                                hiseEngine.getHiseDao().remove(j3);
                             }
                             return null;
                         }
@@ -79,7 +84,8 @@ public class Scheduler {
         Job job = new Job();
         job.setFire(when);
         job.setTask(task);
-        
+        job.setAction(action);
+        hiseEngine.getHiseDao().persist(job);
         return job;
     }
     

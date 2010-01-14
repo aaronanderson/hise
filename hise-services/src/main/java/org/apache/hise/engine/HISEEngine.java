@@ -34,7 +34,7 @@ public class HISEEngine {
     public final Map<QName, TaskInfo> tasks = new HashMap<QName, TaskInfo>();
     private HISEDao hiseDao;
     
-    private Scheduler scheduler;
+    private HISEScheduler hiseScheduler;
     
     public HISEDao getHiseDao() {
         return hiseDao;
@@ -44,12 +44,12 @@ public class HISEEngine {
         this.hiseDao = hiseDao;
     }
     
-    public Scheduler getScheduler() {
-        return scheduler;
+    public HISEScheduler getHiseScheduler() {
+        return hiseScheduler;
     }
 
-    public void setScheduler(Scheduler scheduler) {
-        this.scheduler = scheduler;
+    public void setHiseScheduler(HISEScheduler hiseScheduler) {
+        this.hiseScheduler = hiseScheduler;
     }
 
     public static QName getCanonicalQName(QName q) {

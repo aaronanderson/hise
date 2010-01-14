@@ -51,7 +51,7 @@ import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.dao.Task.Status;
 import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
 import org.apache.hise.engine.HISEEngine;
-import org.apache.hise.engine.Scheduler;
+import org.apache.hise.engine.HISEScheduler;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.lang.xsd.htd.TExpression;
 import org.apache.hise.lang.xsd.htd.TGrouplist;
@@ -522,7 +522,7 @@ public class Task {
         Validate.notNull(when);
 
         setStatus(Status.SUSPENDED);
-        Job job = hiseEngine.getScheduler().createJob(when, "suspendUntil", taskDto);
+        Job job = hiseEngine.getHiseScheduler().createJob(when, "suspendUntil", taskDto);
         taskDto.setSuspendUntil(job);
     }
     
