@@ -41,9 +41,10 @@
 
   <bean id="hiseEngine" class="org.apache.hise.engine.HISEEngine">
     <property name="hiseDao" ref="hiseDao"/>
+    <property name="hiseScheduler" ref="hiseScheduler"/>
   </bean>
 
-  <bean id="hiseScheduler" class="org.apache.hise.engine.Scheduler" init-method="init" destroy-method="destroy">
+  <bean id="hiseScheduler" class="org.apache.hise.engine.HISEScheduler" init-method="init" destroy-method="destroy">
     <property name="hiseEngine" ref="hiseEngine"/>
     <property name="transactionManager" ref="transactionManager"/>
   </bean>

@@ -34,12 +34,22 @@ public class HISEEngine {
     public final Map<QName, TaskInfo> tasks = new HashMap<QName, TaskInfo>();
     private HISEDao hiseDao;
     
+    private HISEScheduler hiseScheduler;
+    
     public HISEDao getHiseDao() {
         return hiseDao;
     }
 
     public void setHiseDao(HISEDao hiseDao) {
         this.hiseDao = hiseDao;
+    }
+    
+    public HISEScheduler getHiseScheduler() {
+        return hiseScheduler;
+    }
+
+    public void setHiseScheduler(HISEScheduler hiseScheduler) {
+        this.hiseScheduler = hiseScheduler;
     }
 
     public static QName getCanonicalQName(QName q) {
