@@ -75,4 +75,26 @@
             </plugins>
         </pluginManagement>
     </build>
+    
+    <!-- dependencies from subprojects put here to keep versions in one place -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jmock</groupId>
+                <artifactId>jmock</artifactId>
+                <version>2.5.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jmock</groupId>
+                <artifactId>jmock-legacy</artifactId>
+                <version>2.5.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 </project>
