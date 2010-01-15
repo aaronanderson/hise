@@ -20,17 +20,18 @@
 package org.apache.hise.engine;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
 import org.apache.hise.api.HISEUserDetails;
-import org.apache.hise.dao.HISEDao;
 import org.apache.ws.security.WSPasswordCallback;
 
+/**
+ * 
+ * @author Rafał Rusin
+ */
 public class HISEPasswordCallback implements CallbackHandler {
     
     private HISEUserDetails hiseUserDetails;

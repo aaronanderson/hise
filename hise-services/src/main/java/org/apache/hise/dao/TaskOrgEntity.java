@@ -19,23 +19,16 @@
 
 package org.apache.hise.dao;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElementRef;
 
 /**
  * Task Assignee - member of generic human role.
+ * 
  * @author Witek Wołejszo
  */
 @Entity
@@ -49,17 +42,17 @@ public class TaskOrgEntity extends JpaBase {
     private Task task;
 
     private String name;
-    
+
     public static enum OrgEntityType {
         USER, GROUP;
     }
-    
+
     @Enumerated(value = EnumType.STRING)
     private OrgEntityType type;
 
     @Enumerated(value = EnumType.STRING)
     private GenericHumanRole genericHumanRole;
-    
+
     public Task getTask() {
         return task;
     }
@@ -72,24 +65,17 @@ public class TaskOrgEntity extends JpaBase {
         return name;
     }
 
-
-
     public void setName(String name) {
         this.name = name;
     }
-
-
 
     public OrgEntityType getType() {
         return type;
     }
 
-
-
     public void setType(OrgEntityType type) {
         this.type = type;
     }
-    
 
     public GenericHumanRole getGenericHumanRole() {
         return genericHumanRole;
@@ -101,6 +87,6 @@ public class TaskOrgEntity extends JpaBase {
 
     @Override
     public Object[] getKeys() {
-        return new Object[] {id} ;
+        return new Object[] { id };
     }
 }

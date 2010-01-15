@@ -33,8 +33,10 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
  * This is workaround for not working @Transactional + @Resource web services.
  */
 public class TransactionHandler implements Handler<MessageContext> {
-    private static Log __log = LogFactory.getLog(TransactionHandler.class);
+
     public static final String TRANSACTION = "org.apache.hise.transaction";
+    
+    private Log __log = LogFactory.getLog(TransactionHandler.class);
     
     private JpaTransactionManager transactionManager;
 

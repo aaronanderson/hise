@@ -18,6 +18,7 @@
  */
 
 package org.apache.hise.utils;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -76,6 +77,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class DOMUtils {
+    
     public static QName uniqueQName(QName q) {
         String s = q.getNamespaceURI();
         while (s.endsWith("/")) { s = s.substring(0, s.length() - 1); }

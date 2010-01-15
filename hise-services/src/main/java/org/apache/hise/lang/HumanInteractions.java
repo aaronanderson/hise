@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
-
 /**
  * Provides access methods to Human Interactions document defined
  * using http://www.example.org/WS-HT schema.

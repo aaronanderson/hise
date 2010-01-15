@@ -21,11 +21,6 @@ package org.apache.hise.dao;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Transient;
-
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Fault.
@@ -33,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
  */
 @Embeddable
 public class Fault extends JpaBase {
+
     @Column(name = "fault_name", nullable = true)
     private String name;
     

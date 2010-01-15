@@ -29,7 +29,8 @@ import org.apache.hise.lang.xsd.htd.TDeadlines;
 import org.apache.hise.lang.xsd.htd.TExpression;
 
 public class DeadlineController implements TaskStateListener {
-    private static Log __log = LogFactory.getLog(DeadlineController.class);
+
+    private Log __log = LogFactory.getLog(DeadlineController.class);
 
     public void stateChanged(Task task, Status oldStatus, Status newStatus) {
         __log.debug(task + " " + oldStatus + " " + newStatus);

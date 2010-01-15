@@ -82,7 +82,7 @@ import org.springframework.beans.factory.annotation.Configurable;
 @Configurable(preConstruction = true)
 public class Task extends JpaBase {
 
-    private static final Log __log = LogFactory.getLog(Task.class);
+    private final Log log = LogFactory.getLog(Task.class);
     
     @Column(nullable = false)
     private String taskDefinitionKey;
