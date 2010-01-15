@@ -21,6 +21,19 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.1.108</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>oracle</groupId>
+            <artifactId>ojdbc5</artifactId>
+            <version>11.1.0.6.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.hise</groupId>
             <artifactId>hise-wsdl</artifactId>
             <version>${project.version}</version>
