@@ -136,7 +136,7 @@ public class Task {
     public static Task load(HISEEngine engine, Long id) {
         Task t = new Task(engine);
         HISEDao dao = engine.getHiseDao();
-        t.taskDto = dao.loadTask(id);
+        t.taskDto = dao.find(org.apache.hise.dao.Task.class, id);
         // t.setTaskDto(em.find(Task.class, , arg1)engine.taskDao.fetch(id));
         t.taskDefinition = engine.getTaskDefinition(t.taskDto.getTaskDefinitionName());
         return t;
@@ -184,7 +184,7 @@ public class Task {
         t.setStatus(Status.READY);
         t.tryNominateOwner();
         
-        engine.getHiseDao().saveTask(u);
+        engine.getHiseDao().persist(u);
         
         return t;
 

@@ -28,7 +28,7 @@
     ">
 
     <bean id="htEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="dataSource" ref="htDataSource" />
+        <property name="dataSource" ref="dataSource" />
         <property name="jpaVendorAdapter" ref="htJPAVendorAdapter"/>
         <property name="jpaPropertyMap" ref="htJPAPropertyMap"/>
         <property name="persistenceXmlLocation" value="classpath:/org/apache/hise/persistence.xml" />
@@ -56,7 +56,7 @@
         <property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" />
     </bean>
 
-    <bean id="htDataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true">
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true">
         <property name="driverClassName" value="org.h2.Driver" />
         <property name="url" value="jdbc:h2:file:~/hise-db;DB_CLOSE_ON_EXIT=false" />
         <property name="username" value="sa" />
@@ -74,7 +74,7 @@
         <property name="databasePlatform" value="org.hibernate.dialect.MySQL5Dialect" />
     </bean>
 
-    <bean id="htDataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true">
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://localhost/hise"/>
         <property name="username" value="root" />
@@ -91,7 +91,7 @@
         <property name="databasePlatform" value="org.hibernate.dialect.OracleDialect" />
     </bean>
 
-    <bean id="htDataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true">
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true">
         <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
         <property name="url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
         <property name="username" value="hise" />

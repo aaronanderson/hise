@@ -168,11 +168,6 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-entitymanager</artifactId>
-      <version>3.4.0.GA</version>
-    </dependency>
-    <dependency>
       <groupId>javassist</groupId>
       <artifactId>javassist</artifactId>
       <version>3.8.0.GA</version>

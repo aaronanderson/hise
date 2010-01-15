@@ -40,8 +40,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 public class Attachment extends JpaBase {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "attc_seq")
-    @SequenceGenerator(name = "attc_seq", sequenceName = "attc_seq")
+    @GeneratedValue
     private Long id;
 
     @Column

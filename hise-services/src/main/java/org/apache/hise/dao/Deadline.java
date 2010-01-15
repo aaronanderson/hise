@@ -47,8 +47,7 @@ import org.apache.commons.lang.builder.EqualsBuilder;
 public class Deadline extends JpaBase {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ddln_seq")
-    @SequenceGenerator(name = "ddln_seq", sequenceName = "ddln_seq")
+    @GeneratedValue
     private Long id;
     
     @Column(name = "EVENT_DATE")

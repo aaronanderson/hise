@@ -305,18 +305,7 @@ public class HISEDao extends JpaDaoSupport {
     // }
     //    
 
-    public Task loadTask(Long taskId) {
-        return getJpaTemplate().find(Task.class, taskId);
-    }
-
-    public void saveTask(Task t) {
-        getJpaTemplate().persist(t);
-    }
     
-    public <T> T load(Class<T> what, Object id) {
-        return getJpaTemplate().find(what, id);
-    }
-
     // public Person loadUser(String userId) {
     // return getJpaTemplate().find(Person.class, userId);
     // }
@@ -348,9 +337,14 @@ public class HISEDao extends JpaDaoSupport {
                 public Object doInJpa(EntityManager em) throws PersistenceException {
                     return new JpaQueryBuilder().buildQuery(em, 
                             new Object[] {
-                            "select distinct t from Task t, TaskOrgEntity e where e.task = t and (e.name = :user and e.type = 'USER'",
+                            "select distinct t from Task t, TaskOrgEntity e where e.task = t and (e.name = :user and e.type = :constUser",
                             new JQBParam("user", query.getUser()),
-                            new JQBParam("groups", query.getUserGroups(), " or e.name in (:groups) and e.type = 'GROUP'"),
+                            new JQBParam("constUser", TaskOrgEntity.OrgEntityType.USER),
+                            new JQBParam("groups", query.getUserGroups(), 
+                                new Object[] {
+                                    " or e.name in (:groups) and e.type = :constGroup", 
+                                    new JQBParam("constGroup", TaskOrgEntity.OrgEntityType.GROUP)
+                                }),
                             ") and e.genericHumanRole = :role",
                             new JQBParam("role", query.getGenericHumanRole())
                     })
@@ -374,16 +368,18 @@ public class HISEDao extends JpaDaoSupport {
         });
     }
 
-    public void saveOrgEntity(OrgEntity o) {
-        getJpaTemplate().persist(o);
+    public <T> T find(Class<T> what, Object id) {
+        return getJpaTemplate().find(what, id);
     }
     
     public void remove(Object o) {
         getJpaTemplate().remove(o);
+        getJpaTemplate().flush();
     }
 
     public void persist(Object o) {
         getJpaTemplate().persist(o);
+        getJpaTemplate().flush();
     }
     
     public <T> void clearAllRecords(Class<T> clazz) {

@@ -49,12 +49,14 @@ public class Comment extends JpaBase {
     @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
-    @Column(length = 4096)
+    @Column(length = 4000)
     private String content;
 
     @ManyToOne
     @JoinColumn(name = "TASK_ID")
     private Task task;
+    
+    public Comment() {}
     
     public Comment(String content, Task task) {
         this.content = content;

@@ -24,16 +24,17 @@
 
   <bean id="htEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
     <property name="dataSource" ref="htDataSource"/>
-    <property name="jpaVendorAdapter" ref="htJPAVendorAdapter"/>
-    <property name="jpaPropertyMap" ref="htJPAPropertyMap"/>
+    <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
+    <property name="jpaPropertyMap" ref="jpaPropertyMap"/>
     <property name="persistenceXmlLocation" value="classpath:/org/apache/hise/persistence.xml"/>
     <property name="persistenceUnitName" value="org.apache.hise"/>
   </bean>
 
-  <util:map id="htJPAPropertyMap">
+  <util:map id="jpaPropertyMap">
+<!-- 
     <entry key="hibernate.hbm2ddl.auto" value="create"/>
+   -->
   </util:map>
-  
   <!-- 
       <bean id="htJPAVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="showSql" value="true" />
@@ -50,13 +51,53 @@
         <property name="suppressClose" value="true" />
     </bean>
      -->
-  
 
+<!-- OpenJPA Oracle  
+  <bean id="jpaVendorAdapter" class="org.apache.hise.dao.vendor.OpenJpaVendorAdapter">
+    <property name="database"       value="ORACLE" />
+    <property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.OracleDictionary" />
+    <property name="generateDdl"    value="true" />
+    <property name="showSql"      value="true" />
+    <property name="extProperties">
+      <util:map>
+        <entry key="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true,SchemaAction='drop,add')"/>
+      </util:map>
+    </property>
+  </bean>
+
+    <bean id="htDataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+        <property name="username" value="hise" />
+        <property name="password" value="hise"/>
+        <property name="autoCommit" value="false" />
+        <property name="suppressClose" value="true" />
+    </bean>
+   -->
+
+<!-- 
   <bean id="htJPAVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
     <property name="showSql" value="true"/>
     <property name="generateDdl" value="true"/>
     <property name="databasePlatform" value="org.hibernate.dialect.H2Dialect"/>
   </bean>
+  <bean id="jpaVendorAdapter" class="org.apache.hise.dao.vendor.OpenJpa2VendorAdapter">
+   -->
+   
+<!-- OpenJPA H2
+   -->
+  <bean id="jpaVendorAdapter" class="org.apache.hise.dao.vendor.OpenJpaVendorAdapter">
+    <property name="database"       value="H2" />
+    <property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.H2Dictionary" />
+    <property name="generateDdl"    value="true" />
+    <property name="showSql"      value="true" />
+    <property name="extProperties">
+      <util:map>
+        <entry key="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true,SchemaAction='drop,add')"/>
+      </util:map>
+    </property>
+  </bean>
+   
   <bean id="htDataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true">
     <property name="driverClassName" value="org.h2.Driver"/>
     <property name="url" value="jdbc:h2:mem:test"/>

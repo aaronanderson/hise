@@ -60,7 +60,7 @@
 
   <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
     <property name="entityManagerFactory" ref="htEntityManagerFactory"/>
-    <property name="dataSource" ref="htDataSource"/>
+    <property name="dataSource" ref="dataSource"/>
   </bean>
 
   <bean name="taskOperations" class="org.apache.hise.engine.jaxws.TaskOperationsImpl" init-method="init">

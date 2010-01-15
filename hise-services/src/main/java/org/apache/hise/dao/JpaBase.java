@@ -46,6 +46,7 @@ public abstract class JpaBase {
     
     @Override
     public boolean equals(Object obj) {
+        if (obj == null) return false;
         List<Object> l1 = new ArrayList<Object>();
         Collections.addAll(l1, getKeys());
         List<Object> l2 = new ArrayList<Object>();

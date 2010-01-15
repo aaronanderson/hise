@@ -47,7 +47,7 @@ public class HISEScheduler {
                     tt.execute(new TransactionCallback() {
 
                         public Object doInTransaction(TransactionStatus ts) {
-                            Job j3 = hiseEngine.getHiseDao().load(Job.class, j2); 
+                            Job j3 = hiseEngine.getHiseDao().find(Job.class, j2); 
                             if (j3 == null) {
                                 __log.debug("Skipping job " + j3 + " - it's no longer id DB");
                             } else {

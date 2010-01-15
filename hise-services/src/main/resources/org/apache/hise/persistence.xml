@@ -19,7 +19,6 @@
   -->
 <persistence xmlns="http://java.sun.com/xml/ns/persistence" version="1.0">
     <persistence-unit name="org.apache.hise">
-        <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <class>org.apache.hise.dao.Attachment</class>
         <class>org.apache.hise.dao.Comment</class>
         <class>org.apache.hise.dao.Deadline</class>

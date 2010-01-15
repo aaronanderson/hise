@@ -32,13 +32,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.annotations.Index;
 
 /**
  * Evaluated value of Task's presentation parameter.
@@ -51,8 +47,6 @@ public class PresentationParameter extends JpaBase {
     private static final Log log = LogFactory.getLog(PresentationParameter.class);
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "prpr_seq")
-    @SequenceGenerator(name = "prpr_seq", sequenceName = "prpr_seq")
     private Long id;
     
     private String name;
@@ -77,7 +71,6 @@ public class PresentationParameter extends JpaBase {
     
     @ManyToOne
     @JoinColumn(name = "task_id", nullable = false)
-    @Index(name = "prpr_task_id_idx")
     private Task task;
 
     public void setName(String name) {

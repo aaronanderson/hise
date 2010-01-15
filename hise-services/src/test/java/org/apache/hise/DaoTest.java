@@ -51,7 +51,7 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         o2 = new OrgEntity();
         o2.setName("group1");
         o2.setType(OrgEntityType.GROUP);
-        hiseDao.saveOrgEntity(o2);
+        hiseDao.persist(o2);
 
         o = new OrgEntity();
         o.setName("user1");
@@ -59,7 +59,7 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         o.setUserPassword("abc");
         
         o.addToGroup(o2);
-        hiseDao.saveOrgEntity(o);
+        hiseDao.persist(o);
         
         Task t = new Task();
         t.setStatus(Status.CREATED);
@@ -67,8 +67,10 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         t.setActualOwner("user1");
         
         t.getInput().put("abc", new Message("abc", "def"));
-        hiseDao.saveTask(t);
-        return t.getId();
+        hiseDao.persist(t);
+        Long id = t.getId();
+        Assert.assertNotNull(id);
+        return id;
     }
 
     private void addTask2() throws Exception {
@@ -84,7 +86,7 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         x.setTask(t);
         pa.add(x);
         t.setPeopleAssignments(pa);
-        hiseDao.saveTask(t);
+        hiseDao.persist(t);
     }
 
     private void addTask3() throws Exception {
@@ -100,13 +102,22 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         x.setTask(t);
         pa.add(x);
         t.setPeopleAssignments(pa);
-        hiseDao.saveTask(t);
+        hiseDao.persist(t);
     }
 
     
     @Test
     public void testDao() throws Exception {
-        addTask();
+        TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        final Long tid = (Long) tt.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus arg0) {
+                try {
+                    return addTask();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
     
     
@@ -117,6 +128,7 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         final Long tid = (Long) tt.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {
                 try {
+                    cleanup();
                     return addTask();
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -178,7 +190,7 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         tt.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {
                 try {
-                    Assert.assertTrue(hiseDao.loadTask(tid).getInput().get("abc").getMessage().equals("def"));
+                    Assert.assertTrue(hiseDao.find(Task.class, tid).getInput().get("abc").getMessage().equals("def"));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

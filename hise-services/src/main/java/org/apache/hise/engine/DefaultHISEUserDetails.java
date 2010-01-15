@@ -20,12 +20,12 @@ public class DefaultHISEUserDetails implements HISEUserDetails {
     }
 
     public String getUserPassword(String user1) {
-        OrgEntity user = hiseDao.load(OrgEntity.class, user1);
+        OrgEntity user = hiseDao.find(OrgEntity.class, user1);
         return user.getUserPassword();
     }
     
     public Collection<String> getUserGroups(String user1) {
-        OrgEntity user = hiseDao.load(OrgEntity.class, user1);
+        OrgEntity user = hiseDao.find(OrgEntity.class, user1);
         Collection<String> r = new ArrayList<String>();
         for (OrgEntity g : user.getUserGroups()) {
             Validate.isTrue(g.getType() == OrgEntityType.GROUP);

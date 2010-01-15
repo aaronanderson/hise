@@ -60,8 +60,7 @@ public class Message extends JpaBase {
     private static final Log log = LogFactory.getLog(Message.class);
     
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "mssg_seq")
-    @SequenceGenerator(name = "mssg_seq", sequenceName = "mssg_seq")
+    @GeneratedValue
     private Long id;
     
     private String partName;

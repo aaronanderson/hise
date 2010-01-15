@@ -30,14 +30,14 @@ public class SampleUsers {
                 {
                     g.setName("group1");
                     g.setType(TaskOrgEntity.OrgEntityType.GROUP);
-                    hiseDao.saveOrgEntity(g);
+                    hiseDao.persist(g);
                 }
                 {
                     OrgEntity o = new OrgEntity();
                     o.setName("user1");
                     o.setType(TaskOrgEntity.OrgEntityType.USER);
                     o.setUserPassword("user1pass");
-                    hiseDao.saveOrgEntity(o);
+                    hiseDao.persist(o);
                 }
                 {
                     OrgEntity o = new OrgEntity();
@@ -45,7 +45,7 @@ public class SampleUsers {
                     o.setType(TaskOrgEntity.OrgEntityType.USER);
                     o.setUserPassword("user2pass");
                     o.getUserGroups().add(g);
-                    hiseDao.saveOrgEntity(o);
+                    hiseDao.persist(o);
                 }
                 return null;
             }

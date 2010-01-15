@@ -252,7 +252,7 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public org.apache.hise.lang.xsd.htda.TTask getTaskInfo(String identifier) throws IllegalArgumentFault {
-        return convertTask(hiseEngine.getHiseDao().loadTask(Long.parseLong(identifier)));
+        return convertTask(hiseEngine.getHiseDao().find(org.apache.hise.dao.Task.class, Long.parseLong(identifier)));
     }
 
     public TTaskQueryResultSet query(String selectClause, String whereClause, String orderByClause, Integer maxTasks, Integer taskIndexOffset) throws IllegalArgumentFault, IllegalStateFault {
