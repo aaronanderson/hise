@@ -1,5 +1,6 @@
 package org.apache.hise;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.xml.validation.SchemaFactory;
 
 import junit.framework.Assert;
 
+import org.apache.hise.api.HISEUserDetails;
 import org.apache.hise.engine.HISEEngine;
 import org.apache.hise.engine.jaxws.TaskOperationsImpl;
 import org.apache.hise.lang.xsd.htda.TTask;
@@ -27,6 +29,15 @@ public class TaskOperationsTest {
     public void testGetMyTasks() throws Exception {
         TaskOperationsImpl ti = new MockTaskOperationsImpl();
         HISEEngine he = new HISEEngine();
+        he.setHiseUserDetails(new HISEUserDetails() {
+            public String getUserPassword(String user) {
+                return null;
+            }
+            
+            public Collection<String> getUserGroups(String user) {
+                return Collections.singleton("group1");
+            }
+        });
         MockHiseDao hd = new MockHiseDao();
         he.setHiseDao(hd);
         ti.setHiseEngine(he);

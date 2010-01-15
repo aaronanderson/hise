@@ -206,11 +206,7 @@ public class Task extends JpaBase {
     @Enumerated(EnumType.STRING)
     private Status statusBeforeSuspend;
 
-    /**
-     * People assigned to different generic human roles.
-     */
-    @ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    private OrgEntity actualOwner;
+    private String actualOwner;
 
     /**
      * This element is used to specify the priority of the task. It is an optional element which value is an integer expression. If not present, the priority of
@@ -347,12 +343,12 @@ public class Task extends JpaBase {
     public void setStatusBeforeSuspend(Status statusBeforeSuspend) {
         this.statusBeforeSuspend = statusBeforeSuspend;
     }
-
-    public OrgEntity getActualOwner() {
+    
+    public String getActualOwner() {
         return actualOwner;
     }
 
-    public void setActualOwner(OrgEntity actualOwner) {
+    public void setActualOwner(String actualOwner) {
         this.actualOwner = actualOwner;
     }
 

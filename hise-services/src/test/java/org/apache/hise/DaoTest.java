@@ -13,6 +13,7 @@ import org.apache.hise.dao.Message;
 import org.apache.hise.dao.OrgEntity;
 import org.apache.hise.dao.Task;
 import org.apache.hise.dao.TaskOrgEntity;
+import org.apache.hise.dao.TaskQuery;
 import org.apache.hise.dao.Task.Status;
 import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
 import org.apache.hise.lang.xsd.htda.TStatus;
@@ -63,7 +64,7 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         Task t = new Task();
         t.setStatus(Status.CREATED);
         t.setTaskDefinitionKey("asd");
-        t.setActualOwner(o);
+        t.setActualOwner("user1");
         
         t.getInput().put("abc", new Message("abc", "def"));
         hiseDao.saveTask(t);
@@ -125,8 +126,9 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         tt.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {
                 try {
-                    OrgEntity o = hiseDao.load(OrgEntity.class, "user1");
-                    List<Task> r = hiseDao.getUserTasks(o, "", GenericHumanRole.ACTUALOWNER, "", Collections.EMPTY_LIST, "", null, 100);
+                    TaskQuery query = new TaskQuery();
+                    query.setUser("user1");
+                    List<Task> r = hiseDao.getUserTasks(query);
                     Assert.assertEquals("asd", r.get(0).getTaskDefinitionKey());
                     return null;
                 } catch (Exception e) {
@@ -144,8 +146,13 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
                 try{
                     cleanup();
                     addTask2();
-                    OrgEntity o = hiseDao.load(OrgEntity.class, "user1");
-                    List<Task> r = hiseDao.getUserTasks(o, "", GenericHumanRole.POTENTIALOWNERS, "", Collections.EMPTY_LIST, "", null, 100);
+                    TaskQuery query = new TaskQuery();
+                    query.setUser("user1");
+                    query.setGenericHumanRole(GenericHumanRole.POTENTIALOWNERS);
+                    List<Task> r = hiseDao.getUserTasks(query);
+                    query.getUserGroups().add("group1");
+                    r = hiseDao.getUserTasks(query);
+                    
                     Assert.assertEquals("asd2", r.get(0).getTaskDefinitionKey());
                     return null;
                 } catch (Exception e) {
@@ -182,7 +189,7 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
     }
     
     @Test 
-    public void testGrupQuery() throws Exception {
+    public void testGroupQuery() throws Exception {
         TransactionTemplate tt = new TransactionTemplate(transactionManager);
         tt.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {
@@ -199,8 +206,11 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         tt.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {
                 try {
-                    OrgEntity o = hiseDao.load(OrgEntity.class, "user1");
-                    List<Task> r = hiseDao.getUserTasks(o, "", GenericHumanRole.POTENTIALOWNERS, "", Collections.EMPTY_LIST, "", null, 100);
+                    TaskQuery query = new TaskQuery();
+                    query.setUser("user1");
+                    query.getUserGroups().add("group1");
+                    query.setGenericHumanRole(GenericHumanRole.POTENTIALOWNERS);
+                    List<Task> r = hiseDao.getUserTasks(query);
                     Assert.assertEquals("asd3", r.get(0).getTaskDefinitionKey());
                 } catch (Exception e) {
                     throw new RuntimeException(e);

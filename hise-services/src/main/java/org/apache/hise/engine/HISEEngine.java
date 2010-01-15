@@ -9,6 +9,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hise.api.HISEUserDetails;
 import org.apache.hise.dao.HISEDao;
 import org.apache.hise.dao.Job;
 import org.apache.hise.engine.jaxws.HISEJaxWSClient;
@@ -33,11 +34,20 @@ public class HISEEngine {
     public final Map<String, QName> tasksMap = new HashMap<String, QName>();
     public final Map<QName, TaskInfo> tasks = new HashMap<QName, TaskInfo>();
     private HISEDao hiseDao;
+    private HISEUserDetails hiseUserDetails;
     
     private HISEScheduler hiseScheduler;
     
     public HISEDao getHiseDao() {
         return hiseDao;
+    }
+    
+    public void setHiseUserDetails(HISEUserDetails hiseUserDetails) {
+        this.hiseUserDetails = hiseUserDetails;
+    }
+
+    public HISEUserDetails getHiseUserDetails() {
+        return hiseUserDetails;
     }
 
     public void setHiseDao(HISEDao hiseDao) {

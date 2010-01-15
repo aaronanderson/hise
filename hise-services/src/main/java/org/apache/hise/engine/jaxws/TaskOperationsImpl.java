@@ -35,6 +35,7 @@ import javax.xml.ws.WebServiceContext;
 import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.OrgEntity;
 import org.apache.hise.dao.TaskOrgEntity;
+import org.apache.hise.dao.TaskQuery;
 import org.apache.hise.engine.HISEEngine;
 import org.apache.hise.engine.wsdl.IllegalAccessFault;
 import org.apache.hise.engine.wsdl.IllegalArgumentFault;
@@ -89,19 +90,33 @@ public class TaskOperationsImpl implements TaskOperations {
         return context.getUserPrincipal().getName();
     }
     
-    protected OrgEntity loadUser() {
-        return hiseEngine.getHiseDao().getOrgEntity(getUserString());
+    protected String loadUser() {
+//        return hiseEngine.getHiseDao().getOrgEntity(getUserString());
+        return getUserString();
     }
     
     public void claim(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {
         Task task = Task.load(hiseEngine, Long.valueOf(identifier));
-        task.claim(loadUser());
+        task.setCurrentUser(loadUser());
+        task.claim();
     }
 
     public List<org.apache.hise.lang.xsd.htda.TTask> getMyTasks(String taskType, String genericHumanRole, String workQueue, List<TStatus> status, String whereClause, String createdOnClause, Integer maxTasks) throws IllegalArgumentFault, IllegalStateFault {
         List<org.apache.hise.lang.xsd.htda.TTask> l = new ArrayList<org.apache.hise.lang.xsd.htda.TTask>();
-        OrgEntity user = loadUser();
-        List<org.apache.hise.dao.Task> k = hiseEngine.getHiseDao().getUserTasks(user, taskType, GenericHumanRole.valueOf(genericHumanRole), workQueue, status, whereClause, createdOnClause, maxTasks);
+        String user = loadUser();
+        
+        TaskQuery query = new TaskQuery();
+        query.setUser(user);
+        query.setUserGroups(hiseEngine.getHiseUserDetails().getUserGroups(user));
+        query.setTaskType(taskType);
+        query.setGenericHumanRole(GenericHumanRole.valueOf(genericHumanRole));
+        query.setWorkQueue(workQueue);
+        query.setStatus(status);
+        query.setWhereClause(whereClause);
+        query.setCreatedOnClause(createdOnClause);
+        query.setMaxTasks(maxTasks);
+        
+        List<org.apache.hise.dao.Task> k = hiseEngine.getHiseDao().getUserTasks(query);
         for (org.apache.hise.dao.Task u : k) {
             TTask t = convertTask(u);
             l.add(t);
@@ -229,7 +244,7 @@ public class TaskOperationsImpl implements TaskOperations {
         t.setTaskType(u.isNotification() ? "NOTIFICATION" : "TASK");
         t.setCreatedOn(u.getCreatedOn());
         t.setActivationTime(u.getActivationTime());
-        if (u.getActualOwner() != null) t.setActualOwner(u.getActualOwner().getName());
+        if (u.getActualOwner() != null) t.setActualOwner(u.getActualOwner());
         t.setCreatedBy(u.getCreatedBy());
         t.setName(u.getTaskDefinitionName());
         t.setStatus(TStatus.valueOf(u.getStatus().toString()));
@@ -246,15 +261,15 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public void release(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {
-        OrgEntity user = loadUser();
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
-        t.release(user);
+        t.setCurrentUser(loadUser());
+        t.release();
     }
 
     public void start(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {
-        OrgEntity user = loadUser();
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
-        t.start(user);
+        t.setCurrentUser(loadUser());
+        t.start();
     }
 
     public void activate(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
@@ -273,9 +288,9 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public void complete(String identifier, Object taskData) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
-        OrgEntity user = loadUser();
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
-        t.complete(user);
+        t.setCurrentUser(loadUser());
+        t.complete();
     }
 
     public void delegate(String identifier, TOrganizationalEntity organizationalEntity) throws IllegalAccessFault, IllegalStateFault, RecipientNotAllowed, IllegalArgumentFault {
@@ -299,9 +314,9 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public void fail(String identifier, String faultName, Object faultData) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault, IllegalOperationFault {
-        OrgEntity user = loadUser();
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
-        t.fail(user);
+        t.setCurrentUser(loadUser());
+        t.fail();
     }
 
     public void forward(String identifier, TOrganizationalEntity organizationalEntity) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
@@ -400,15 +415,13 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public void stop(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
-        OrgEntity user = loadUser();
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
-        t.stop(user);
+        t.stop();
     }
 
     public void suspend(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
-        OrgEntity user = loadUser();
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
-        t.suspend(user);
+        t.suspend();
     }
 
     public void suspendUntil(String identifier, TTime time) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {

@@ -25,10 +25,6 @@
   </bean>
    -->
 
-  <bean id="hisePasswordCallback" class="org.apache.hise.engine.HISEDaoPasswordCallback">
-    <property name="hiseDao" ref="hiseDao"/>
-  </bean>
-
 <!-- 
   <bean id="transactionHandler" class="org.apache.hise.engine.jaxws.TransactionHandler">
     <property name="transactionManager" ref="transactionManager"/>
@@ -42,8 +38,17 @@
   <bean id="hiseEngine" class="org.apache.hise.engine.HISEEngine">
     <property name="hiseDao" ref="hiseDao"/>
     <property name="hiseScheduler" ref="hiseScheduler"/>
+    <property name="hiseUserDetails" ref="hiseUserDetails"/>
   </bean>
 
+  <bean id="hiseUserDetails" class="org.apache.hise.engine.DefaultHISEUserDetails">
+    <property name="hiseDao" ref="hiseDao"/>
+  </bean>
+
+  <bean id="hisePasswordCallback" class="org.apache.hise.engine.HISEPasswordCallback">
+    <property name="hiseUserDetails" ref="hiseUserDetails"/>
+  </bean>
+  
   <bean id="hiseScheduler" class="org.apache.hise.engine.HISEScheduler" init-method="init" destroy-method="destroy">
     <property name="hiseEngine" ref="hiseEngine"/>
     <property name="transactionManager" ref="transactionManager"/>

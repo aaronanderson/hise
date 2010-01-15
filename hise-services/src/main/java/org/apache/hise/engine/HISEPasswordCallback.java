@@ -27,35 +27,30 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
+import org.apache.hise.api.HISEUserDetails;
 import org.apache.hise.dao.HISEDao;
 import org.apache.ws.security.WSPasswordCallback;
 
-public class HISEDaoPasswordCallback implements CallbackHandler {
+public class HISEPasswordCallback implements CallbackHandler {
     
-    private HISEDao hiseDao;
+    private HISEUserDetails hiseUserDetails;
     
-    public void setHiseDao(HISEDao hiseDao) {
-        this.hiseDao = hiseDao;
+    public void setHiseUserDetails(HISEUserDetails hiseUserDetails) {
+        this.hiseUserDetails = hiseUserDetails;
     }
 
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (int i = 0; i < callbacks.length; i++) {
             WSPasswordCallback pc = (WSPasswordCallback)callbacks[i];
 
-            String pass = hiseDao.getOrgEntity(pc.getIdentifer()).getUserPassword();
+            String pass = hiseUserDetails.getUserPassword(pc.getIdentifer());
             if (pass != null) {
                 pc.setPassword(pass);
                 return;
             }
         }
         
-        //
         // Password not found
-        //
         throw new IOException();
     }
-    
-//    public void setAliasPassword(String alias, String password) {
-//        passwords.put(alias, password);
-//    }
 }

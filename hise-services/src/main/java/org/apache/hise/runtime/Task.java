@@ -86,6 +86,8 @@ public class Task {
     private Job currentJob;
 //    private Date currentEventDateTime = Calendar.getInstance().getTime();
     
+    private String currentUser;
+    
     protected Task() {}
     
     public Job getCurrentJob() {
@@ -94,6 +96,14 @@ public class Task {
     
     public void setCurrentJob(Job currentJob) {
         this.currentJob = currentJob;
+    }
+
+    public String getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(String currentUser) {
+        this.currentUser = currentUser;
     }
 
     private Task(HISEEngine engine) {
@@ -147,10 +157,7 @@ public class Task {
             
             if (poSize == 1 && selected != null) {
                 //Nominate a single potential owner
-                OrgEntity a = hiseEngine.getHiseDao().getOrgEntity(selected.getName());
-                if (a.getType() == TaskOrgEntity.OrgEntityType.USER) {
-                    setActualOwner(a);
-                }
+                setActualOwner(selected.getName());
             }
         }
     }
@@ -224,7 +231,7 @@ public class Task {
         // recalculatePriority();
     }
     
-    public void setActualOwner(OrgEntity user) {
+    public void setActualOwner(String user) {
         taskDto.setActualOwner(user);
         setStatus(Status.RESERVED);
     }
@@ -473,7 +480,7 @@ public class Task {
      * @throws HTIllegalAccessException
      *             Thrown when task is in illegal state for claim i.e. not READY or person cannot become actual owner i.e. not potential owner or excluded.
      */
-    public void claim(OrgEntity user) {
+    public void claim() {
 
         if (taskDto.getActualOwner() != null) {
             throw new IllegalStateException("Actual owner already set " + taskDto.getActualOwner());
@@ -494,27 +501,25 @@ public class Task {
         // throw new HTIllegalAccessException("Person is excluded from potential owners.", person.getName());
         // }
 
-        Validate.isTrue(user.getType() == TaskOrgEntity.OrgEntityType.USER);
-
-        taskDto.setActualOwner(user);
+        taskDto.setActualOwner(currentUser);
 
         // taskDto.addOperationComment(Operations.CLAIM, person);
         setStatus(Status.RESERVED);
     }
     
-    public void start(OrgEntity user) {
+    public void start() {
         setStatus(Status.IN_PROGRESS);
     }
 
-    public void stop(OrgEntity user) {
+    public void stop() {
         setStatus(Status.RESERVED);
     }
 
-    public void release(OrgEntity user) {
+    public void release() {
         setStatus(Status.READY);
     }
     
-    public void suspend(OrgEntity user) {
+    public void suspend() {
         setStatus(Status.SUSPENDED);
     }
     
@@ -535,12 +540,12 @@ public class Task {
         setStatus(taskDto.getStatusBeforeSuspend());
     }
 
-    public void fail(OrgEntity user) {
+    public void fail() {
         setStatus(Status.FAILED);
         sendResponse();
     }
 
-    public void complete(OrgEntity user) {
+    public void complete() {
         setStatus(Status.COMPLETED);
         sendResponse();
     }
