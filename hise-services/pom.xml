@@ -104,6 +104,7 @@
             </exclusions>
             -->
         </dependency>
+        
         <dependency>
             <groupId>org.apache.hise</groupId>
             <artifactId>hise-wsdl-classes</artifactId>
@@ -245,7 +246,7 @@
         <dependency>
         	<groupId>org.apache.openjpa</groupId>
         	<artifactId>openjpa</artifactId>
-        	<version>1.2.1</version>
+        	<version>1.2.2</version>
         </dependency>
         
         <dependency>
@@ -286,6 +287,13 @@
             <artifactId>log4j</artifactId>
             <version>1.2.15</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+        	<groupId>oracle</groupId>
+        	<artifactId>ojdbc5</artifactId>
+        	<version>11.1.0.6.0</version>
+        	<type>jar</type>
+        	<scope>test</scope>
         </dependency>
         
     </dependencies>

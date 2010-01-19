@@ -53,6 +53,7 @@
      -->
 
 <!-- OpenJPA Oracle  
+   -->
   <bean id="jpaVendorAdapter" class="org.apache.hise.dao.vendor.OpenJpaVendorAdapter">
     <property name="database"       value="ORACLE" />
     <property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.OracleDictionary" />
@@ -61,6 +62,8 @@
     <property name="extProperties">
       <util:map>
         <entry key="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true,SchemaAction='drop,add')"/>
+        <entry key="openjpa.Sequence" value="native"/>
+        
       </util:map>
     </property>
   </bean>
@@ -73,7 +76,6 @@
         <property name="autoCommit" value="false" />
         <property name="suppressClose" value="true" />
     </bean>
-   -->
 
 <!-- 
   <bean id="htJPAVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
@@ -85,7 +87,6 @@
    -->
    
 <!-- OpenJPA H2
-   -->
   <bean id="jpaVendorAdapter" class="org.apache.hise.dao.vendor.OpenJpaVendorAdapter">
     <property name="database"       value="H2" />
     <property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.H2Dictionary" />
@@ -108,6 +109,7 @@
     <property name="autoCommit" value="false"/>
     <property name="suppressClose" value="true"/>
   </bean>
+   -->
   
 
   <!--

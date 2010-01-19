@@ -380,6 +380,11 @@ public class HISEDao extends JpaDaoSupport {
     public void persist(Object o) {
         getJpaTemplate().persist(o);
         getJpaTemplate().flush();
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("", e);
+        }
     }
     
     public <T> void clearAllRecords(Class<T> clazz) {

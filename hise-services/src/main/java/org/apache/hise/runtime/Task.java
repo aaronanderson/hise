@@ -137,6 +137,7 @@ public class Task {
         Task t = new Task(engine);
         HISEDao dao = engine.getHiseDao();
         t.taskDto = dao.find(org.apache.hise.dao.Task.class, id);
+        Validate.notNull(t.taskDto, "Can't find task " + id);
         // t.setTaskDto(em.find(Task.class, , arg1)engine.taskDao.fetch(id));
         t.taskDefinition = engine.getTaskDefinition(t.taskDto.getTaskDefinitionName());
         return t;

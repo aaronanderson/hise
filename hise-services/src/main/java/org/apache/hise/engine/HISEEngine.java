@@ -119,6 +119,7 @@ public class HISEEngine {
         assert(taskName != null);
         log.debug("routed " + portType + " " + operation + " -> " + taskName);
         Task t = Task.create(this, getTaskDefinition(taskName), createdBy, DOMUtils.getFirstElement(body), requestHeader);
+        hiseDao.persist(t.getTaskDto());
         return t.getTaskEvaluator().evaluateApproveResponseHeader();
     }
     

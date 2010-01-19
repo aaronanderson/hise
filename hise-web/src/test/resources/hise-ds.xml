@@ -100,6 +100,13 @@
     <property name="extProperties">
       <util:map>
         <entry key="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true,SchemaAction='drop,add')"/>
+        <entry key="openjpa.Sequence" value="native"/>
+        <!-- 
+        <entry key="openjpa.LockManager" value="pessimistic(VersionCheckOnReadLock=true,VersionUpdateOnWriteLock=true)"/>
+        <entry key="openjpa.ReadLockLevel" value="write"/>
+        <entry key="openjpa.FlushBeforeQueries" value="true"/>
+        <entry key="openjpa.Multithreaded" value="true"/>
+         -->
       </util:map>
     </property>
   </bean>
