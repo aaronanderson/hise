@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!--
+
+        Licensed to the Apache Software Foundation (ASF) under one or more
+        contributor license agreements.  See the NOTICE file distributed with
+        this work for additional information regarding copyright ownership.
+        The ASF licenses this file to You under the Apache License, Version 2.0
+        (the "License"); you may not use this file except in compliance with
+        the License.  You may obtain a copy of the License at
+
+           http://www.apache.org/licenses/LICENSE-2.0
+
+        Unless required by applicable law or agreed to in writing, software
+        distributed under the License is distributed on an "AS IS" BASIS,
+        WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions and
+        limitations under the License.
+    -->
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.hise</groupId>
+        <artifactId>hise</artifactId>
+        <version>1.0.21-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.apache.hise</groupId>
+    <artifactId>hise-bundle</artifactId>
+    <version>1.0.21-SNAPSHOT</version>
+    <packaging>bundle</packaging>
+
+    <pluginRepositories>
+      <pluginRepository>
+        <id>open.iona.m2-snapshot</id>
+        <name>IONA Snapshots Repository</name>
+        <url>http://repo.open.iona.com/maven2-snapshot/</url>
+        <snapshots>
+          <enabled>true</enabled>
+        </snapshots>
+        <releases>
+           <enabled>false</enabled>
+        </releases>
+      </pluginRepository>
+      <pluginRepository>
+        <id>open.iona.m2</id>
+        <name>IONA Repository</name>
+        <url>http://repo.open.iona.com/maven2/</url>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+        <releases>
+           <enabled>true</enabled>
+        </releases>
+      </pluginRepository>
+    </pluginRepositories>
+
+    <build>
+        <!--
+    <resources>
+        
+      <resource>
+        <directory>src/main/karaf</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+    -->
+    <plugins>
+        <!--
+        -->
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>generate-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/karaf</outputDirectory>
+              <resources>          
+                <resource>
+                    <directory>${basedir}/src/main/karaf</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>              
+            </configuration>            
+          </execution>
+        </executions>
+      </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+				<version>1.4.3</version>
+				<extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
+                        <Import-Package>
+                            javax.jws,
+                            javax.wsdl,
+                            META-INF.cxf,
+                            META-INF.cxf.osgi,
+                            org.apache.cxf.bus,
+                            org.apache.cxf.bus.spring,
+                            org.apache.cxf.bus.resource,
+                            org.apache.cxf.configuration.spring,
+                            org.apache.cxf.resource,
+                            org.apache.cxf.transport.http_osgi,
+                            org.apache.servicemix.util,
+                            org.springframework.beans.factory.config
+                        </Import-Package>
+                        <Private-Package>org.apache.servicemix.examples.cxf</Private-Package>
+                        <Require-Bundle>org.apache.cxf.bundle</Require-Bundle>
+                        <!--
+                        <DynamicImport-Package>*</DynamicImport-Package>
+                        -->
+                    </instructions>
+                </configuration>
+            </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+          <artifactId>build-helper-maven-plugin</artifactId>
+          <version>1.2</version>
+          <executions>
+            <execution>
+              <id>attach-artifacts</id>
+              <phase>package</phase>
+              <goals>
+                <goal>attach-artifact</goal>
+              </goals>
+              <configuration>
+                <artifacts>
+                  <artifact>
+                    <file>target/karaf/features.xml</file>
+                     <type>xml</type>
+                     <classifier>features</classifier>
+                   </artifact>
+                 </artifacts>
+               </configuration>
+             </execution>
+         </executions>
+       </plugin>
+    </plugins>
+  </build>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix</groupId>
+            <artifactId>servicemix-utils</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+    </dependencies>
+</project>

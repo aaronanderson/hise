@@ -29,6 +29,7 @@
 		<module>hise-wsdl-classes</module>
 		<module>hise-services</module>
         <module>hise-web</module>
+        <module>hise-bundle</module>
 	</modules>
 	<properties>
 		<cxf.version>2.2.4</cxf.version>

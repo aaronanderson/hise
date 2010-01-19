@@ -1,0 +1,21 @@
+<features>
+    <repository>mvn:org.apache.felix.karaf/apache-felix-karaf/1.1.0-SNAPSHOT/xml/features</repository>
+
+    <!--
+    <feature name="transaction" version="1.0.0"> 
+        <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle> 
+        <bundle>mvn:org.apache.geronimo.specs/geronimo-j2ee-connector_1.5_spec/2.0.0</bundle> 
+        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.howl/1.0.1-1_1</bundle> 
+        <bundle>mvn:org.apache.geronimo.components/geronimo-transaction/2.2-r634076</bundle> 
+        <bundle>mvn:org.springframework/spring-tx/2.5.6</bundle> 
+        <bundle>mvn:org.apache.servicemix.transaction/org.apache.servicemix.transaction/1.0.0</bundle> 
+    </feature>     
+    -->
+    
+    <feature name="hise" version="${project.version}"> 
+        <!--
+        <feature version="1.0.0">transaction</feature> 
+        -->
+        <bundle>mvn:org.apache.hise/hise-bundle/${project.version}</bundle> 
+    </feature>
+</features>
