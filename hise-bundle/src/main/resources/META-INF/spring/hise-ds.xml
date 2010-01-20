@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Licensed to the Apache Software Foundation (ASF) under one
+  ~ or more contributor license agreements.  See the NOTICE file
+  ~ distributed with this work for additional information
+  ~ regarding copyright ownership.  The ASF licenses this file
+  ~ to you under the Apache License, Version 2.0 (the
+  ~ "License"); you may not use this file except in compliance
+  ~ with the License.  You may obtain a copy of the License at
+  ~
+  ~    http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing,
+  ~ software distributed under the License is distributed on an
+  ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  ~ KIND, either express or implied.  See the License for the
+  ~ specific language governing permissions and limitations
+  ~ under the License.
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:util="http://www.springframework.org/schema/util"
+       
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+    ">
+
+    <bean id="htEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
+        <property name="jpaPropertyMap" ref="jpaPropertyMap"/>
+        <property name="persistenceXmlLocation" value="classpath:/org/apache/hise/persistence.xml" />
+        <property name="persistenceUnitName" value="org.apache.hise"/>
+    </bean>
+
+    <util:map id="jpaPropertyMap">
+        <!-- 
+            <entry key="hibernate.search.default.directory_provider" value="org.hibernate.search.store.RAMDirectoryProvider"  />   
+            <entry key="hibernate.cache.provider_class" value="net.sf.ehcache.hibernate.SingletonEhCacheProvider" />
+            <entry key="hibernate.cache.provider_configuration" value="classpath:ehCache.xml" />
+            <entry key="hibernate.cache.use_second_level_cache" value="true" />
+            <entry key="hibernate.generate_statistics" value="true" />
+            <entry key="hibernate.cache.use_structured_entries" value="true" />
+            <entry key="hibernate.jdbc.batch_size" value="0" />
+            <entry key="hibernate.default_batch_fetch_size" value="20"/>
+            <entry key="hibernate.hbm2ddl.auto" value="create" />
+             -->
+    </util:map>
+    
+    <!-- 
+    <bean id="htJPAVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="showSql" value="true" />
+        <property name="generateDdl" value="true" />
+        <property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" />
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true">
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:file:~/hise-db;DB_CLOSE_ON_EXIT=false" />
+        <property name="username" value="sa" />
+        <property name="password">
+            <value></value>
+        </property>
+        <property name="autoCommit" value="false" />
+        <property name="suppressClose" value="true" />
+    </bean>
+     -->
+
+    <!-- 
+    <bean id="htJPAVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="showSql" value="true" />
+        <property name="generateDdl" value="true" />
+        <property name="databasePlatform" value="org.hibernate.dialect.MySQL5Dialect" />
+    </bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <property name="url" value="jdbc:mysql://localhost/hise"/>
+        <property name="username" value="root" />
+        <property name="password" value="abc"/>
+        <property name="autoCommit" value="false" />
+        <property name="suppressClose" value="true" />
+    </bean>
+     -->
+
+<!-- 
+    <bean id="htJPAVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="showSql" value="false" />
+        <property name="generateDdl" value="true" />
+        <property name="databasePlatform" value="org.hibernate.dialect.OracleDialect" />
+    </bean>
+     -->
+    <bean id="jpaVendorAdapter" class="org.apache.hise.dao.vendor.OpenJpaVendorAdapter">
+    <property name="database" value="ORACLE"/>
+    <property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.OracleDictionary"/>
+    <property name="generateDdl"    value="true" />
+    <property name="showSql"      value="true" />
+    <property name="extProperties">
+      <util:map>
+        <entry key="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true,SchemaAction='drop,add')"/>
+      </util:map>
+    </property>
+  </bean>
+  
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
+        <property name="url" value="jdbc:oracle:thin:@localhost:1521:XE"/>
+        <property name="username" value="hise" />
+        <property name="password" value="hise"/>
+        <property name="autoCommit" value="false" />
+        <property name="suppressClose" value="true" />
+    </bean>
+    
+    <bean id="sampleUsers" class="org.apache.hise.SampleUsers" init-method="init">
+        <property name="hiseDao" ref="hiseDao"></property>
+        <property name="transactionManager" ref="transactionManager"></property>
+    </bean>
+ </beans>

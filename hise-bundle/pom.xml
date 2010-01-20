@@ -59,18 +59,8 @@
     </pluginRepositories>
 
     <build>
-        <!--
-    <resources>
-        
-      <resource>
-        <directory>src/main/karaf</directory>
-        <filtering>true</filtering>
-      </resource>
-    </resources>
-    -->
     <plugins>
         <!--
-        -->
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
@@ -92,6 +82,7 @@
           </execution>
         </executions>
       </plugin>
+      -->
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -101,27 +92,46 @@
                     <instructions>
                         <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
                         <Import-Package>
-                            javax.jws,
-                            javax.wsdl,
+                            javax.persistence,
+                            javax.xml.bind,
+                            javax.xml.soap,
                             META-INF.cxf,
                             META-INF.cxf.osgi,
-                            org.apache.cxf.bus,
-                            org.apache.cxf.bus.spring,
-                            org.apache.cxf.bus.resource,
-                            org.apache.cxf.configuration.spring,
-                            org.apache.cxf.resource,
-                            org.apache.cxf.transport.http_osgi,
+                            org.apache.*,
                             org.apache.servicemix.util,
-                            org.springframework.beans.factory.config
+                            org.w3c.*,
+                            org.xml.sax.*,
                         </Import-Package>
-                        <Private-Package>org.apache.servicemix.examples.cxf</Private-Package>
+                        <Private-Package>org.apache.hise*</Private-Package>
+                        <DynamicImport-Package>*</DynamicImport-Package>
+                        <!--
+                        <DynamicImport-Package>org.w3.*,javax.xml.xquery</DynamicImport-Package>
+                            org.springframework.*,
+                            org.w3.*,
+			    net.sf.saxon*
+                        -->
                         <Require-Bundle>org.apache.cxf.bundle</Require-Bundle>
+                        <Embed-Dependency>saxon*,spring-orm,spring-jdbc;scope=compile|runtime</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                        <!--
+                        -->
+
+                        <!--
+                        <_exportcontents>org.apache.hise*</_exportcontents>
+                        -->
                         <!--
                         <DynamicImport-Package>*</DynamicImport-Package>
+<Include-Resource>
+  {maven-resources}, {maven-dependencies}
+</Include-Resource>
+                        -->
+                        <!--
+                        <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
                         -->
                     </instructions>
                 </configuration>
             </plugin>
+          <!--
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
@@ -145,9 +155,20 @@
              </execution>
          </executions>
        </plugin>
+      <plugin>
+        <groupId>org.apache.felix.karaf.tooling</groupId>
+          <artifactId>features-maven-plugin</artifactId>
+          <version>1.2.0-psc-01-01RC1</version>
+       </plugin>
+       -->
     </plugins>
   </build>
     <dependencies>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jpa_1.0_spec</artifactId>
+            <version>1.1.2</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
@@ -158,5 +179,169 @@
             <artifactId>servicemix-utils</artifactId>
             <version>1.2.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.1.108</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>oracle</groupId>
+            <artifactId>ojdbc5</artifactId>
+            <version>11.1.0.6.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.hise</groupId>
+            <artifactId>hise-wsdl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hise</groupId>
+            <artifactId>hise-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-bindings-http</artifactId>
+            <version>${cxf.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-core</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-frontend-jaxws</artifactId>
+            <version>${cxf.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>jaxb-xjc</artifactId>
+                    <groupId>com.sun.xml.bind</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <version>${cxf.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-common-utilities</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-security</artifactId>
+            <version>${cxf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>2.7.1</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.soap</groupId>
+            <artifactId>saaj-impl</artifactId>
+            <version>1.3</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>soap</groupId>
+            <artifactId>soap</artifactId>
+            <scope>runtime</scope>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>wsdl4j</groupId>
+            <artifactId>wsdl4j</artifactId>
+            <scope>runtime</scope>
+            <version>1.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${spring.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>${spring.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.8.0.GA</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hise</groupId>
+            <artifactId>hise-test-example</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.openjpa</artifactId>
+            <version>1.2.1_2</version>
+        </dependency>
+        <!--
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.saxon</artifactId>
+            <version>9.1.0.8_3</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.apache.servicemix.bundles</groupId>
+            <artifactId>org.apache.servicemix.bundles.serp</artifactId>
+            <version>1.13.1_2</version>
+        </dependency>
+
+
+
     </dependencies>
 </project>
