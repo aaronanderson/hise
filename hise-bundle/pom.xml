@@ -111,7 +111,7 @@
 			    net.sf.saxon*
                         -->
                         <Require-Bundle>org.apache.cxf.bundle</Require-Bundle>
-                        <Embed-Dependency>saxon*,spring-orm,spring-jdbc;scope=compile|runtime</Embed-Dependency>
+                        <Embed-Dependency>saxon*,spring-orm,spring-jdbc,ojdbc5;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <!--
                         -->
@@ -190,7 +190,6 @@
             <groupId>oracle</groupId>
             <artifactId>ojdbc5</artifactId>
             <version>11.1.0.6.0</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>
