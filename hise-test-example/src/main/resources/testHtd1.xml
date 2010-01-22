@@ -83,12 +83,13 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
                     </htd:literal>
                   </htd:from>
                 </htd:businessAdministrators>
-
+<!-- 
                 <htd:businessAdministrators>
                     <htd:from logicalPeopleGroup="lpg1">
                         <htd:argument name="region"> htd:getInput("ClahimApprovalRequest")/region </htd:argument>
                     </htd:from>
                 </htd:businessAdministrators>
+                 -->
                 
             	<htd:taskStakeholders>
                   <htd:from>
@@ -227,11 +228,13 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
                   </htd:from>  
                 </htd:businessAdministrators>
 
+<!-- 
                 <htd:businessAdministrators>
                     <htd:from logicalPeopleGroup="lpg1">
                         <htd:argument name="region"> htd:getInput("ClahimApprovalRequest")/region </htd:argument>
                     </htd:from>
                 </htd:businessAdministrators>
+                 -->
                 
             	<htd:taskStakeholders>
                   <htd:from>

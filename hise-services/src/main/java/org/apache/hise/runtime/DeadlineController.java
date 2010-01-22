@@ -89,6 +89,8 @@ public class DeadlineController implements TaskStateListener {
     }
     
     public void deadlineCrossed(Job deadline) {
+        __log.debug("deadline crossed" + deadline);
+
         EscalationResult e = task.getTaskEvaluator().findEscalation(deadline.getDetails());
         if (e == null) {
             __log.warn("Can't find escalation " + deadline.getDetails() + " in task definition " + task);

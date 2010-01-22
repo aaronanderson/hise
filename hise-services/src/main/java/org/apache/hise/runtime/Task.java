@@ -90,6 +90,8 @@ public class Task {
     
     private String currentUser;
     
+    private DeadlineController deadlineController;
+    
     protected Task() {}
     
     public Job getCurrentJob() {
@@ -122,7 +124,8 @@ public class Task {
 
         taskStateListeners = new ArrayList<TaskStateListener>();
         taskStateListeners.add(new TaskLifecycle(this));
-        taskStateListeners.add(new DeadlineController(this));
+        deadlineController = new DeadlineController(this);
+        taskStateListeners.add(deadlineController);
 
         taskEvaluator = new TaskEvaluator(this);
     }
@@ -548,7 +551,7 @@ public class Task {
 
     public void deadlineJobAction() {
         taskDto.getDeadlines().remove(getCurrentJob());
-        __log.debug("Fired deadline " + getCurrentJob());
+        deadlineController.deadlineCrossed(getCurrentJob());
     }
 
     
