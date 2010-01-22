@@ -55,19 +55,23 @@ public class DeadlineController implements TaskStateListener {
             deadlines = new TDeadlines();
         }
         
-        if (newStatus.equals(Status.CREATED)) {
+        if (newStatus == Status.CREATED) {
             computeDeadlines(deadlines.getStartDeadline(), false);
-        } else if (newStatus.equals(Status.IN_PROGRESS)) {
+        } else if (newStatus == Status.IN_PROGRESS) {
             deleteDeadlines();
             computeDeadlines(deadlines.getCompletionDeadline(), true);
-        } else if (newStatus.equals(Status.COMPLETED)) {
+        } else if (newStatus == Status.COMPLETED || newStatus == Status.FAILED) {
             deleteDeadlines();
         }
     }
     
     private void deleteDeadlines() {
         __log.debug("clearing deadlines " + task.getTaskDto().getDeadlines());
-        task.getTaskDto().getDeadlines().clear();
+        while (!task.getTaskDto().getDeadlines().isEmpty()) {
+            Job j = task.getTaskDto().getDeadlines().iterator().next();
+            task.getTaskDto().getDeadlines().remove(j);
+            task.getHiseEngine().getHiseDao().remove(j);
+        }
     }
     
     private void computeDeadlines(List<TDeadline> deadlines, boolean isCompletion) {

@@ -118,6 +118,10 @@ public class Task {
         this.currentUser = currentUser;
     }
 
+    public HISEEngine getHiseEngine() {
+        return hiseEngine;
+    }
+
     private Task(HISEEngine engine) {
         this.hiseEngine = engine;
         Validate.notNull(hiseEngine);
