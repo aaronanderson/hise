@@ -21,8 +21,10 @@ package org.apache.hise.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -265,8 +267,12 @@ public class Task extends JpaBase {
     @OneToMany(mappedBy = "task", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Attachment> attachments = new ArrayList<Attachment>();
 
-    @OneToMany(mappedBy = "task", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
-    private List<Deadline> deadlines = new ArrayList<Deadline>();
+//    @OneToMany(mappedBy = "task", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+//    private List<Deadline> deadlines = new ArrayList<Deadline>();
+    
+    @OneToMany(cascade = {CascadeType.ALL})
+    @JoinTable(name="DEADLINE")
+    private Set<Job> deadlines = new HashSet<Job>();
 
     /**
      * Fault information. Set when task fail method is called.
@@ -283,14 +289,22 @@ public class Task extends JpaBase {
     private Map<String, PresentationParameter> presentationParameters = new HashMap<String, PresentationParameter>();
 
 
-    public List<Deadline> getDeadlines() {
+//    public List<Deadline> getDeadlines() {
+//        return deadlines;
+//    }
+//
+//    public void setDeadlines(List<Deadline> deadlines) {
+//        this.deadlines = deadlines;
+//    }
+
+    public Set<Job> getDeadlines() {
         return deadlines;
     }
 
-    public void setDeadlines(List<Deadline> deadlines) {
+    public void setDeadlines(Set<Job> deadlines) {
         this.deadlines = deadlines;
     }
-
+    
     public String getTaskDefinitionKey() {
         return taskDefinitionKey;
     }

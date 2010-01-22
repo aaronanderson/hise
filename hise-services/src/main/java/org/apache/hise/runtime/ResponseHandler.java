@@ -22,8 +22,14 @@ package org.apache.hise.runtime;
 import org.apache.hise.dao.Task.Status;
 
 public class ResponseHandler implements TaskStateListener {
+    private Task task;
     
-    public void stateChanged(Task task, Status oldStatus, Status newStatus) {
+    public ResponseHandler(Task task) {
+        super();
+        this.task = task;
+    }
+
+    public void stateChanged(Status oldStatus, Status newStatus) {
         boolean result = false;
         if (newStatus.equals(Status.COMPLETED)) {
             result = true;

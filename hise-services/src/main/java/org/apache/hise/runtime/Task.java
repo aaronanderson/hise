@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.xml.namespace.QName;
@@ -119,8 +121,8 @@ public class Task {
         Validate.notNull(hiseEngine);
 
         taskStateListeners = new ArrayList<TaskStateListener>();
-        taskStateListeners.add(new TaskLifecycle());
-        taskStateListeners.add(new DeadlineController());
+        taskStateListeners.add(new TaskLifecycle(this));
+        taskStateListeners.add(new DeadlineController(this));
 
         taskEvaluator = new TaskEvaluator(this);
     }
@@ -375,7 +377,7 @@ public class Task {
 
     public void setStatus(Status newStatus) {
         for (TaskStateListener l : taskStateListeners) {
-            l.stateChanged(this, taskDto.getStatus(), newStatus);
+            l.stateChanged(taskDto.getStatus(), newStatus);
         }
         taskDto.setStatus(newStatus);
     }
@@ -543,6 +545,13 @@ public class Task {
         taskDto.setSuspendUntil(null);
         resume();
     }
+
+    public void deadlineJobAction() {
+        taskDto.getDeadlines().remove(getCurrentJob());
+        __log.debug("Fired deadline " + getCurrentJob());
+    }
+
+    
     
     public void resume() {
         setStatus(taskDto.getStatusBeforeSuspend());
@@ -575,13 +584,7 @@ public class Task {
     }
     
     public void forward(TOrganizationalEntity target) {
-        releaseOwner();
-        
-        for (TaskOrgEntity x : taskDto.getPeopleAssignments()) {
-            x.setTask(null);
-            hiseEngine.getHiseDao().remove(x);
-        }
-        taskDto.getPeopleAssignments().clear();
+        Set<TaskOrgEntity> e = new HashSet<TaskOrgEntity>();
         
         for (String user : XmlUtils.notNull(target.getUsers(), new TUserlist()).getUser()) {
             TaskOrgEntity x = new TaskOrgEntity();
@@ -589,7 +592,7 @@ public class Task {
             x.setName(user);
             x.setType(OrgEntityType.USER);
             x.setTask(taskDto);
-            taskDto.getPeopleAssignments().add(x);
+            e.add(x);
         }
 
         for (String group : XmlUtils.notNull(target.getGroups(), new TGrouplist()).getGroup()) {
@@ -598,11 +601,26 @@ public class Task {
             x.setName(group);
             x.setType(OrgEntityType.GROUP);
             x.setTask(taskDto);
-            taskDto.getPeopleAssignments().add(x);
+            e.add(x);
         }
+        
+        forward(e);
+    }
+    
+    public void forward(Set<TaskOrgEntity> targets) {
+        __log.debug("forwarding to " + targets);
+        releaseOwner();
+        
+        for (TaskOrgEntity x : taskDto.getPeopleAssignments()) {
+            x.setTask(null);
+            hiseEngine.getHiseDao().remove(x);
+        }
+        taskDto.getPeopleAssignments().clear();
+        taskDto.getPeopleAssignments().addAll(targets);
         
         tryNominateOwner();
     }
+    
 
     //    
     // /**

@@ -29,12 +29,15 @@ import javax.xml.namespace.QName;
 
 import net.sf.saxon.value.DurationValue;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
 import org.apache.hise.lang.xsd.htd.TDeadline;
+import org.apache.hise.lang.xsd.htd.TDeadlines;
+import org.apache.hise.lang.xsd.htd.TEscalation;
 import org.apache.hise.lang.xsd.htd.TExpression;
 import org.apache.hise.lang.xsd.htd.TFrom;
 import org.apache.hise.lang.xsd.htd.TGenericHumanRole;
@@ -93,34 +96,41 @@ public class TaskEvaluator {
 
         for (JAXBElement<TGenericHumanRole> r : p.getGenericHumanRole()) {
             GenericHumanRole assignmentRole = GenericHumanRole.valueOf(r.getName().getLocalPart().toUpperCase());
-            TGenericHumanRole role = r.getValue();
-            TFrom f = role.getFrom();
-            if (f.getLogicalPeopleGroup() != null) {
-                // TODO
-            } else {
-                Element e = DOMUtils.findElement(QName.valueOf("{http://www.example.org/WS-HT}literal"), f.getContent());
-                if (e != null) {
-                    for (String user : (List<String>) buildQueryEvaluator().evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:users/htd:user return string($i)", e)) {
-                        TaskOrgEntity x = new TaskOrgEntity();
-                        x.setGenericHumanRole(assignmentRole);
-                        x.setName(user);
-                        x.setType(OrgEntityType.USER);
-                        x.setTask(task.getTaskDto());
-                        result.add(x);
-                    }
-                    for (String group : (List<String>) buildQueryEvaluator().evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:groups/htd:group return string($i)", e)) {
-                        TaskOrgEntity x = new TaskOrgEntity();
-                        x.setGenericHumanRole(assignmentRole);
-                        x.setName(group);
-                        x.setType(OrgEntityType.GROUP);
-                        x.setTask(task.getTaskDto());
-                        result.add(x);
-                    }
-                }
-            }
+            Set<TaskOrgEntity> result2 = evaluateGenericHumanRole(r.getValue(), assignmentRole);
+            result.addAll(result2);
         }
         if (__log.isDebugEnabled()) {
             __log.debug("evaluated people assignments " + task.getTaskDefinition().getTaskName() + " " + result);
+        }
+        return result;
+    }
+
+    public Set<TaskOrgEntity> evaluateGenericHumanRole(TGenericHumanRole role, GenericHumanRole assignmentRole) {
+        Set<TaskOrgEntity> result = new HashSet<TaskOrgEntity>();
+
+        TFrom f = role.getFrom();
+        if (f.getLogicalPeopleGroup() != null) {
+            throw new NotImplementedException();
+        } else {
+            Element e = DOMUtils.findElement(QName.valueOf("{http://www.example.org/WS-HT}literal"), f.getContent());
+            if (e != null) {
+                for (String user : (List<String>) buildQueryEvaluator().evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:users/htd:user return string($i)", e)) {
+                    TaskOrgEntity x = new TaskOrgEntity();
+                    x.setGenericHumanRole(assignmentRole);
+                    x.setName(user);
+                    x.setType(OrgEntityType.USER);
+                    x.setTask(task.getTaskDto());
+                    result.add(x);
+                }
+                for (String group : (List<String>) buildQueryEvaluator().evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:groups/htd:group return string($i)", e)) {
+                    TaskOrgEntity x = new TaskOrgEntity();
+                    x.setGenericHumanRole(assignmentRole);
+                    x.setName(group);
+                    x.setType(OrgEntityType.GROUP);
+                    x.setTask(task.getTaskDto());
+                    result.add(x);
+                }
+            }
         }
         return result;
     }
@@ -149,4 +159,40 @@ public class TaskEvaluator {
         return (Node) evaluator.evaluateExpression("<htd:taskId xmlns:htd=\"xmlns:htd=http://www.example.org/WS-HT\">{$taskId}</htd:taskId>", null).get(0);
     }
 
+    
+    public static String getEscalationKey(TEscalation e, boolean isCompletion) {
+        return e.getName() + ";" + (isCompletion ? "COMPLETION" : "START");
+    }
+    
+    public static class EscalationResult {
+        public final TEscalation escalation;
+        public final boolean isCompletion;
+        public EscalationResult(TEscalation escalation, boolean isCompletion) {
+            super();
+            this.escalation = escalation;
+            this.isCompletion = isCompletion;
+        }
+    }
+    
+    public EscalationResult findEscalation(String name) {
+        EscalationResult r = null;
+        TDeadlines d = task.getTaskDefinition().gettTask().getDeadlines();
+        for (TDeadline u : d.getStartDeadline()) {
+            for (TEscalation e : u.getEscalation()) {
+                if (getEscalationKey(e, false).equals(name)) {
+                    return new EscalationResult(e, false);
+                }
+            }
+        }
+
+        for (TDeadline u : d.getCompletionDeadline()) {
+            for (TEscalation e : u.getEscalation()) {
+                if (getEscalationKey(e, true).equals(name)) {
+                    return new EscalationResult(e, true);
+                }
+            }
+        }
+        
+        return null;
+    }
 }

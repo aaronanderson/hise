@@ -21,19 +21,33 @@ package org.apache.hise.runtime;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hise.dao.GenericHumanRole;
+import org.apache.hise.dao.Job;
+import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.dao.Task.Status;
 import org.apache.hise.lang.xsd.htd.TDeadline;
 import org.apache.hise.lang.xsd.htd.TDeadlines;
-import org.apache.hise.lang.xsd.htd.TExpression;
+import org.apache.hise.lang.xsd.htd.TEscalation;
+import org.apache.hise.runtime.TaskEvaluator.EscalationResult;
 
 public class DeadlineController implements TaskStateListener {
 
-    private Log __log = LogFactory.getLog(DeadlineController.class);
+    private static Log __log = LogFactory.getLog(DeadlineController.class);
+    
+    private Task task;
 
-    public void stateChanged(Task task, Status oldStatus, Status newStatus) {
+    
+    public DeadlineController(Task task) {
+        super();
+        this.task = task;
+    }
+
+    public void stateChanged(Status oldStatus, Status newStatus) {
         __log.debug(task + " " + oldStatus + " " + newStatus);
         
         TDeadlines deadlines = task.getTaskDefinition().gettTask().getDeadlines();
@@ -42,22 +56,49 @@ public class DeadlineController implements TaskStateListener {
         }
         
         if (newStatus.equals(Status.CREATED)) {
-            //compute start deadlines
-            computeDeadlines(task, deadlines.getStartDeadline(), false);
+            computeDeadlines(deadlines.getStartDeadline(), false);
         } else if (newStatus.equals(Status.IN_PROGRESS)) {
-            //delete start deadlines
-            //compute completion deadlines
-            computeDeadlines(task, deadlines.getCompletionDeadline(), false);
+            deleteDeadlines();
+            computeDeadlines(deadlines.getCompletionDeadline(), true);
         } else if (newStatus.equals(Status.COMPLETED)) {
-            //delete completion deadlines
+            deleteDeadlines();
         }
     }
     
-    private void computeDeadlines(Task task, List<TDeadline> deadlines, boolean isCompletion) {
+    private void deleteDeadlines() {
+        __log.debug("clearing deadlines " + task.getTaskDto().getDeadlines());
+        task.getTaskDto().getDeadlines().clear();
+    }
+    
+    private void computeDeadlines(List<TDeadline> deadlines, boolean isCompletion) {
         for (TDeadline deadline : deadlines) {
-            TExpression expr = deadline.getFor();
-            Date d = task.getTaskEvaluator().evaluateDeadline(deadline);
-            __log.debug("deadline " + d);
+            Date fire = task.getTaskEvaluator().evaluateDeadline(deadline);
+            __log.debug("deadline fire date " + fire);
+            
+            for (TEscalation escalation : deadline.getEscalation()) {
+                Job job = new Job();
+                job.setAction("deadline");
+                job.setTask(task.getTaskDto());
+                job.setFire(fire);
+                job.setDetails(TaskEvaluator.getEscalationKey(escalation, isCompletion));
+                
+                __log.debug("registering deadline " + job);
+                task.getTaskDto().getDeadlines().add(job);
+            }
+        }
+    }
+    
+    public void deadlineCrossed(Job deadline) {
+        EscalationResult e = task.getTaskEvaluator().findEscalation(deadline.getDetails());
+        if (e == null) {
+            __log.warn("Can't find escalation " + deadline.getDetails() + " in task definition " + task);
+        } else {
+            if (e.escalation.getReassignment() != null) {
+                Set<TaskOrgEntity> result = task.getTaskEvaluator().evaluateGenericHumanRole(e.escalation.getReassignment().getPotentialOwners(), GenericHumanRole.POTENTIALOWNERS);
+                task.forward(result);
+            } else {
+                throw new NotImplementedException();
+            }
         }
     }
 }
