@@ -26,9 +26,16 @@ import org.apache.hise.dao.Task.Status;
 
 public class TaskLifecycle implements TaskStateListener {
     
-    private Log __log = LogFactory.getLog(TaskLifecycle.class);
+    private static Log __log = LogFactory.getLog(TaskLifecycle.class);
 
-    public void stateChanged(Task task, Status oldStatus, Status newStatus) {
+    private Task task;
+    
+    public TaskLifecycle(Task task) {
+        super();
+        this.task = task;
+    }
+
+    public void stateChanged(Status oldStatus, Status newStatus) {
         boolean isOk = false;
 
         // check if change is valid for current state

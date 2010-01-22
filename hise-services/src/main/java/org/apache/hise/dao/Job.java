@@ -20,6 +20,8 @@
 package org.apache.hise.dao;
 
 import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -84,6 +86,16 @@ public class Job extends JpaBase {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+    
+    @Override
+    public String toString() {
+        Map m = new TreeMap();
+        m.put("id", id);
+        m.put("task", getTask().getId());
+        m.put("action", getAction());
+        m.put("details", getDetails());
+        return m.toString();
     }
 
     @Override
