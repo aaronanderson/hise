@@ -69,7 +69,7 @@
     <property name="hiseEngine" ref="hiseEngine"/>
   </bean>
 
-  <jaxws:endpoint id="taskOperationsEndpoint" name="taskOperationsEndpoint" address="/taskOperations/" implementor="#taskOperations" serviceName="htdaw:taskOperations" publish="true"  wsdlLocation="classpath:ws-humantask.wsdl">
+  <jaxws:endpoint id="taskOperationsEndpoint" name="taskOperationsEndpoint" address="/taskOperations/" implementor="#taskOperations" serviceName="htdaw:taskOperations" publish="true"  wsdlLocation="ws-humantask.wsdl">
   <!-- 
     <jaxws:handlers>
       <ref bean="transactionHandler"/>

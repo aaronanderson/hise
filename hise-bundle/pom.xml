@@ -28,6 +28,7 @@
         <version>1.0.21-SNAPSHOT</version>
     </parent>
 
+    <name>hise-bundle</name>
     <groupId>org.apache.hise</groupId>
     <artifactId>hise-bundle</artifactId>
     <version>1.0.21-SNAPSHOT</version>
@@ -97,21 +98,32 @@
                             javax.xml.soap,
                             META-INF.cxf,
                             META-INF.cxf.osgi,
-                            org.apache.*,
                             org.apache.servicemix.util,
-                            org.w3c.*,
-                            org.xml.sax.*,
+                            org.apache.cxf.resource,
+                            org.apache.cxf.binding.soap.spring,
+                            org.springframework.orm,
+                            org.springframework.beans,
+                            org.springframework.jdbc,
+                            org.springframework.jdbc.datasource,
+                            org.apache.openjpa.persistence,
+                            org.apache.openjpa.jdbc.sql,
+                            oracle.jdbc.driver
                         </Import-Package>
                         <Private-Package>org.apache.hise*</Private-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
+                        <Require-Bundle>
+                            org.apache.cxf.bundle
+                        </Require-Bundle>
                         <!--
+                        -->
+                        <!--
+
                         <DynamicImport-Package>org.w3.*,javax.xml.xquery</DynamicImport-Package>
-                            org.springframework.*,
                             org.w3.*,
 			    net.sf.saxon*
-                        -->
-                        <Require-Bundle>org.apache.cxf.bundle</Require-Bundle>
                         <Embed-Dependency>saxon*,spring-orm,spring-jdbc,ojdbc5;scope=compile|runtime</Embed-Dependency>
+                        -->
+                        <Embed-Dependency>saxon*;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <!--
                         -->
@@ -164,6 +176,25 @@
     </plugins>
   </build>
     <dependencies>
+
+        <dependency>
+            <groupId>org.apache.hise</groupId>
+            <artifactId>hise-test-example</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hise</groupId>
+            <artifactId>hise-wsdl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.hise</groupId>
+            <artifactId>hise-services</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jpa_1.0_spec</artifactId>
@@ -192,16 +223,6 @@
             <version>11.1.0.6.0</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.hise</groupId>
-            <artifactId>hise-wsdl</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hise</groupId>
-            <artifactId>hise-services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-bindings-http</artifactId>
@@ -312,21 +333,17 @@
             <version>3.8.0.GA</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.hise</groupId>
-            <artifactId>hise-test-example</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
             <artifactId>org.apache.servicemix.bundles.openjpa</artifactId>
             <version>1.2.1_2</version>
         </dependency>
+        -->
         <!--
         <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
@@ -339,8 +356,6 @@
             <artifactId>org.apache.servicemix.bundles.serp</artifactId>
             <version>1.13.1_2</version>
         </dependency>
-
-
 
     </dependencies>
 </project>
