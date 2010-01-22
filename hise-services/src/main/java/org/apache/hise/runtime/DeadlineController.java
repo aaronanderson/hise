@@ -19,6 +19,7 @@
 
 package org.apache.hise.runtime;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -46,6 +47,7 @@ public class DeadlineController implements TaskStateListener {
         } else if (newStatus.equals(Status.IN_PROGRESS)) {
             //delete start deadlines
             //compute completion deadlines
+            computeDeadlines(task, deadlines.getCompletionDeadline(), false);
         } else if (newStatus.equals(Status.COMPLETED)) {
             //delete completion deadlines
         }
@@ -54,8 +56,8 @@ public class DeadlineController implements TaskStateListener {
     private void computeDeadlines(Task task, List<TDeadline> deadlines, boolean isCompletion) {
         for (TDeadline deadline : deadlines) {
             TExpression expr = deadline.getFor();
-            Object v = task.getTaskEvaluator().evaluateExpression(expr);
-            __log.debug("deadline " + v);
+            Date d = task.getTaskEvaluator().evaluateDeadline(deadline);
+            __log.debug("deadline " + d);
         }
     }
 }

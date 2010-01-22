@@ -84,7 +84,7 @@ public class Task {
     private List<TaskStateListener> taskStateListeners;
     
     private Job currentJob;
-//    private Date currentEventDateTime = Calendar.getInstance().getTime();
+    private Date currentEventDateTime = Calendar.getInstance().getTime();
     
     private String currentUser;
     
@@ -96,6 +96,14 @@ public class Task {
     
     public void setCurrentJob(Job currentJob) {
         this.currentJob = currentJob;
+    }
+    
+    public Date getCurrentEventDateTime() {
+        return currentEventDateTime;
+    }
+
+    public void setCurrentEventDateTime(Date currentEventDateTime) {
+        this.currentEventDateTime = currentEventDateTime;
     }
 
     public String getCurrentUser() {

@@ -1,5 +1,6 @@
 package org.apache.hise;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -9,6 +10,8 @@ import junit.framework.Assert;
 import net.sf.saxon.dom.NodeOverNodeInfo;
 import net.sf.saxon.om.NodeInfo;
 
+import org.apache.hise.lang.xsd.htd.TDeadline;
+import org.apache.hise.lang.xsd.htd.TDurationExpr;
 import org.apache.hise.runtime.Task;
 import org.apache.hise.runtime.TaskEvaluator;
 import org.apache.hise.utils.DOMUtils;
@@ -17,6 +20,17 @@ import org.junit.Test;
 import org.w3c.dom.Node;
 
 public class TaskEvaluatorTest {
+    
+    private TaskEvaluator buildTaskEvaluator() {
+        Task t = new MockTask();
+        t.setCurrentEventDateTime(new Date(1234L));
+        org.apache.hise.dao.Task t2 = new org.apache.hise.dao.Task();
+        t2.setId(1234L);
+        t.setTaskDto(t2);
+        
+        return new TaskEvaluator(t);
+    }
+    
     @Test
     public void testEval() throws Exception {
         XQueryEvaluator e = new XQueryEvaluator();
@@ -48,14 +62,22 @@ public class TaskEvaluatorTest {
     
     @Test
     public void testEvaluateApproveResponseHeader() throws Exception {
-        Task t = new MockTask();
-        org.apache.hise.dao.Task t2 = new org.apache.hise.dao.Task();
-        t2.setId(1234L);
-        t.setTaskDto(t2);
-        
-        TaskEvaluator te = new TaskEvaluator(t);
+        TaskEvaluator te = buildTaskEvaluator();
         Node n = te.evaluateApproveResponseHeader();
         Assert.assertTrue(DOMUtils.domToString(n).contains(">1234<"));
     }
+    
+    @Test
+    public void testDeadline() throws Exception {
+        TaskEvaluator e = buildTaskEvaluator();
+
+        TDeadline deadline = new TDeadline();
+        TDurationExpr d = new TDurationExpr();
+        deadline.setFor(d);
+        d.getContent().add(new String("'PT5S'"));
+        Date r = e.evaluateDeadline(deadline);
+        Assert.assertEquals(6234L, r.getTime());
+    }
+
 
 }

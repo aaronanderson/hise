@@ -19,6 +19,7 @@
 
 package org.apache.hise.runtime;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,11 +27,14 @@ import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 
+import net.sf.saxon.value.DurationValue;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
+import org.apache.hise.lang.xsd.htd.TDeadline;
 import org.apache.hise.lang.xsd.htd.TExpression;
 import org.apache.hise.lang.xsd.htd.TFrom;
 import org.apache.hise.lang.xsd.htd.TGenericHumanRole;
@@ -67,6 +71,7 @@ public class TaskEvaluator {
         evaluator.setContextObject(this);
         evaluator.declareJavaClass("http://www.example.org/WS-HT", HtdFunctions.class);
         evaluator.bindVariable(QName.valueOf("taskId"), task.getTaskDto().getId());
+        evaluator.bindVariable(QName.valueOf("currentEventDateTime"), task.getCurrentEventDateTime());
         return evaluator;
     }
     
@@ -74,8 +79,12 @@ public class TaskEvaluator {
         return Integer.parseInt("" + evaluateExpression(task.getTaskDefinition().gettTask().getPriority()));
     }
 
-    public List evaluateExpression(TExpression expr) {
+    private List evaluateExpression(TExpression expr) {
         return buildQueryEvaluator().evaluateExpression(XmlUtils.getStringContent(expr.getContent()), null);
+    }
+    
+    public Date evaluateDeadline(TDeadline deadline) {
+        return (Date) buildQueryEvaluator().evaluateExpression("$currentEventDateTime + xs:dayTimeDuration(" + XmlUtils.getStringContent(deadline.getFor().getContent()) + ")", null).get(0);
     }
     
     public Set<TaskOrgEntity> evaluatePeopleAssignments() {
