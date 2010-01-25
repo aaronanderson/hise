@@ -20,6 +20,7 @@
 package org.apache.hise.engine;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -36,6 +37,7 @@ import org.apache.hise.engine.store.TaskDD;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.runtime.Task;
 import org.apache.hise.utils.DOMUtils;
+import org.apache.hise.utils.XQueryEvaluator;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -114,7 +116,16 @@ public class HISEEngine {
         return n;
     }
     
-    public Node receive(QName portType, String operation, Element body, String createdBy, Node requestHeader) {
+    public static String fetchCreatedBy(Node requestHeader) {
+        log.debug("header " + DOMUtils.domToString(requestHeader));
+        XQueryEvaluator e = new XQueryEvaluator();
+        List r = e.evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; xs:string(*/htd:initiator)", requestHeader);
+        return r.size() == 1 ? (String) r.get(0) : "";
+    }
+    
+    public Node receive(QName portType, String operation, Element body, Node requestHeader) {
+        String createdBy = fetchCreatedBy(requestHeader);
+        
         QName taskName = getTaskName(portType, operation);
         assert(taskName != null);
         log.debug("routed " + portType + " " + operation + " -> " + taskName);

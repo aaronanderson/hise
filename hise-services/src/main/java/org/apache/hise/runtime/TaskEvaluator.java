@@ -156,7 +156,7 @@ public class TaskEvaluator {
     
     public Node evaluateApproveResponseHeader() {
         XQueryEvaluator evaluator = buildQueryEvaluator();
-        return (Node) evaluator.evaluateExpression("<htd:taskId xmlns:htd=\"xmlns:htd=http://www.example.org/WS-HT\">{$taskId}</htd:taskId>", null).get(0);
+        return (Node) evaluator.evaluateExpression("<htd:taskId xmlns:htd=\"http://www.example.org/WS-HT\">{$taskId}</htd:taskId>", null).get(0);
     }
 
     

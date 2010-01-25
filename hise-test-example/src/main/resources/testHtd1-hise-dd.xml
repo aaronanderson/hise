@@ -39,7 +39,6 @@
     <jaxws:handlers>
       <ref bean="transactionHandler"/>
     </jaxws:handlers>
-     -->
     <jaxws:inInterceptors>
       <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
         <constructor-arg>
@@ -53,6 +52,7 @@
         </constructor-arg>
       </bean>
     </jaxws:inInterceptors>
+     -->
   </jaxws:endpoint>
 
   <bean id="hiseJaxWSSender1" class="org.apache.hise.engine.jaxws.HISEJaxWSClient" init-method="init">
