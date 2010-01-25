@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Header xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:wsa="http://www.w3.org/2005/08/addressing">
+  <wsse:Security soapenv:mustUnderstand="1" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+    <wsse:UsernameToken wsu:Id="UsernameToken-18874281" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+      <wsse:Username>user2</wsse:Username>
+      <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordDigest">9kjX6S6fPxT2wXaewA46x2HkOfw=</wsse:Password>
+      <wsse:Nonce>MIfGhAtlnYCc++maCqCItQ==</wsse:Nonce>
+      <wsu:Created>2010-01-25T10:32:49.292Z</wsu:Created>
+    </wsse:UsernameToken>
+  </wsse:Security>
+  <htd:initiator xmlns:htd="http://www.example.org/WS-HT">soapui</htd:initiator>
+  <wsa:Action xmlns:wsa="http://www.w3.org/2005/08/addressing">http://www.insurance.example.com/claims/ClaimsHandlingPT/approveRequest</wsa:Action>
+  <wsa:ReplyTo xmlns:wsa="http://www.w3.org/2005/08/addressing">
+    <wsa:Address>http://localhost:8082/ClaimsResponseService/</wsa:Address>
+  </wsa:ReplyTo>
+  <wsa:To xmlns:wsa="http://www.w3.org/2005/08/addressing">http://localhost:8080/ClaimsHandlingService/</wsa:To>
+</soapenv:Header>
