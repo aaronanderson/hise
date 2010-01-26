@@ -4,14 +4,15 @@ import javax.jws.WebService;
 
 import org.apache.hise.dao.HISEDao;
 import org.apache.hise.dao.Job;
-import org.apache.hise.dao.OrgEntity;
 import org.apache.hise.dao.Task;
+import org.junit.Ignore;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @WebService(endpointInterface = "org.apache.hise.Test")
+@Ignore
 public class TestImpl implements Test {
     
     private HISEDao hiseDao;
