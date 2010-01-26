@@ -196,7 +196,7 @@ public class Task extends JpaBase {
      * Task status.
      */
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+//    @Column(nullable = false)
 //    @Index(name = "task_status_idx")
     private Status status;
 

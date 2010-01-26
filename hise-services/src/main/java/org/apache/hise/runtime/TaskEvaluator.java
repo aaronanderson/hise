@@ -20,8 +20,10 @@
 package org.apache.hise.runtime;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBElement;
@@ -42,6 +44,8 @@ import org.apache.hise.lang.xsd.htd.TExpression;
 import org.apache.hise.lang.xsd.htd.TFrom;
 import org.apache.hise.lang.xsd.htd.TGenericHumanRole;
 import org.apache.hise.lang.xsd.htd.TPeopleAssignments;
+import org.apache.hise.lang.xsd.htd.TToPart;
+import org.apache.hise.lang.xsd.htd.TToParts;
 import org.apache.hise.utils.DOMUtils;
 import org.apache.hise.utils.XQueryEvaluator;
 import org.apache.hise.utils.XmlUtils;
@@ -194,5 +198,20 @@ public class TaskEvaluator {
         }
         
         return null;
+    }
+    
+    public Map<String, Node> evaluateToParts(TToParts toParts) {
+        Map<String, Node> result = new HashMap<String, Node>();
+        if (toParts != null) {
+            XQueryEvaluator e = buildQueryEvaluator();
+            for (TToPart toPart : toParts.getToPart()) {
+                result.put(toPart.getName(), (Node) e.evaluateExpression(XmlUtils.getStringContent(toPart.getContent()), null).get(0));
+            }
+        }
+        return result;
+    }
+    
+    public static Node defaultHeader() {
+        return DOMUtils.parse("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"/>").getDocumentElement();
     }
 }

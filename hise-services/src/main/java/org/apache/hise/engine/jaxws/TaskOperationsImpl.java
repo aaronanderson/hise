@@ -345,8 +345,8 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public Object getInput(String identifier, String part) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
-        // TODO Auto-generated method stub
-        return null;
+        Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        return t.getInput(part);
     }
 
     public List<TTaskAbstract> getMyTaskAbstracts(String taskType, String genericHumanRole, String workQueue, List<TStatus> status, String whereClause, String createdOnClause, Integer maxTasks) throws IllegalStateFault, IllegalArgumentFault {

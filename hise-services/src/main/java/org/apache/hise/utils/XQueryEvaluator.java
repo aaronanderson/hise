@@ -138,7 +138,7 @@ public class XQueryEvaluator {
             __log.debug("result for expression " + expr + " " + value2 + " value class " + (value2 == null ? null : value2.getClass()));
             return value2;
         } catch (XPathException e) {
-            __log.error("", e);
+            __log.error("Expression: \n" + expr, e);
             throw new RuntimeException(e);
         } finally {
             contextObjectTL.set(null);

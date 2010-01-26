@@ -21,6 +21,7 @@ package org.apache.hise.runtime;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -28,12 +29,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.Job;
+import org.apache.hise.dao.Message;
 import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.dao.Task.Status;
 import org.apache.hise.lang.xsd.htd.TDeadline;
 import org.apache.hise.lang.xsd.htd.TDeadlines;
 import org.apache.hise.lang.xsd.htd.TEscalation;
 import org.apache.hise.runtime.TaskEvaluator.EscalationResult;
+import org.apache.hise.utils.DOMUtils;
+import org.w3c.dom.Node;
 
 public class DeadlineController implements TaskStateListener {
 
@@ -85,6 +89,7 @@ public class DeadlineController implements TaskStateListener {
                 job.setTask(task.getTaskDto());
                 job.setFire(fire);
                 job.setDetails(TaskEvaluator.getEscalationKey(escalation, isCompletion));
+                task.getHiseEngine().getHiseDao().persist(job);
                 
                 __log.debug("registering deadline " + job);
                 task.getTaskDto().getDeadlines().add(job);
@@ -99,9 +104,14 @@ public class DeadlineController implements TaskStateListener {
         if (e == null) {
             __log.warn("Can't find escalation " + deadline.getDetails() + " in task definition " + task);
         } else {
+            Map<String, Node> msg = task.getTaskEvaluator().evaluateToParts(e.escalation.getToParts().size() == 0 ? null : e.escalation.getToParts().get(0));
+            
             if (e.escalation.getReassignment() != null) {
                 Set<TaskOrgEntity> result = task.getTaskEvaluator().evaluateGenericHumanRole(e.escalation.getReassignment().getPotentialOwners(), GenericHumanRole.POTENTIALOWNERS);
                 task.forward(result);
+            } else if (e.escalation.getLocalNotification() != null) {
+                Node request = msg.get("request");
+                task.getHiseEngine().receiveNotification(e.escalation.getLocalNotification().getReference(), request);
             } else {
                 throw new NotImplementedException();
             }

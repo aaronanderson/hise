@@ -253,4 +253,48 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
             }
         });
     }
+    
+    @Test 
+    public void testDeadlines() throws Exception {
+        TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        final Long tid = (Long) tt.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus arg0) {
+                try {
+                    cleanup();
+                    Task t = hiseDao.find(Task.class, addTask());
+                    
+                    {
+                        Job j = new Job();
+                        j.setFire(new Date(1213L));
+                        j.setTask(t);
+                        j.setAction("abc");
+                        hiseDao.persist(j);
+                        t.getDeadlines().add(j);
+                    }
+                    {
+                        Job j = new Job();
+                        j.setFire(new Date(1213L));
+                        j.setTask(t);
+                        j.setAction("abc2");
+                        hiseDao.persist(j);
+                        t.getDeadlines().add(j);
+                    }
+                    return t.getId();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        Integer s = (Integer) tt.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus arg0) {
+                try {
+                    Task t = hiseDao.find(Task.class, tid);
+                    return t.getDeadlines().size();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        Assert.assertEquals(new Integer(2), s);
+    }
 }

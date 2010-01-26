@@ -177,6 +177,7 @@ public class Task {
         u.setActivationTime(new Date());
         u.setEscalated(false);
         u.setNotification(false);
+        engine.getHiseDao().persist(u);
         t.taskDto = u;
         t.setStatus(Status.CREATED);
 
@@ -185,7 +186,6 @@ public class Task {
         t.setStatus(Status.READY);
         t.tryNominateOwner();
         
-        engine.getHiseDao().persist(u);
         
         return t;
 
@@ -247,6 +247,8 @@ public class Task {
         u.setActivationTime(new Date());
         u.setEscalated(false);
         u.setNotification(true);
+        engine.getHiseDao().persist(u);
+        
         t.taskDto = u;
         t.setStatus(Status.CREATED);
 
@@ -1103,5 +1105,9 @@ public class Task {
     public void remove() {
         Validate.isTrue(taskDto.isNotification());
         hiseEngine.getHiseDao().remove(taskDto);
+    }
+    
+    public Node getInput(String part) {
+        return DOMUtils.parse(taskDto.getInput().get(part).getMessage()).getDocumentElement();
     }
 }

@@ -36,6 +36,7 @@ import org.apache.hise.engine.store.HISEDD;
 import org.apache.hise.engine.store.TaskDD;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.runtime.Task;
+import org.apache.hise.runtime.TaskEvaluator;
 import org.apache.hise.utils.DOMUtils;
 import org.apache.hise.utils.XQueryEvaluator;
 import org.w3c.dom.Element;
@@ -137,6 +138,15 @@ public class HISEEngine {
             t = Task.create(this, getTaskDefinition(taskName), createdBy, DOMUtils.getFirstElement(body), requestHeader);
         }
         return t.getTaskEvaluator().evaluateApproveResponseHeader();
+    }
+    
+    public void receiveNotification(QName notificationName, Node request) {
+        notificationName = DOMUtils.uniqueQName(notificationName);
+        log.debug("Receiving notification " + notificationName);
+        TaskInfo n = tasks.get(notificationName);
+        Validate.notNull(n, "Can't find notification in registry " + notificationName);
+        Validate.isTrue(n.taskDefinition.isNotification());
+        Task.createNotification(this, n.taskDefinition, "", request, TaskEvaluator.defaultHeader());
     }
     
     public void sendResponse(QName taskName, Node body, Node epr) {
