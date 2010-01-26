@@ -362,5 +362,29 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
     </htd:completionDeadline>
   </htd:deadlines>
         </htd:task>    
-    </htd:tasks>    
+    </htd:tasks>
+    
+    <htd:notifications>
+      <htd:notification name="Notify2">
+        <htd:interface portType="tns:ClaimApprovalReminderPT" operation="notify"></htd:interface>
+        <htd:peopleAssignments>
+          <htd:potentialOwners>
+            <htd:from>
+              <htd:literal>
+                <htd:organizationalEntity>
+                  <htd:users>
+                    <htd:user>user5</htd:user>
+                  </htd:users>
+                </htd:organizationalEntity>
+              </htd:literal>
+            </htd:from>
+          </htd:potentialOwners>
+        </htd:peopleAssignments>
+        <htd:presentationElements>
+          <htd:name>Notify2Name</htd:name>
+          <htd:subject>Name2Subject</htd:subject>
+        </htd:presentationElements>
+      </htd:notification>
+    </htd:notifications>
+        
 </htd:humanInteractions>

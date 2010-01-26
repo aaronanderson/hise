@@ -380,8 +380,8 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public void remove(String identifier) throws IllegalAccessFault, IllegalArgumentFault {
-        // TODO Auto-generated method stub
-
+        Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.remove();
     }
 
     public void resume(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {

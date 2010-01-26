@@ -50,7 +50,7 @@ public class DeadlineController implements TaskStateListener {
     public void stateChanged(Status oldStatus, Status newStatus) {
         __log.debug(task + " " + oldStatus + " " + newStatus);
         
-        TDeadlines deadlines = task.getTaskDefinition().gettTask().getDeadlines();
+        TDeadlines deadlines = task.getTaskDefinition().getDeadlines();
         if (deadlines == null) {
             deadlines = new TDeadlines();
         }

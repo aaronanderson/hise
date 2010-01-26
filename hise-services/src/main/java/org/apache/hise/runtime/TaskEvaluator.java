@@ -79,7 +79,7 @@ public class TaskEvaluator {
     }
     
     public Integer evaluatePriority() {
-        return Integer.parseInt("" + evaluateExpression(task.getTaskDefinition().gettTask().getPriority()));
+        return Integer.parseInt("" + evaluateExpression(task.getTaskDefinition().getPriority()));
     }
 
     private List evaluateExpression(TExpression expr) {
@@ -92,7 +92,7 @@ public class TaskEvaluator {
     
     public Set<TaskOrgEntity> evaluatePeopleAssignments() {
         Set<TaskOrgEntity> result = new HashSet<TaskOrgEntity>();
-        TPeopleAssignments p = task.getTaskDefinition().gettTask().getPeopleAssignments();
+        TPeopleAssignments p = task.getTaskDefinition().getPeopleAssignments();
 
         for (JAXBElement<TGenericHumanRole> r : p.getGenericHumanRole()) {
             GenericHumanRole assignmentRole = GenericHumanRole.valueOf(r.getName().getLocalPart().toUpperCase());
@@ -176,7 +176,7 @@ public class TaskEvaluator {
     
     public EscalationResult findEscalation(String name) {
         EscalationResult r = null;
-        TDeadlines d = task.getTaskDefinition().gettTask().getDeadlines();
+        TDeadlines d = task.getTaskDefinition().getDeadlines();
         for (TDeadline u : d.getStartDeadline()) {
             for (TEscalation e : u.getEscalation()) {
                 if (getEscalationKey(e, false).equals(name)) {

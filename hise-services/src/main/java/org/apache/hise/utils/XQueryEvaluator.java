@@ -75,10 +75,16 @@ public class XQueryEvaluator {
         this.contextObject = contextObject;
     }
 
-    public static ValueRepresentation convertJavaToSaxon(Object obj) {
+    public ValueRepresentation convertJavaToSaxon(Object obj) {
         try {
             if (obj == null) obj = "";
-            return JPConverter.allocate(obj.getClass(), null).convert(obj, null);
+            
+            if (obj instanceof Node) {
+                NodeInfo v = new DocumentWrapper((Node) obj, "", config).getRoot();
+                return v;
+            } else { 
+                return JPConverter.allocate(obj.getClass(), null).convert(obj, null);
+            }
         } catch (XPathException e) {
             throw new RuntimeException("", e);
         }
@@ -126,6 +132,7 @@ public class XQueryEvaluator {
                         throw new RuntimeException("Error converting result", e1);
                     }
                 }
+//                o2 = JavaDOMWrapper.unwrap(o2);
                 value2.add(o2);
             }
             __log.debug("result for expression " + expr + " " + value2 + " value class " + (value2 == null ? null : value2.getClass()));

@@ -20,6 +20,14 @@ public class SampleUsers {
     public void setTransactionManager(JpaTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
+    
+    private void addUser(String name, String pass) {
+        OrgEntity o = new OrgEntity();
+        o.setName(name);
+        o.setType(TaskOrgEntity.OrgEntityType.USER);
+        o.setUserPassword(pass);
+        hiseDao.persist(o);
+    }
 
     public void init() {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
@@ -32,21 +40,9 @@ public class SampleUsers {
                     g.setType(TaskOrgEntity.OrgEntityType.GROUP);
                     hiseDao.persist(g);
                 }
-                {
-                    OrgEntity o = new OrgEntity();
-                    o.setName("user1");
-                    o.setType(TaskOrgEntity.OrgEntityType.USER);
-                    o.setUserPassword("user1pass");
-                    hiseDao.persist(o);
-                }
-                {
-                    OrgEntity o = new OrgEntity();
-                    o.setName("user2");
-                    o.setType(TaskOrgEntity.OrgEntityType.USER);
-                    o.setUserPassword("user2pass");
-                    o.getUserGroups().add(g);
-                    hiseDao.persist(o);
-                }
+                addUser("user1", "user1pass");
+                addUser("user2", "user2pass");
+                addUser("user5", "user5pass");
                 return null;
             }
         });

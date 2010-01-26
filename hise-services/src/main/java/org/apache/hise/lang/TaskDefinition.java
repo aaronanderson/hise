@@ -26,8 +26,12 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hise.lang.xsd.htd.TDeadlines;
 import org.apache.hise.lang.xsd.htd.TFrom;
 import org.apache.hise.lang.xsd.htd.TLiteral;
+import org.apache.hise.lang.xsd.htd.TNotification;
+import org.apache.hise.lang.xsd.htd.TPeopleAssignments;
+import org.apache.hise.lang.xsd.htd.TPriority;
 import org.apache.hise.lang.xsd.htd.TTask;
 import org.apache.hise.lang.xsd.htd.TTaskInterface;
 import org.apache.hise.utils.DOMUtils;
@@ -49,7 +53,11 @@ public class TaskDefinition {
 
     private final TTask tTask;
 
-    private String targetNamespace; 
+    private final TNotification tNote;
+
+    private String targetNamespace;
+    
+    private TTaskInterface taskInterface;
     
     /**
      * XML namespaces supported in human task definitions.
@@ -64,17 +72,25 @@ public class TaskDefinition {
 
         Validate.notNull(taskDefinition);
 
+        this.tNote = null;
         this.tTask = taskDefinition;
         this.xmlNamespaces = xmlNamespaces;
         this.targetNamespace = targetNamespace;
     }
 
-    
-    public TTaskInterface getInterface() {
-        return tTask.getInterface();
+    public TaskDefinition(TNotification taskDefinition, Map<String, String> xmlNamespaces, String targetNamespace) {
+
+        super();
+
+        Validate.notNull(taskDefinition);
+
+        this.tNote = taskDefinition;
+        this.tTask = null;
+        this.xmlNamespaces = xmlNamespaces;
+        this.targetNamespace = targetNamespace;
     }
-    
-    
+
+     
     
 //    /**
 //     * Returns description of the Task.
@@ -281,12 +297,28 @@ public class TaskDefinition {
 //        return this.templateEngine.merge(subjectTemplate, presentationParameterValues).trim();
 //    }
 
-    public QName getTaskName() {
-        return DOMUtils.uniqueQName(new QName(targetNamespace, this.tTask.getName()));
+    public TTaskInterface getTaskInterface() {
+        return taskInterface;
     }
 
-    public TTask gettTask() {
-        return tTask;
+    public void setTaskInterface(TTaskInterface taskInterface) {
+        this.taskInterface = taskInterface;
+    }
+
+    private String getName() {
+        return isNotification() ? tNote.getName() : tTask.getName();
+    }
+    
+    public QName getTaskName() {
+        return DOMUtils.uniqueQName(new QName(targetNamespace, getName()));
+    }
+
+//    public TTask gettTask() {
+//        return tTask;
+//    }
+    
+    public TPeopleAssignments getPeopleAssignments() {
+        return isNotification() ? tNote.getPeopleAssignments() : tTask.getPeopleAssignments();
     }
     
     public String getOutcomeExpression() {
@@ -300,5 +332,18 @@ public class TaskDefinition {
      */
     public String getNamespaceURI(String prefix) {
         return this.xmlNamespaces == null ? null : this.xmlNamespaces.get(prefix);
+    }
+
+
+    public boolean isNotification() {
+        return tNote != null;
+    }
+    
+    public TPriority getPriority() {
+        return isNotification() ? tNote.getPriority() : tTask.getPriority();
+    }
+    
+    public TDeadlines getDeadlines() {
+        return tTask.getDeadlines();
     }
 }

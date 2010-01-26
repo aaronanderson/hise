@@ -100,7 +100,9 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
                     SOAPMessage m = messageFactory.createMessage();
                     
                     Document doc = m.getSOAPHeader().getOwnerDocument();
-                    m.getSOAPHeader().appendChild(doc.importNode(approveResponseHeader, true));
+                    if (approveResponseHeader != null) {
+                        m.getSOAPHeader().appendChild(doc.importNode(approveResponseHeader, true));
+                    }
                     return m;
                 } catch (Exception e) {
                     throw new RuntimeException("Error during receiving message ", e);

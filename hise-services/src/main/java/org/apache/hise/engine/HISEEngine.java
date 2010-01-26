@@ -129,7 +129,13 @@ public class HISEEngine {
         QName taskName = getTaskName(portType, operation);
         assert(taskName != null);
         log.debug("routed " + portType + " " + operation + " -> " + taskName);
-        Task t = Task.create(this, getTaskDefinition(taskName), createdBy, DOMUtils.getFirstElement(body), requestHeader);
+        TaskDefinition def = getTaskDefinition(taskName);
+        Task t;
+        if (def.isNotification()) {
+            t = Task.createNotification(this, getTaskDefinition(taskName), createdBy, DOMUtils.getFirstElement(body), requestHeader);
+        } else {
+            t = Task.create(this, getTaskDefinition(taskName), createdBy, DOMUtils.getFirstElement(body), requestHeader);
+        }
         return t.getTaskEvaluator().evaluateApproveResponseHeader();
     }
     

@@ -43,7 +43,10 @@ public class CompilerTest {
         Assert.assertTrue(s.contains(QName.valueOf("{http://www.insurance.example.com/claims}Task1")));
         Assert.assertTrue(s.contains(QName.valueOf("{http://www.insurance.example.com/claims}Task2")));
         Assert.assertTrue(s.contains(QName.valueOf("{http://www.insurance.example.com/claims}Task3")));
+        Assert.assertTrue(s.contains(QName.valueOf("{http://www.insurance.example.com/claims}Notify2")));
         Assert.assertEquals("someOutput", hi.getTaskDefinitions().get(QName.valueOf("{http://www.insurance.example.com/claims}Task1")).getOutcomeExpression());
+        Assert.assertEquals("approve", hi.getTaskDefinitions().get(QName.valueOf("{http://www.insurance.example.com/claims}Task1")).getTaskInterface().getOperation());
+        Assert.assertEquals("notify", hi.getTaskDefinitions().get(QName.valueOf("{http://www.insurance.example.com/claims}Notify2")).getTaskInterface().getOperation());
     }
     
     @Test

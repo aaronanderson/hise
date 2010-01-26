@@ -22,23 +22,9 @@ package org.apache.hise.runtime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.xml.namespace.QName;
-
-import net.sf.saxon.Configuration;
-import net.sf.saxon.dom.NodeOverNodeInfo;
-import net.sf.saxon.dom.NodeWrapper;
-import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.query.DynamicQueryContext;
-import net.sf.saxon.query.StaticQueryContext;
-import net.sf.saxon.query.XQueryExpression;
-import net.sf.saxon.trans.XPathException;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
@@ -47,21 +33,16 @@ import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.HISEDao;
 import org.apache.hise.dao.Job;
 import org.apache.hise.dao.Message;
-import org.apache.hise.dao.OrgEntity;
-import org.apache.hise.dao.PresentationParameter;
 import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.dao.Task.Status;
 import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
 import org.apache.hise.engine.HISEEngine;
-import org.apache.hise.engine.HISEScheduler;
 import org.apache.hise.lang.TaskDefinition;
-import org.apache.hise.lang.xsd.htd.TExpression;
 import org.apache.hise.lang.xsd.htd.TGrouplist;
 import org.apache.hise.lang.xsd.htd.TOrganizationalEntity;
 import org.apache.hise.lang.xsd.htd.TUserlist;
 import org.apache.hise.utils.DOMUtils;
 import org.apache.hise.utils.XmlUtils;
-import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 /**
@@ -122,14 +103,16 @@ public class Task {
         return hiseEngine;
     }
 
-    private Task(HISEEngine engine) {
+    private Task(HISEEngine engine, boolean notification) {
         this.hiseEngine = engine;
         Validate.notNull(hiseEngine);
 
         taskStateListeners = new ArrayList<TaskStateListener>();
-        taskStateListeners.add(new TaskLifecycle(this));
-        deadlineController = new DeadlineController(this);
-        taskStateListeners.add(deadlineController);
+        if (!notification) {
+            taskStateListeners.add(new TaskLifecycle(this));
+            deadlineController = new DeadlineController(this);
+            taskStateListeners.add(deadlineController);
+        }
 
         taskEvaluator = new TaskEvaluator(this);
     }
@@ -151,10 +134,10 @@ public class Task {
     }
 
     public static Task load(HISEEngine engine, Long id) {
-        Task t = new Task(engine);
         HISEDao dao = engine.getHiseDao();
-        t.taskDto = dao.find(org.apache.hise.dao.Task.class, id);
-        // t.setTaskDto(em.find(Task.class, , arg1)engine.taskDao.fetch(id));
+        org.apache.hise.dao.Task dto = dao.find(org.apache.hise.dao.Task.class, id);
+        Task t = new Task(engine, dto.isNotification());
+        t.taskDto = dto;
         t.taskDefinition = engine.getTaskDefinition(t.taskDto.getTaskDefinitionName());
         return t;
     }
@@ -180,8 +163,9 @@ public class Task {
     }
     
     public static Task create(HISEEngine engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
-        Task t = new Task(engine);
+        Task t = new Task(engine, false);
         Validate.notNull(taskDefinition);
+        Validate.isTrue(!taskDefinition.isNotification());
         t.taskDefinition = taskDefinition;
         org.apache.hise.dao.Task u = new org.apache.hise.dao.Task();
         u.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
@@ -247,6 +231,33 @@ public class Task {
         //        
         // recalculatePriority();
     }
+
+    public static Task createNotification(HISEEngine engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
+        Task t = new Task(engine, true);
+        Validate.notNull(taskDefinition);
+        Validate.isTrue(taskDefinition.isNotification());
+        t.taskDefinition = taskDefinition;
+        org.apache.hise.dao.Task u = new org.apache.hise.dao.Task();
+        u.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
+        u.setCreatedBy(createdBy);
+        u.setStatus(null);
+        u.getInput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
+        u.getInput().put("requestHeader", new Message("requestHeader", DOMUtils.domToString(requestHeader)));
+        u.setCreatedOn(new Date());
+        u.setActivationTime(new Date());
+        u.setEscalated(false);
+        u.setNotification(true);
+        t.taskDto = u;
+        t.setStatus(Status.CREATED);
+
+        u.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
+        
+        t.setStatus(Status.READY);
+        engine.getHiseDao().persist(u);
+        
+        return t;
+    }
+
     
     public void setActualOwner(String user) {
         taskDto.setActualOwner(user);
@@ -1087,5 +1098,10 @@ public class Task {
     
     public Date calculateWakeupTime() {
         return null;
+    }
+    
+    public void remove() {
+        Validate.isTrue(taskDto.isNotification());
+        hiseEngine.getHiseDao().remove(taskDto);
     }
 }

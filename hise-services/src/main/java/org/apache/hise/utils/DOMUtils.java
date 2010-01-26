@@ -172,7 +172,11 @@ public class DOMUtils {
         return d;
     }
 
-    public static Document parse(String in) throws Exception {
-        return parse(new ByteArrayInputStream(in.getBytes()));
+    public static Document parse(String in) {
+        try {
+            return parse(new ByteArrayInputStream(in.getBytes()));
+        } catch (Exception e) {
+            throw new RuntimeException("", e);
+        }
     }
 }

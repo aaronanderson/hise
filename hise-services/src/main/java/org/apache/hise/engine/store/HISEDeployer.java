@@ -42,7 +42,7 @@ public class HISEDeployer {
             TaskInfo ti = new HISEEngine.TaskInfo();
             ti.dd = t;
             ti.parent = di;
-            ti.taskKey = HISEEngine.tasksKey(d.getInterface().getPortType(), d.getInterface().getOperation());
+            ti.taskKey = HISEEngine.tasksKey(d.getTaskInterface().getPortType(), d.getTaskInterface().getOperation());
             ti.taskDefinition = d;
             hiseEngine.registerTask(ti);
         }

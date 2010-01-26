@@ -23,6 +23,15 @@
               <property name="handler" ref="hiseJaxWSService1"/>
               <property name="sender" ref="hiseJaxWSSender1"/>
             </bean>
+            
+            <bean class="org.apache.hise.engine.store.TaskDD">
+              <property name="taskName">
+                <bean class="javax.xml.namespace.QName" factory-method="valueOf">
+                  <constructor-arg type="java.lang.String" value="{http://www.insurance.example.com/claims}Notify2"></constructor-arg>
+                </bean>
+              </property>
+              <property name="handler" ref="hiseJaxWSService1"/>
+            </bean>
           </list>
         </property>
       </bean>
@@ -67,5 +76,7 @@
 <!-- 
   <jaxws:client id="testHtd1Sender" address="http://localhost:9999" wsdlLocation="classpath:ExampleTasks.wsdl"/>
    -->
+  <jaxws:endpoint id="testHtd2" address="/ClaimApprovalReminderService/" implementor="#hiseJaxWSService1" serviceName="ins:ClaimApprovalReminderService" endpointName="ins:ClaimApprovalReminderPort" publish="true" wsdlLocation="classpath:ExampleTasks.wsdl"/>
+   
 </beans>    
 

@@ -35,7 +35,9 @@ import org.apache.hise.lang.HumanInteractions;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.lang.xsd.htd.TGenericHumanRole;
 import org.apache.hise.lang.xsd.htd.THumanInteractions;
+import org.apache.hise.lang.xsd.htd.TNotification;
 import org.apache.hise.lang.xsd.htd.TTask;
+import org.apache.hise.lang.xsd.htd.TTaskInterface;
 import org.apache.hise.utils.DOMUtils;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
@@ -76,26 +78,38 @@ public class HumanInteractionsCompiler {
 
         HumanInteractions humanInteractions = new HumanInteractions();
 
-        for (TTask tTask : hiDoc.getTasks().getTask()) {
-            TaskDefinition taskDefinition = new TaskDefinition(tTask, this.xmlNamespaces, hiDoc.getTargetNamespace());
-            compileTaskDef(taskDefinition);
-            
-            QName name = taskDefinition.getTaskName();
-            if (humanInteractions.getTaskDefinitions().containsKey(name)) {
-                throw new RuntimeException("Duplicate task found, name: " + name + " resource: " + resource);
+        if (hiDoc.getTasks() != null) {
+            for (TTask tTask : hiDoc.getTasks().getTask()) {
+                TaskDefinition taskDefinition = new TaskDefinition(tTask, this.xmlNamespaces, hiDoc.getTargetNamespace());
+                taskDefinition.setTaskInterface(tTask.getInterface());
+                
+                QName name = taskDefinition.getTaskName();
+                if (humanInteractions.getTaskDefinitions().containsKey(name)) {
+                    throw new RuntimeException("Duplicate task found, name: " + name + " resource: " + resource);
+                }
+                humanInteractions.getTaskDefinitions().put(name, taskDefinition);
             }
-            humanInteractions.getTaskDefinitions().put(name, taskDefinition);
+        }
+
+        if (hiDoc.getNotifications() != null) {
+            for (TNotification tnote : hiDoc.getNotifications().getNotification()) {
+                TaskDefinition taskDefinition = new TaskDefinition(tnote, this.xmlNamespaces, hiDoc.getTargetNamespace());
+                TTaskInterface x = new TTaskInterface();
+                x.setOperation(tnote.getInterface().getOperation());
+                x.setPortType(tnote.getInterface().getPortType());
+                taskDefinition.setTaskInterface(x);
+                
+                QName name = taskDefinition.getTaskName();
+                if (humanInteractions.getTaskDefinitions().containsKey(name)) {
+                    throw new RuntimeException("Duplicate task found, name: " + name + " resource: " + resource);
+                }
+                humanInteractions.getTaskDefinitions().put(name, taskDefinition);
+            }
         }
 
         return humanInteractions;
     }
 
-    void compileTaskDef(TaskDefinition t) {
-        for (JAXBElement<TGenericHumanRole> e: t.gettTask().getPeopleAssignments().getGenericHumanRole()) {
-            log.debug(e);
-        }
-    }
-    
     // /**
     // * Creates HumanInteractions instance, passing DOM Document instance to its constructor.
     // *
