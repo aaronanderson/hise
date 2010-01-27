@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ "${DOCBOOK_DIR}" = "" ];then 
+cat <<EOF
+Please provide DOCBOOK_DIR (docbook-xsl-1.75.2), like
+DOCBOOK_DIR=/some/dir/ ./generate
+
+EOF
+exit 1
+fi
+
+mvn clean compile -o
+mkdir -p target/site
+for i in target/classes/*.xml;do
+j="`basename $i .xml`"
+xsltproc       --output  target/site/${j}.xhtml      ${DOCBOOK_DIR}/xhtml/docbook.xsl  $i
+done

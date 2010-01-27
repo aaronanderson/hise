@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book version="5.0" xmlns="http://docbook.org/ns/docbook" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:svg="http://www.w3.org/2000/svg" xmlns:m="http://www.w3.org/1998/Math/MathML" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://docbook.org/ns/docbook file:/usr/share/schemas/docbook.xsd">
+  <info>
+    <title>Apache HISE User Guide</title>
+    <releaseinfo>${project.version}</releaseinfo>
+  </info>
+
+  <index/>
+  
+  <chapter>
+    <title>Quick Introduction</title>
+    <para>
+    In order to have something running, you need to do following steps:
+    <itemizedlist>
+      <listitem><para>Download HISE distribution</para></listitem>
+      <listitem><para>Then you need to unzip HISE WAR contents into your application server directory (like Apache Tomcat). Name it hise.</para></listitem>
+      <listitem><para>Copy example files from examples/claims-approval into WEB-INF directory</para></listitem>
+      <listitem><para>Start your application server</para></listitem>
+      <listitem><para>Enter hise URL into your browser. For Tomcat, this will be http://localhost:8080/hise. 
+      There will be a list of services exposed by HISE. It will contain approve operation from example task. 
+      </para></listitem>
+    </itemizedlist>
+    </para>
+  </chapter>
+</book>
