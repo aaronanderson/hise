@@ -1,0 +1,31 @@
+<assembly>
+      <id>bin</id>
+      <formats>
+        <format>zip</format>
+      </formats>
+      <fileSets>
+        <fileSet>
+          <directory>..</directory>
+          <outputDirectory/>
+          <includes>
+              <include>README*</include>
+              <include>LICENSE*</include>
+              <include>NOTICE*</include>
+          </includes>
+        </fileSet>
+        <fileSet>
+          <directory>src/distro</directory>
+          <outputDirectory/>
+          <includes>
+            <include>**</include>
+          </includes>
+        </fileSet>
+      </fileSets>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>/</outputDirectory>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+    </dependencySet>
+  </dependencySets>
+</assembly>
