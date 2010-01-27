@@ -14,6 +14,13 @@
           </includes>
         </fileSet>
         <fileSet>
+            <directory>../hise-docs/target/site</directory>
+            <outputDirectory>doc</outputDirectory>
+          <includes>
+              <include>user-guide*</include>
+          </includes>
+        </fileSet>
+        <fileSet>
           <directory>src/distro</directory>
           <outputDirectory/>
           <includes>
