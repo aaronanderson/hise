@@ -57,7 +57,7 @@
     <property name="showSql"      value="false" />
     <property name="extProperties">
       <util:map>
-        <entry key="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true,SchemaAction='update')"/>
+        <entry key="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true,SchemaAction='add')"/>
       </util:map>
     </property>
   </bean>
