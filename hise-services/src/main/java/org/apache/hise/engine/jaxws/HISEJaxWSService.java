@@ -87,7 +87,7 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
             public Object doInTransaction(TransactionStatus arg0) {
                 try {
                     // TransactionStatus tx = transactionManager.getTransaction(new DefaultTransactionDefinition());
-                    assert transactionManager.isValidateExistingTransaction();
+//                    assert transactionManager.isValidateExistingTransaction();
                     MessageContext c = context.getMessageContext();
                     Object operationInfo = c.get("org.apache.cxf.service.model.OperationInfo");
                     QName operation = (QName) operationInfo.getClass().getMethod("getName").invoke(operationInfo);

@@ -82,11 +82,14 @@ public class HISEJaxWSClient {
 
     public Node invoke(Node message, Node epr) {
         try {            
-            String address = getAddressFromEpr(epr);
             
             Dispatch<SOAPMessage> dispatch = destinationService.createDispatch(destinationPort, SOAPMessage.class, Service.Mode.MESSAGE);
-            __log.debug("sending to address " + address);
-            dispatch.getRequestContext().put(Dispatch.ENDPOINT_ADDRESS_PROPERTY, address);
+            
+            String address = getAddressFromEpr(epr);
+            if (!address.equals("")) {
+                __log.debug("sending to address " + address);
+                dispatch.getRequestContext().put(Dispatch.ENDPOINT_ADDRESS_PROPERTY, address);
+            }
             
             SOAPMessage m;
             m = messageFactory.createMessage();

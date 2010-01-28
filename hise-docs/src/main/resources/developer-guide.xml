@@ -12,34 +12,35 @@
       <itemizedlist>
         <listitem>
           <para>
-            install oracle XE and create hise user with hise password (easiest way is via http://localhost:8980/apex/apex)
+            Execute mvn install in hise directory
           </para>
         </listitem>
         <listitem>
           <para>
-            mvn clean install
+            enter hise-web, run mvn jetty:run and enter http://localhost:8080/ - it will show published WS Services and operations.
           </para>
-        </listitem>
-        <listitem>
           <para>
-            enter hise-web, run mvn jetty:run, enter http://localhost:8080/ - it will show published WS Services and operations
+            This will deploy hise-test-example project and start HISE on Jetty.
           </para>
         </listitem>
         <listitem>
           <para>
             run soapui 3.5-beta1 and run tests from project hise-web/soapui-tests/hise-soapui-project.xml
         </para>
+        <para>
+        This will run integration tests for HISE.
+        </para>
         </listitem>
       </itemizedlist>
 
-      Each time you do mvn jetty:run, whole DB is erased.
+      Each time you do mvn jetty:run, a whole DB is erased. 
+      Additionally, for tests, there is exposed cleanup POJO Web Service, which cleans up DB Tables.
     </para>
     <para>
-      I prefer to use default configuration as Oracle instead of in memory
-      DB, because it's better for monitoring and shows more errors.
-      On Debian like systems, you can easily install oracle-xe package. 
-      But you can modify data source in /hise-test-example/src/main/resources/hise-ds.xml.
-      There exists a configuration for H2 Database, which is commented out. 
+      By default, HISE integration tests are run using H2 Database. 
+      This can be changed, for example to Oracle, by commenting out 
+      ojdbc deps in hise-web/pom.xml and Oracle datasource in
+      hise-web/src/test/resources/hise-ds.xml. 
    </para>
    <para>
       HISE has two types of tests:

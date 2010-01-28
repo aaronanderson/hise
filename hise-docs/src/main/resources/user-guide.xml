@@ -6,20 +6,73 @@
   </info>
 
   <index/>
-  
+
   <chapter>
     <title>Quick Introduction</title>
     <para>
-    In order to have something running, you need to do following steps:
-    <itemizedlist>
-      <listitem><para>Download HISE distribution</para></listitem>
-      <listitem><para>Then you need to unzip HISE WAR contents into your application server directory (like Apache Tomcat). Name it hise.</para></listitem>
-      <listitem><para>Copy example files from examples/claims-approval into WEB-INF directory</para></listitem>
-      <listitem><para>Start your application server</para></listitem>
-      <listitem><para>Enter hise URL into your browser. For Tomcat, this will be http://localhost:8080/hise. 
-      There will be a list of services exposed by HISE. It will contain approve operation from example task. 
-      </para></listitem>
-    </itemizedlist>
+      In order to have something running, you need to do following steps:
+      <itemizedlist>
+        <listitem>
+          <para>Download HISE distribution</para>
+        </listitem>
+        <listitem>
+          <para>Then you need to unzip HISE WAR contents into your application server directory (like Apache Tomcat). Name it hise.</para>
+        </listitem>
+        <listitem>
+          <para>
+            Copy example files from examples/claims-approval/* into WEB-INF/classes directory.
+            HISE looks up *-hise-dd.xml files for Human Tasks definitions.  
+          </para>
+        </listitem>
+        <listitem>
+          <para>Start your application server. This will create H2 database schema in files hise-h2-db.*.db. </para>
+        </listitem>
+        <listitem>
+          <para>Enter hise URL into your browser. For Tomcat, this will be http://localhost:8080/hise.
+            There will be a list of services exposed by HISE. It will contain approve operation from example task. 
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+          You can import WSDL http://localhost:8080/hise/ClaimsHandlingService/?wsdl into SoapUI to start interacting with Human Task.
+          There is also a prepared project in examples/claimsHandling/claimsHandling-soapui-project.xml. 
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            You need to import some user and group definitions.
+            By default, HISE uses H2 file database named hise-h2-db.
+            So you can run addUsers.sql script from HISE distribution, by following command:
+            <programlisting>
+              java -cp webapps/hise/WEB-INF/lib/h2-1.1.108.jar org.h2.tools.RunScript -url 'jdbc:h2:file:hise-h2-db;DB_CLOSE_ON_EXIT=false' -user sa -showResults -script addUsers.sql
+            </programlisting>
+            addUsers.sql looks like this:
+            <programlisting>
+              insert into ORG_ENTITY (name, type, userpassword) values ('user1', 'USER', 'pass1');
+              insert into ORG_ENTITY (name, type, userpassword) values ('group1', 'GROUP', null);
+              insert into USER_GROUPS (USERGROUPS_NAME, ORGENTITY_NAME) values ('user1', 'group1');
+            </programlisting>
+            This defines Organizational Entities and specifies associations between users and groups.
+          </para>
+        </listitem>
+        <listitem>
+           <para>
+             Next, you need to enter claimsHandling-soapui-project.xml and start Resolving Mock Service
+             and run ClaimsHandling test suite. 
+             This will register a claim by sending approve operation and send back response to Mock Service on complete.
+           </para>
+           <para>
+              Note that approve operation is meant to be sent by external system to HISE deployed Human Task.
+              This differs from TaskOperations Web Service, which is meant to be used by Task Operator. 
+              TaskOperations operations require operator's authentication via WS Security.
+              So in SoapUI operators need to fill fields like "user", "password", "password type" (digest or plain text).
+              When operator completes or fails a task, HISE sends response to external system. 
+              This yields to receiving a request in Resolving MockService in SoapUI. 
+              Additionally, when WS Addressing reply-to field is specified in approve request, 
+              HISE will send reply on task completion to a specified address. 
+           </para>
+        </listitem>
+      </itemizedlist>
     </para>
   </chapter>
 </book>
