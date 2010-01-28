@@ -12,11 +12,11 @@
 
   <packaging>pom</packaging>
   <build>
-  <plugins>
-        <plugin>
+    <plugins>
+      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        
+
         <executions>
           <execution>
             <id>bin</id>
@@ -26,21 +26,22 @@
             </goals>
             <configuration>
               <descriptors>
-                 <descriptor>src/main/bin.xml</descriptor>  
+                <descriptor>src/main/bin.xml</descriptor>
               </descriptors>
+              <finalName>apache-hise-${project.version}</finalName>
             </configuration>
           </execution>
         </executions>
-</plugin>  
-  </plugins>
+      </plugin>
+    </plugins>
   </build>
-  
+
   <dependencies>
-  <dependency>
-  <groupId>org.apache.hise</groupId>
-  <artifactId>hise-web</artifactId>
-  <version>${project.version}</version>
-  <type>war</type>
-  </dependency>
+    <dependency>
+      <groupId>org.apache.hise</groupId>
+      <artifactId>hise-web</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+    </dependency>
   </dependencies>
 </project>
