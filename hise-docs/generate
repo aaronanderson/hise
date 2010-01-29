@@ -15,3 +15,4 @@ for i in target/classes/*.xml;do
 j="`basename $i .xml`"
 xsltproc       --output  target/site/${j}.xhtml      ${DOCBOOK_DIR}/xhtml/docbook.xsl  $i
 done
+cp src/main/resources/*.png target/site

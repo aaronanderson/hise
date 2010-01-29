@@ -75,4 +75,64 @@
       </itemizedlist>
     </para>
   </chapter>
+  <chapter>
+    <title>Claims Handling Example</title>
+    <para>
+      HISE distribution contains claimsHandling example, which defines a single 
+      Human Interaction with one potential owner (Task Operator).
+    </para>
+    <para>
+      Task definition from claimsHandling.xml file contains following entries:
+      <programlisting>
+<![CDATA[
+    <htd:tasks>
+        <htd:task name="ClaimsHandlingTask">
+            <htd:interface portType="tns:ClaimsHandlingPT" operation="approve" responsePortType="tns:ClaimsHandlingPT" responseOperation="resolve"/>
+
+            ...
+            
+            <htd:peopleAssignments>
+              <htd:potentialOwners>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:users>
+                                <htd:user>user1</htd:user>
+                            </htd:users>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>
+                </htd:potentialOwners>
+            </htd:peopleAssignments>
+            
+            ...
+            
+            <htd:outcome>
+                ]]>&lt;<![CDATA[![CDATA[
+                  <cla:resolve xmlns:cla="http://www.insurance.example.com/claims" xmlns:htd="http://www.example.org/WS-HT">
+                     <claimId>{htd:getInput("request")/ClaimApprovalRequest/cla:cust/cla:id/text()}</claimId>
+                     <ok>{$outcome}</ok>
+                  </cla:resolve>
+                ]]>]]&gt;<![CDATA[
+            </htd:outcome>
+        </htd:task>    
+    </htd:tasks>  
+    ]]>  
+      </programlisting>
+      
+      htd:interface specifies Web Service via portType and operation attributes, which is exposed for listening for claims from external system.
+      When such request arrives, it is assigned to potential owner user1, as specified in peopleAssignments: <![CDATA[<htd:user>user1</htd:user>]]>.
+      Next, after Task Operator completes the claim, response is sent back to external system, specified by responsePortType and responseOperation. 
+      
+      Following picture shows basic interation between parties involved.
+      
+      <mediaobject>
+        <imageobject>
+          <imagedata align="center" fileref="claimsHandling.png" format="PNG" role=""></imagedata>
+        </imageobject>
+      </mediaobject>
+      
+      Detailed information on endpoint addresses is defined in claimsHandling-hise-dd.xml file.
+    </para>
+  </chapter>
 </book>
