@@ -100,6 +100,7 @@
                             META-INF.cxf.osgi,
                             org.apache.cxf.resource,
                             org.apache.cxf.binding.soap.spring,
+                            org.apache.cxf.jaxws.spi,
                             org.springframework.orm,
                             org.springframework.beans,
                             org.springframework.jdbc,

@@ -26,19 +26,16 @@ import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.ws.Dispatch;
-import javax.xml.ws.EndpointReference;
 import javax.xml.ws.Service;
-import javax.xml.ws.wsaddressing.W3CEndpointReference;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.apache.hise.utils.XQueryEvaluator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
 
 public class HISEJaxWSClient {
 

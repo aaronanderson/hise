@@ -43,7 +43,7 @@ public class HISEScheduler {
     
     private Log __log = LogFactory.getLog(HISEScheduler.class);
     
-    private HISEEngine hiseEngine;
+    private HISEEngineImpl hiseEngine;
     private ScheduledExecutorService executor;
     private PlatformTransactionManager transactionManager;
     
@@ -96,11 +96,11 @@ public class HISEScheduler {
     }
     
     
-    public HISEEngine getHiseEngine() {
+    public HISEEngineImpl getHiseEngine() {
         return hiseEngine;
     }
 
-    public void setHiseEngine(HISEEngine hiseEngine) {
+    public void setHiseEngine(HISEEngineImpl hiseEngine) {
         this.hiseEngine = hiseEngine;
     }
     

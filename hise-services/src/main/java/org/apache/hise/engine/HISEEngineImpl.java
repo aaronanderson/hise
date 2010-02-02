@@ -28,6 +28,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hise.api.HISEEngine;
 import org.apache.hise.api.HISEUserDetails;
 import org.apache.hise.dao.HISEDao;
 import org.apache.hise.dao.Job;
@@ -42,15 +43,8 @@ import org.apache.hise.utils.XQueryEvaluator;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class HISEEngine {
-    private static Log log = LogFactory.getLog(HISEEngine.class);
-    
-    public static class TaskInfo {
-        public String taskKey;
-        public TaskDefinition taskDefinition;
-        public HISEDD parent;
-        public TaskDD dd;
-    }
+public class HISEEngineImpl implements HISEEngine {
+    private static Log log = LogFactory.getLog(HISEEngineImpl.class);
     
     public final Map<String, QName> tasksMap = new HashMap<String, QName>();
     public final Map<QName, TaskInfo> tasks = new HashMap<QName, TaskInfo>();

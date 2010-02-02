@@ -20,8 +20,8 @@
 package org.apache.hise.engine.store;
 
 import org.apache.commons.lang.Validate;
-import org.apache.hise.engine.HISEEngine;
-import org.apache.hise.engine.HISEEngine.TaskInfo;
+import org.apache.hise.api.HISEEngine;
+import org.apache.hise.engine.HISEEngineImpl;
 import org.apache.hise.lang.HumanInteractions;
 import org.apache.hise.lang.TaskDefinition;
 
@@ -39,10 +39,10 @@ public class HISEDeployer {
         for (TaskDD t : di.getTasksDI()) {
             TaskDefinition d = tasks.getTaskDefinitions().get(t.getTaskName());
             Validate.notNull(d, "Can't find Task name specified in deployment descriptor " + t.getTaskName());
-            TaskInfo ti = new HISEEngine.TaskInfo();
+            org.apache.hise.api.HISEEngine.TaskInfo ti = new org.apache.hise.api.HISEEngine.TaskInfo();
             ti.dd = t;
             ti.parent = di;
-            ti.taskKey = HISEEngine.tasksKey(d.getTaskInterface().getPortType(), d.getTaskInterface().getOperation());
+            ti.taskKey = HISEEngineImpl.tasksKey(d.getTaskInterface().getPortType(), d.getTaskInterface().getOperation());
             ti.taskDefinition = d;
             hiseEngine.registerTask(ti);
         }
