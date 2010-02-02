@@ -28,10 +28,12 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
+import javax.xml.ws.spi.ServiceDelegate;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.jaxws.spi.ProviderImpl;
 import org.apache.hise.utils.XQueryEvaluator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -46,13 +48,15 @@ public class HISEJaxWSClient {
     URL wsdlDocumentLocation;
     QName serviceName;
     
-    private Service destinationService;
+    private ServiceDelegate destinationService;
     private QName destinationPort;
     private XQueryEvaluator evaluator = new XQueryEvaluator();
     
     public void init() throws Exception {
         messageFactory = MessageFactory.newInstance();
-        destinationService = Service.create(wsdlDocumentLocation, serviceName);
+        javax.xml.ws.spi.Provider provider = new ProviderImpl();
+        destinationService = provider.createServiceDelegate(wsdlDocumentLocation, serviceName, Service.class);
+//        destinationService = Service.create(wsdlDocumentLocation, serviceName);
         destinationPort = null;
         {
             Iterator<QName> it = destinationService.getPorts();
