@@ -15,9 +15,16 @@
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
        ">
 
+<!--
   <import resource="classpath:META-INF/cxf/cxf.xml"/>
   <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
   <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+-->
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-extension-http.xml" />
+    <import resource="classpath:META-INF/cxf/osgi/cxf-extension-osgi.xml" />
+
 
 <!-- 
   <bean id="hisePasswordCallback" class="org.apache.hise.engine.MapPasswordCallback">
@@ -69,7 +76,7 @@
     <property name="hiseEngine" ref="hiseEngine"/>
   </bean>
 
-  <jaxws:endpoint id="taskOperationsEndpoint" name="taskOperationsEndpoint" address="/taskOperations/" implementor="#taskOperations" serviceName="htdaw:taskOperations" publish="true"  wsdlLocation="ws-humantask.wsdl">
+  <jaxws:endpoint id="taskOperationsEndpoint" name="taskOperationsEndpoint" address="/taskOperations/" implementor="#taskOperations" serviceName="htdaw:taskOperations" publish="true" wsdlLocation="classpath:ws-humantask.wsdl">
   <!-- 
     <jaxws:handlers>
       <ref bean="transactionHandler"/>
@@ -90,9 +97,9 @@
     </jaxws:inInterceptors>
   </jaxws:endpoint>
 
+<!--
   <bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
   <bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
-
   <cxf:bus>
     <cxf:inInterceptors>
       <ref bean="logInbound"/>
@@ -107,4 +114,5 @@
       <ref bean="logOutbound"/>
     </cxf:outFaultInterceptors>
   </cxf:bus>
+-->
 </beans>

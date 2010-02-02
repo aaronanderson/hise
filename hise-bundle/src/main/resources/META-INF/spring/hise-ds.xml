@@ -24,7 +24,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
-    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
     ">
 
     <bean id="htEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -49,16 +49,23 @@
              -->
     </util:map>
     
-    <!-- 
-    <bean id="htJPAVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-        <property name="showSql" value="true" />
-        <property name="generateDdl" value="true" />
-        <property name="databasePlatform" value="org.hibernate.dialect.H2Dialect" />
-    </bean>
+    <!-- OpenJPA H2 Driver -->
+    <bean id="jpaVendorAdapter" class="org.apache.hise.dao.vendor.OpenJpaVendorAdapter">
+    <property name="database" value="ORACLE"/>
+    <property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.H2Dictionary"/>
+    <property name="generateDdl"    value="true" />
+    <property name="showSql"      value="false" />
+    <property name="extProperties">
+      <util:map>
+        <entry key="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true,SchemaAction='add')"/>
+      </util:map>
+    </property>
+  </bean>
+  
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource" lazy-init="true">
         <property name="driverClassName" value="org.h2.Driver" />
-        <property name="url" value="jdbc:h2:file:~/hise-db;DB_CLOSE_ON_EXIT=false" />
+        <property name="url" value="jdbc:h2:file:hise-h2-db;DB_CLOSE_ON_EXIT=false"/>
         <property name="username" value="sa" />
         <property name="password">
             <value></value>
@@ -66,9 +73,11 @@
         <property name="autoCommit" value="false" />
         <property name="suppressClose" value="true" />
     </bean>
-     -->
 
     <!-- 
+     -->
+
+    <!-- Hibernate MySQL Driver
     <bean id="htJPAVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="showSql" value="true" />
         <property name="generateDdl" value="true" />
@@ -85,13 +94,8 @@
     </bean>
      -->
 
-<!-- 
-    <bean id="htJPAVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-        <property name="showSql" value="false" />
-        <property name="generateDdl" value="true" />
-        <property name="databasePlatform" value="org.hibernate.dialect.OracleDialect" />
-    </bean>
-     -->
+
+<!-- OpenJPA Oracle Driver
     <bean id="jpaVendorAdapter" class="org.apache.hise.dao.vendor.OpenJpaVendorAdapter">
     <property name="database" value="ORACLE"/>
     <property name="databasePlatform" value="org.apache.openjpa.jdbc.sql.OracleDictionary"/>
@@ -113,9 +117,5 @@
         <property name="autoCommit" value="false" />
         <property name="suppressClose" value="true" />
     </bean>
-    
-    <bean id="sampleUsers" class="org.apache.hise.SampleUsers" init-method="init">
-        <property name="hiseDao" ref="hiseDao"></property>
-        <property name="transactionManager" ref="transactionManager"></property>
-    </bean>
+    -->
  </beans>

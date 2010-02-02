@@ -25,12 +25,12 @@
     <parent>
         <groupId>org.apache.hise</groupId>
         <artifactId>hise</artifactId>
-        <version>1.0.21-SNAPSHOT</version>
+        <version>0.1.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.hise</groupId>
     <artifactId>hise-features</artifactId>
-    <version>1.0.21-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <pluginRepositories>
@@ -125,51 +125,21 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.1.108</version>
-            <scope>test</scope>
+            <scope>runtime</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>oracle</groupId>
             <artifactId>ojdbc5</artifactId>
             <version>11.1.0.6.0</version>
         </dependency>
+        -->
 
         <dependency>
             <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-bindings-http</artifactId>
+            <artifactId>cxf-bundle</artifactId>
             <version>${cxf.version}</version>
             <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-core</artifactId>
-            <version>${cxf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>${cxf.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jaxb-xjc</artifactId>
-                    <groupId>com.sun.xml.bind</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http</artifactId>
-            <version>${cxf.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-common-utilities</artifactId>
-            <version>${cxf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-ws-security</artifactId>
-            <version>${cxf.version}</version>
         </dependency>
         <dependency>
             <groupId>xalan</groupId>

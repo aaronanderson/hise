@@ -25,13 +25,13 @@
     <parent>
         <groupId>org.apache.hise</groupId>
         <artifactId>hise</artifactId>
-        <version>1.0.21-SNAPSHOT</version>
+        <version>0.1.0-SNAPSHOT</version>
     </parent>
 
     <name>hise-bundle</name>
     <groupId>org.apache.hise</groupId>
     <artifactId>hise-bundle</artifactId>
-    <version>1.0.21-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <pluginRepositories>
@@ -98,18 +98,26 @@
                             javax.xml.soap,
                             META-INF.cxf,
                             META-INF.cxf.osgi,
-                            org.apache.servicemix.util,
                             org.apache.cxf.resource,
                             org.apache.cxf.binding.soap.spring,
                             org.springframework.orm,
                             org.springframework.beans,
                             org.springframework.jdbc,
                             org.springframework.jdbc.datasource,
+
+   org.springframework.osgi.config,
+   org.springframework.osgi.context,
+   org.springframework.osgi.context.support,
+   org.springframework.osgi.service,
+   org.springframework.osgi.service.importer,
+
                             org.apache.openjpa.persistence,
-                            org.apache.openjpa.jdbc.sql,
-                            oracle.jdbc.driver
+                            org.apache.openjpa.jdbc.sql
                         </Import-Package>
+                        <!--
                         <Private-Package>org.apache.hise*</Private-Package>
+                        -->
+                        <Export-Package>org.apache.hise*,org.w3._2001.xmlschema</Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                         <Require-Bundle>
                             org.apache.cxf.bundle
@@ -123,7 +131,7 @@
 			    net.sf.saxon*
                         <Embed-Dependency>saxon*,spring-orm,spring-jdbc,ojdbc5;scope=compile|runtime</Embed-Dependency>
                         -->
-                        <Embed-Dependency>saxon*;scope=compile|runtime</Embed-Dependency>
+                        <Embed-Dependency>saxon*,hise-wsdl;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <!--
                         -->
@@ -167,12 +175,29 @@
              </execution>
          </executions>
        </plugin>
+       -->
       <plugin>
         <groupId>org.apache.felix.karaf.tooling</groupId>
           <artifactId>features-maven-plugin</artifactId>
           <version>1.2.0-psc-01-01RC1</version>
        </plugin>
+       <!--
+      <plugin>
+        <groupId>org.apache.felix.karaf.tooling</groupId>
+          <artifactId>features-maven-plugin</artifactId>
+          <version>1.2.0-psc-01-01RC1</version>
+          <executions>
+            <execution>
+              <id>generate-features</id>
+              <phase>generate-resources</phase>
+              <goals>
+                <goal>generate-features-xml</goal>
+              </goals>
+             </execution>
+         </executions>
+       </plugin>
        -->
+
     </plugins>
   </build>
     <dependencies>
@@ -205,23 +230,27 @@
             <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
             <version>1.1.2</version>
         </dependency>
+        <!--
         <dependency>
             <groupId>org.apache.servicemix</groupId>
             <artifactId>servicemix-utils</artifactId>
             <version>1.2.0</version>
         </dependency>
+        -->
 
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.1.108</version>
-            <scope>test</scope>
+            <scope>runtime</scope>
         </dependency>
+        <!--
         <dependency>
             <groupId>oracle</groupId>
             <artifactId>ojdbc5</artifactId>
             <version>11.1.0.6.0</version>
         </dependency>
+        -->
 
         <dependency>
             <groupId>org.apache.cxf</groupId>
