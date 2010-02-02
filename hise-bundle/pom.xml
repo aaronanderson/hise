@@ -101,10 +101,6 @@
                             org.apache.cxf.resource,
                             org.apache.cxf.binding.soap.spring,
                             org.apache.cxf.jaxws.spi,
-                            org.springframework.orm,
-                            org.springframework.beans,
-                            org.springframework.jdbc,
-                            org.springframework.jdbc.datasource,
 
    org.springframework.osgi.config,
    org.springframework.osgi.context,
@@ -112,10 +108,16 @@
    org.springframework.osgi.service,
    org.springframework.osgi.service.importer,
 
-                            org.apache.openjpa.persistence,
-                            org.apache.openjpa.jdbc.sql
+org.apache.openjpa.persistence
                         </Import-Package>
                         <!--
+org.h2,
+                            org.apache.openjpa.persistence,
+                            org.apache.openjpa.jdbc.sql
+                            org.springframework.orm,
+                            org.springframework.beans,
+                            org.springframework.jdbc,
+                            org.springframework.jdbc.datasource,
                         <Private-Package>org.apache.hise*</Private-Package>
                         -->
                         <Export-Package>org.apache.hise*,org.w3._2001.xmlschema</Export-Package>
@@ -132,7 +134,7 @@
 			    net.sf.saxon*
                         <Embed-Dependency>saxon*,spring-orm,spring-jdbc,ojdbc5;scope=compile|runtime</Embed-Dependency>
                         -->
-                        <Embed-Dependency>saxon*,hise-wsdl;scope=compile|runtime</Embed-Dependency>
+                        <Embed-Dependency>saxon*,h2,spring-orm,spring-jdbc,spring-aspects,hise-wsdl;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <!--
                         -->

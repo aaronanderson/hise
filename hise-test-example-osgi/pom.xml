@@ -39,6 +39,7 @@
                         <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
                         <Import-Package>
                             javax.persistence,
+                            org.apache.openjpa.persistence,
                             javax.xml.bind,
                             javax.xml.soap,
                             META-INF.cxf,
