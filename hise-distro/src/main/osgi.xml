@@ -20,6 +20,7 @@
             <outputDirectory>doc</outputDirectory>
           <includes>
               <include>user-guide*</include>
+              <include>*.png</include>
           </includes>
         </fileSet>
         <fileSet>
