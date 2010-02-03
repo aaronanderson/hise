@@ -33,8 +33,10 @@
   <dependencySets>
     <dependencySet>
       <outputDirectory>/</outputDirectory>
+          <includes>
+              <include>${pom.groupId}:hise-web</include>
+          </includes>
       <unpack>false</unpack>
-      <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
 </assembly>

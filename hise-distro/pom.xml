@@ -19,16 +19,29 @@
 
         <executions>
           <execution>
-            <id>bin</id>
+            <id>distro-war</id>
             <phase>package</phase>
             <goals>
               <goal>attached</goal>
             </goals>
             <configuration>
               <descriptors>
-                <descriptor>src/main/bin.xml</descriptor>
+                <descriptor>src/main/war.xml</descriptor>
               </descriptors>
-              <finalName>apache-hise-${project.version}</finalName>
+              <finalName>apache-hise-war-${project.version}</finalName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>distro-osgi</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attached</goal>
+            </goals>
+            <configuration>
+              <descriptors>
+                <descriptor>src/main/osgi.xml</descriptor>
+              </descriptors>
+              <finalName>apache-hise-osgi-${project.version}</finalName>
             </configuration>
           </execution>
         </executions>
@@ -42,6 +55,16 @@
       <artifactId>hise-web</artifactId>
       <version>${project.version}</version>
       <type>war</type>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hise</groupId>
+      <artifactId>hise-bundle</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.hise</groupId>
+      <artifactId>hise-test-example-osgi</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>
