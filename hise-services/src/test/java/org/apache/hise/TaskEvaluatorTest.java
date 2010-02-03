@@ -9,7 +9,10 @@ import junit.framework.Assert;
 
 import net.sf.saxon.dom.NodeOverNodeInfo;
 import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.type.TypeHierarchy;
 
+import org.apache.cxf.helpers.IOUtils;
+import org.apache.hise.dao.Message;
 import org.apache.hise.lang.xsd.htd.TDeadline;
 import org.apache.hise.lang.xsd.htd.TDurationExpr;
 import org.apache.hise.runtime.Task;
@@ -26,6 +29,7 @@ public class TaskEvaluatorTest {
         t.setCurrentEventDateTime(new Date(1234L));
         org.apache.hise.dao.Task t2 = new org.apache.hise.dao.Task();
         t2.setId(1234L);
+        t2.getInput().put("request", new Message("request", "<a><b>text1</b></a>"));
         t.setTaskDto(t2);
         
         return new TaskEvaluator(t);
@@ -79,5 +83,19 @@ public class TaskEvaluatorTest {
         Assert.assertEquals(6234L, r.getTime());
     }
 
-
+    @Test
+    public void testEvalGetInput() throws Exception {
+        XQueryEvaluator e = buildTaskEvaluator().buildQueryEvaluator();
+        Object r = e.evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; xs:string(htd:getInput('request')/b)", null);
+        Assert.assertTrue(r.toString().equals("[text1]"));
+    }
+ 
+    @Test
+    public void testEvalOutcome2() throws Exception {
+        System.out.println("testEvalOutcome2");
+        XQueryEvaluator e = buildTaskEvaluator().buildQueryEvaluator();
+        Object r = DOMUtils.domToString((Node) e.evaluateExpression(IOUtils.toString(getClass().getResourceAsStream("/outcome2.xml")), null).get(0));
+        Assert.assertTrue(r.toString().contains("<firstname>text1</firstname><lastname>text1</lastname><taskId>1234</taskId>"));
+        System.out.println("~testEvalOutcome2");
+    }
 }

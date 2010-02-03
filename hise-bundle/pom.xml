@@ -108,7 +108,9 @@
    org.springframework.osgi.service,
    org.springframework.osgi.service.importer,
 
-org.apache.openjpa.persistence
+org.apache.openjpa.persistence,
+
+net.sf.saxon.xpath
                         </Import-Package>
                         <!--
 org.h2,
@@ -134,7 +136,7 @@ org.h2,
 			    net.sf.saxon*
                         <Embed-Dependency>saxon*,spring-orm,spring-jdbc,ojdbc5;scope=compile|runtime</Embed-Dependency>
                         -->
-                        <Embed-Dependency>saxon*,h2,spring-orm,spring-jdbc,spring-aspects,hise-wsdl;scope=compile|runtime</Embed-Dependency>
+                        <Embed-Dependency>h2,spring-orm,spring-jdbc,spring-aspects,hise-wsdl;scope=compile|runtime</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <!--
                         -->

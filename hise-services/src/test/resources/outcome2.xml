@@ -1,0 +1,5 @@
+<cla:notify xmlns:cla="http://www.insurance.example.com/claims" xmlns:htd="http://www.example.org/WS-HT">
+            <firstname>{htd:getInput("request")/b/text()}</firstname>
+            <lastname>{htd:getInput("request")/b/text()}</lastname>
+            <taskId>{$taskId}</taskId>
+          </cla:notify>
