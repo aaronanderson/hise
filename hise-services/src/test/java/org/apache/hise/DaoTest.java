@@ -1,22 +1,15 @@
 package org.apache.hise;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import org.apache.hise.TaskCreationHelper.TaskType;
 import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.HISEDao;
 import org.apache.hise.dao.Job;
-import org.apache.hise.dao.Message;
 import org.apache.hise.dao.OrgEntity;
 import org.apache.hise.dao.Task;
-import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.dao.TaskQuery;
-import org.apache.hise.dao.Task.Status;
-import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
-import org.apache.hise.lang.xsd.htda.TStatus;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,18 +17,19 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 @ContextConfiguration(locations = "classpath:/dao.xml")
 public class DaoTest extends AbstractJUnit4SpringContextTests {
     
-    @Autowired
+	@Autowired
     private HISEDao hiseDao;
     
     @Autowired
     private JpaTransactionManager transactionManager;
+    
+    private TaskCreationHelper taskHelper = new TaskCreationHelper();
     
     private void cleanup() throws Exception {
         hiseDao.clearAllRecords(OrgEntity.class);
@@ -43,105 +37,25 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
         hiseDao.clearAllRecords(Job.class);
     }
     
-    private Long addTask() throws Exception {
-        Assert.assertTrue(hiseDao != null);
-        
-        OrgEntity o, o2;
-        
-        o2 = new OrgEntity();
-        o2.setName("group1");
-        o2.setType(OrgEntityType.GROUP);
-        hiseDao.persist(o2);
-
-        o = new OrgEntity();
-        o.setName("user1");
-        o.setType(OrgEntityType.USER);
-        o.setUserPassword("abc");
-        
-        o.addToGroup(o2);
-        hiseDao.persist(o);
-        
-        Task t = new Task();
-        t.setStatus(Status.CREATED);
-        t.setTaskDefinitionKey("asd");
-        t.setActualOwner("user1");
-        
-        t.getInput().put("abc", new Message("abc", "def"));
-        hiseDao.persist(t);
-        Long id = t.getId();
-        Assert.assertNotNull(id);
-        return id;
-    }
-
-    private void addTask2() throws Exception {
-        addTask();
-        Task t = new Task();
-        t.setStatus(Status.READY);
-        t.setTaskDefinitionKey("asd2");
-        Set<TaskOrgEntity> pa = new HashSet<TaskOrgEntity>();
-        TaskOrgEntity x = new TaskOrgEntity();
-        x.setName("user1");
-        x.setType(OrgEntityType.USER);
-        x.setGenericHumanRole(GenericHumanRole.POTENTIALOWNERS);
-        x.setTask(t);
-        pa.add(x);
-        t.setPeopleAssignments(pa);
-        hiseDao.persist(t);
-    }
-
-    private void addTask3() throws Exception {
-        addTask();
-        Task t = new Task();
-        t.setStatus(Status.READY);
-        t.setTaskDefinitionKey("asd3");
-        Set<TaskOrgEntity> pa = new HashSet<TaskOrgEntity>();
-        TaskOrgEntity x = new TaskOrgEntity();
-        x.setName("group1");
-        x.setType(OrgEntityType.GROUP);
-        x.setGenericHumanRole(GenericHumanRole.POTENTIALOWNERS);
-        x.setTask(t);
-        pa.add(x);
-        t.setPeopleAssignments(pa);
-        hiseDao.persist(t);
-    }
-
-    
     @Test
     public void testDao() throws Exception {
         TransactionTemplate tt = new TransactionTemplate(transactionManager);
-        final Long tid = (Long) tt.execute(new TransactionCallback() {
-            public Object doInTransaction(TransactionStatus arg0) {
-                try {
-                    return addTask();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+        Long tid = taskHelper.addTaskInTransaction(TaskType.TASK1, tt, hiseDao);
+        Assert.assertNotNull(tid);
     }
-    
-    
     
     @Test 
     public void testUserTasks() throws Exception {
         TransactionTemplate tt = new TransactionTemplate(transactionManager);
-        final Long tid = (Long) tt.execute(new TransactionCallback() {
-            public Object doInTransaction(TransactionStatus arg0) {
-                try {
-                    cleanup();
-                    return addTask();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+        taskHelper.addTaskInTransaction(TaskType.TASK1, tt, hiseDao);
+        
         tt.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {
                 try {
                     TaskQuery query = new TaskQuery();
-                    query.setUser("user1");
+                    query.setUser(TaskCreationHelper.TASK1_OWNER);
                     List<Task> r = hiseDao.getUserTasks(query);
-                    Assert.assertEquals("asd", r.get(0).getTaskDefinitionKey());
+                    Assert.assertEquals(TaskCreationHelper.TASK1_DEFINITION_KEY, r.get(0).getTaskDefinitionKey());
                     return null;
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -153,19 +67,19 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
     @Test 
     public void testUserTasks2() throws Exception {
         TransactionTemplate tt = new TransactionTemplate(transactionManager);
-        final Long tid = (Long) tt.execute(new TransactionCallback() {
+        tt.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {
                 try{
                     cleanup();
-                    addTask2();
+                    taskHelper.addTask2(hiseDao);
                     TaskQuery query = new TaskQuery();
-                    query.setUser("user1");
+                    query.setUser(TaskCreationHelper.TASK2_ASSIGNED_USER);
                     query.setGenericHumanRole(GenericHumanRole.POTENTIALOWNERS);
                     List<Task> r = hiseDao.getUserTasks(query);
-                    query.getUserGroups().add("group1");
+                    query.getUserGroups().add(TaskCreationHelper.TASK2_ASSIGNED_USER_GROUP);
                     r = hiseDao.getUserTasks(query);
                     
-                    Assert.assertEquals("asd2", r.get(0).getTaskDefinitionKey());
+                    Assert.assertEquals(TaskCreationHelper.TASK2_DEFINITION_KEY, r.get(0).getTaskDefinitionKey());
                     return null;
                 } catch (Exception e) {
                     throw new RuntimeException(e);
@@ -177,20 +91,12 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
     @Test
     public void testInputs() throws Exception {
         TransactionTemplate tt = new TransactionTemplate(transactionManager);
-        final Long tid = (Long) tt.execute(new TransactionCallback() {
-            public Object doInTransaction(TransactionStatus arg0) {
-                try {
-                    cleanup();
-                    return addTask();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+        final Long tid = taskHelper.addTaskInTransaction(TaskType.TASK1, tt, hiseDao);
         tt.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {
                 try {
-                    Assert.assertTrue(hiseDao.find(Task.class, tid).getInput().get("abc").getMessage().equals("def"));
+                	Task task = hiseDao.find(Task.class, tid);
+                	Assert.assertTrue(task.getInput().get(TaskCreationHelper.TASK1_INPUT_KEY).getMessage().equals(TaskCreationHelper.TASK1_INPUT_VALUE));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -203,27 +109,17 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
     @Test 
     public void testGroupQuery() throws Exception {
         TransactionTemplate tt = new TransactionTemplate(transactionManager);
-        tt.execute(new TransactionCallback() {
-            public Object doInTransaction(TransactionStatus arg0) {
-                try {
-                    cleanup();
-                    addTask3();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                return null;
-            }
-        });
+        taskHelper.addTaskInTransaction(TaskType.TASK3, tt, hiseDao);
                 
         tt.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {
                 try {
                     TaskQuery query = new TaskQuery();
-                    query.setUser("user1");
-                    query.getUserGroups().add("group1");
+                    query.setUser(TaskCreationHelper.TASK3_ASSIGNED_USER);
+                    query.getUserGroups().add(TaskCreationHelper.TASK3_ASSIGNED_GROUP);
                     query.setGenericHumanRole(GenericHumanRole.POTENTIALOWNERS);
                     List<Task> r = hiseDao.getUserTasks(query);
-                    Assert.assertEquals("asd3", r.get(0).getTaskDefinitionKey());
+                    Assert.assertEquals(TaskCreationHelper.TASK3_DEFINITION_KEY, r.get(0).getTaskDefinitionKey());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -261,7 +157,7 @@ public class DaoTest extends AbstractJUnit4SpringContextTests {
             public Object doInTransaction(TransactionStatus arg0) {
                 try {
                     cleanup();
-                    Task t = hiseDao.find(Task.class, addTask());
+                    Task t = hiseDao.find(Task.class, taskHelper.addTask(hiseDao));
                     
                     {
                         Job j = new Job();
