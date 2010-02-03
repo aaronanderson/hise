@@ -8,7 +8,7 @@
   <index/>
 
   <chapter>
-    <title>Quick Introduction</title>
+    <title>Quick Introduction into WAR distibution</title>
     <para>
       In order to have something running, you need to do following steps:
       <itemizedlist>
@@ -73,6 +73,19 @@
            </para>
         </listitem>
       </itemizedlist>
+    </para>
+  </chapter>
+  <chapter>
+    <title>Intoduction into OSGi distribution</title>
+    <para>
+      HISE OSGi distribution works out of box under Apach ServiceMix 4. 
+      It contains bundles directory with required dependencies. 
+      In order to run it, you need to put those artifacts into SMX4/deploy directory. 
+      Next, you can point your browser to http://localhost:8181/cxf address 
+      and see deployed Web Services.
+    </para>
+    <para>
+      This distribution was tested under apache-servicemix-4.1.0-psc-01-00RC1 (FUSE). 
     </para>
   </chapter>
   <chapter>

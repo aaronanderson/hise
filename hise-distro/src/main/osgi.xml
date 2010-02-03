@@ -42,7 +42,6 @@
       <outputDirectory>bundles</outputDirectory>
           <includes>
               <include>${pom.groupId}:hise-bundle</include>
-            <include>${pom.groupId}:hise-test-example-osgi</include>
           </includes>
       <unpack>false</unpack>
     </dependencySet>
