@@ -22,16 +22,16 @@
     <parent>
         <groupId>org.apache.hise</groupId>
         <artifactId>hise</artifactId>
-        <version>0.1.0</version>
+        <version>0.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>hise-wsdl-classes</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.0</version>
+    <version>0.2.0-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>org.apache.hise</groupId>
             <artifactId>hise-wsdl</artifactId>
-            <version>0.1.0</version>
+            <version>0.2.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
