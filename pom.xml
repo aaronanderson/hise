@@ -26,13 +26,15 @@
 	<modules>
 		<module>hise-wsdl</module>
 		<module>hise-test-example</module>
+		<module>hise-test-example-osgi</module>
 		<module>hise-wsdl-classes</module>
 		<module>hise-services</module>
         <module>hise-web</module>
+        <module>hise-bundle</module>
 	</modules>
 	<properties>
-		<cxf.version>2.2.4</cxf.version>
-		<spring.version>2.5.6</spring.version>
+		<cxf.version>2.2.6</cxf.version>
+		<spring.version>2.5.6.SEC01</spring.version>
 		<saxon.version>9.1.0.8</saxon.version>
 	</properties>
 	<repositories>

@@ -34,10 +34,12 @@ import javax.xml.ws.handler.MessageContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.hise.engine.HISEEngine;
+import org.apache.hise.api.HISEEngine;
+import org.apache.hise.engine.HISEEngineImpl;
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionCallback;
@@ -53,7 +55,7 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
 
     private HISEEngine hiseEngine;
     private WebServiceContext context;
-    private JpaTransactionManager transactionManager;
+    private PlatformTransactionManager transactionManager;
     private MessageFactory messageFactory;
     private TransactionTemplate transactionTemplate;
 
@@ -73,7 +75,7 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
         return context;
     }
 
-    public void setTransactionManager(JpaTransactionManager transactionManager) {
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
 

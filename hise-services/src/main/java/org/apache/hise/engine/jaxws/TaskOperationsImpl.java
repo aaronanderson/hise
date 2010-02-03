@@ -36,7 +36,7 @@ import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.OrgEntity;
 import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.dao.TaskQuery;
-import org.apache.hise.engine.HISEEngine;
+import org.apache.hise.engine.HISEEngineImpl;
 import org.apache.hise.engine.wsdl.IllegalAccessFault;
 import org.apache.hise.engine.wsdl.IllegalArgumentFault;
 import org.apache.hise.engine.wsdl.IllegalOperationFault;
@@ -66,7 +66,7 @@ import org.springframework.transaction.annotation.Transactional;
 @WebService
 public class TaskOperationsImpl implements TaskOperations {
 
-    private HISEEngine hiseEngine;
+    private HISEEngineImpl hiseEngine;
 
     private WebServiceContext context;
 
@@ -77,7 +77,7 @@ public class TaskOperationsImpl implements TaskOperations {
         context = (WebServiceContext) Class.forName("org.apache.cxf.jaxws.context.WebServiceContextImpl").newInstance();
     }
 
-    public void setHiseEngine(HISEEngine hiseEngine) {
+    public void setHiseEngine(HISEEngineImpl hiseEngine) {
         this.hiseEngine = hiseEngine;
     }
 

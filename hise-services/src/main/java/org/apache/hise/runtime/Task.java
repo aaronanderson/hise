@@ -36,7 +36,7 @@ import org.apache.hise.dao.Message;
 import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.dao.Task.Status;
 import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
-import org.apache.hise.engine.HISEEngine;
+import org.apache.hise.engine.HISEEngineImpl;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.lang.xsd.htd.TGrouplist;
 import org.apache.hise.lang.xsd.htd.TOrganizationalEntity;
@@ -57,7 +57,7 @@ public class Task {
 
     private final Log __log = LogFactory.getLog(Task.class);
 
-    private HISEEngine hiseEngine;
+    private HISEEngineImpl hiseEngine;
 
     private org.apache.hise.dao.Task taskDto;
     private TaskDefinition taskDefinition;
@@ -99,11 +99,11 @@ public class Task {
         this.currentUser = currentUser;
     }
 
-    public HISEEngine getHiseEngine() {
+    public HISEEngineImpl getHiseEngine() {
         return hiseEngine;
     }
 
-    private Task(HISEEngine engine, boolean notification) {
+    private Task(HISEEngineImpl engine, boolean notification) {
         this.hiseEngine = engine;
         Validate.notNull(hiseEngine);
 
@@ -133,7 +133,7 @@ public class Task {
         this.taskEvaluator = taskEvaluator;
     }
 
-    public static Task load(HISEEngine engine, Long id) {
+    public static Task load(HISEEngineImpl engine, Long id) {
         HISEDao dao = engine.getHiseDao();
         org.apache.hise.dao.Task dto = dao.find(org.apache.hise.dao.Task.class, id);
         Task t = new Task(engine, dto.isNotification());
@@ -162,7 +162,7 @@ public class Task {
         }
     }
     
-    public static Task create(HISEEngine engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
+    public static Task create(HISEEngineImpl engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
         Task t = new Task(engine, false);
         Validate.notNull(taskDefinition);
         Validate.isTrue(!taskDefinition.isNotification());
@@ -232,7 +232,7 @@ public class Task {
         // recalculatePriority();
     }
 
-    public static Task createNotification(HISEEngine engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
+    public static Task createNotification(HISEEngineImpl engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
         Task t = new Task(engine, true);
         Validate.notNull(taskDefinition);
         Validate.isTrue(taskDefinition.isNotification());

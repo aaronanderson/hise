@@ -16,7 +16,7 @@ import javax.xml.validation.SchemaFactory;
 import junit.framework.Assert;
 
 import org.apache.hise.api.HISEUserDetails;
-import org.apache.hise.engine.HISEEngine;
+import org.apache.hise.engine.HISEEngineImpl;
 import org.apache.hise.engine.jaxws.TaskOperationsImpl;
 import org.apache.hise.lang.xsd.htda.TTask;
 import org.apache.hise.lang.xsd.htdt.SuspendUntil;
@@ -28,7 +28,7 @@ public class TaskOperationsTest {
     @Test
     public void testGetMyTasks() throws Exception {
         TaskOperationsImpl ti = new MockTaskOperationsImpl();
-        HISEEngine he = new HISEEngine();
+        HISEEngineImpl he = new HISEEngineImpl();
         he.setHiseUserDetails(new HISEUserDetails() {
             public String getUserPassword(String user) {
                 return null;
