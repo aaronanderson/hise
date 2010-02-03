@@ -22,9 +22,9 @@
     <parent>
         <groupId>org.apache.hise</groupId>
         <artifactId>hise</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
     </parent>
     <artifactId>hise-wsdl</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
 </project>
