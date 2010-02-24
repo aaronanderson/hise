@@ -27,7 +27,6 @@ xmlns:osgi="http://www.springframework.org/schema/osgi"
     <import resource="classpath:META-INF/cxf/cxf-extension-http.xml" />
     <import resource="classpath:META-INF/cxf/osgi/cxf-extension-osgi.xml" />
 
-
 <!-- 
   <bean id="hisePasswordCallback" class="org.apache.hise.engine.MapPasswordCallback">
     <property name="passwords" ref="hiseLoginProperties"/>

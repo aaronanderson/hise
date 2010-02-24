@@ -33,6 +33,21 @@
     <artifactId>hise-bundle</artifactId>
     <version>0.2.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
+    <profiles>
+    	<profile>
+    		<id>itest</id>
+    		<build>
+    			<resources>
+    				<resource>
+    					<directory>src/main/resources-itest</directory>
+    				</resource>
+    				<resource>
+    					<directory>src/main/resources</directory>
+    				</resource>
+    			</resources>
+    		</build>
+    	</profile>
+    </profiles>
 
     <pluginRepositories>
       <pluginRepository>
