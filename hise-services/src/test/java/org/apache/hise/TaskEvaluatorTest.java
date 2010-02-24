@@ -1,5 +1,6 @@
 package org.apache.hise;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -56,7 +57,15 @@ public class TaskEvaluatorTest {
         Object r = e.evaluateExpression("declare namespace htd='http://www.example.org/WS-HT'; for $i in htd:literal/htd:organizationalEntity/htd:users/htd:user return string($i)", DOMUtils.parse(getClass().getResourceAsStream("/taskEvaluator.xml")).getFirstChild());
         Assert.assertTrue(r.toString().equals("[user1, user2]"));
     }
-    
+
+    @Test
+    public void testEval4() throws Exception {
+        XQueryEvaluator e = new XQueryEvaluator();
+        e.bindVariable(QName.valueOf("abc"), "val");
+        Object r = e.evaluateExpression(TaskEvaluator.getTemplateExpr(Collections.singletonList((Object) "123 {$abc} 345")), null);
+        Assert.assertEquals(r.toString(), "[123 val 345]");
+    }
+
     @Test
     public void testEvalOutcome() throws Exception {
         XQueryEvaluator e = new XQueryEvaluator();

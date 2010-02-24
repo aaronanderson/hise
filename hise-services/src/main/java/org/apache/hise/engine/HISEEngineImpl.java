@@ -91,7 +91,7 @@ public class HISEEngineImpl implements HISEEngine {
         log.debug("registering route " + ti.taskKey + " -> " + ti.taskDefinition.getTaskName());
         
         if (tasks.containsKey(ti.taskDefinition.getTaskName()) || tasksMap.containsKey(ti.taskKey)) {
-            throw new IllegalArgumentException("Unable to deploy " + ti + " is already deployed.");
+            log.warn("Unable to deploy " + ti + " is already deployed.");
         }
         
         tasksMap.put(ti.taskKey, ti.taskDefinition.getTaskName());

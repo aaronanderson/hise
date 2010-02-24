@@ -19,6 +19,8 @@
 
 package org.apache.hise.lang;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.namespace.QName;
@@ -31,6 +33,8 @@ import org.apache.hise.lang.xsd.htd.TFrom;
 import org.apache.hise.lang.xsd.htd.TLiteral;
 import org.apache.hise.lang.xsd.htd.TNotification;
 import org.apache.hise.lang.xsd.htd.TPeopleAssignments;
+import org.apache.hise.lang.xsd.htd.TPresentationElements;
+import org.apache.hise.lang.xsd.htd.TPresentationParameters;
 import org.apache.hise.lang.xsd.htd.TPriority;
 import org.apache.hise.lang.xsd.htd.TTask;
 import org.apache.hise.lang.xsd.htd.TTaskInterface;
@@ -323,6 +327,21 @@ public class TaskDefinition {
     
     public String getOutcomeExpression() {
         return tTask.getOutcome().getContent().get(0).toString();
+    }
+    
+    public TPresentationElements getPresentationElements() {
+    	return isNotification() ? tNote.getPresentationElements() : tTask.getPresentationElements();
+    }
+    
+    public List<org.apache.hise.lang.xsd.htd.TPresentationParameter> getPresentationParameters() {
+    	TPresentationElements v = getPresentationElements();
+    	if (v != null) {
+    		TPresentationParameters u = v.getPresentationParameters();
+    		if (u != null) {
+    			return u.getPresentationParameter();
+    		}
+    	}
+    	return Collections.EMPTY_LIST;
     }
 
     /**

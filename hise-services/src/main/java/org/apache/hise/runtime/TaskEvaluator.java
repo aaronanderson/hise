@@ -44,6 +44,7 @@ import org.apache.hise.lang.xsd.htd.TExpression;
 import org.apache.hise.lang.xsd.htd.TFrom;
 import org.apache.hise.lang.xsd.htd.TGenericHumanRole;
 import org.apache.hise.lang.xsd.htd.TPeopleAssignments;
+import org.apache.hise.lang.xsd.htd.TPresentationParameter;
 import org.apache.hise.lang.xsd.htd.TToPart;
 import org.apache.hise.lang.xsd.htd.TToParts;
 import org.apache.hise.utils.DOMUtils;
@@ -213,5 +214,51 @@ public class TaskEvaluator {
     
     public static Node defaultHeader() {
         return DOMUtils.parse("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<soapenv:Header xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\"/>").getDocumentElement();
+    }
+    
+    public String getPresentationName() {
+    	try {
+    		return XmlUtils.getStringContent(task.getTaskDefinition().getPresentationElements().getName().get(0).getContent());
+    	} catch (Throwable t) {
+    		return null;
+    	}
+    }
+    
+    public XQueryEvaluator buildPresentationEvaluator() {
+        XQueryEvaluator evaluator = buildQueryEvaluator();
+        for (TPresentationParameter p : task.getTaskDefinition().getPresentationParameters()) {
+            XQueryEvaluator evaluator2 = buildQueryEvaluator();
+            Object v = evaluator2.evaluateExpression(XmlUtils.getStringContent(p.getContent()), null).get(0);
+            __log.debug("evaluated presentationParameter: " + p.getName() + " = " + v);
+        	evaluator.bindVariable(QName.valueOf(p.getName()), v);
+        }
+        return evaluator;
+    }
+    
+    public static String getTemplateExpr(List<Object> expr) {
+    	return "xs:string(<v>" + XmlUtils.getStringContent(expr) + "</v>)";
+    }
+    
+    
+    public String evalPresentationSubject() {
+    	String subjectExpr;
+    	try {
+	    	subjectExpr = getTemplateExpr(task.getTaskDefinition().getPresentationElements().getSubject().get(0).getContent());
+		} catch (Throwable t) {
+			return null;
+		}
+		XQueryEvaluator e = buildPresentationEvaluator();
+		return "" + e.evaluateExpression(subjectExpr, null).get(0);
+    }
+    
+    public String evalPresentationDescription() {
+    	String descExpr;
+    	try {
+	    	descExpr = getTemplateExpr(task.getTaskDefinition().getPresentationElements().getDescription().get(0).getContent());
+		} catch (Throwable t) {
+			return null;
+		}
+		XQueryEvaluator e = buildPresentationEvaluator();
+		return "" + e.evaluateExpression(descExpr, null).get(0);
     }
 }

@@ -118,7 +118,7 @@ public class TaskOperationsImpl implements TaskOperations {
         
         List<org.apache.hise.dao.Task> k = hiseEngine.getHiseDao().getUserTasks(query);
         for (org.apache.hise.dao.Task u : k) {
-            TTask t = convertTask(u);
+            TTask t = convertTask(u.getId());
             l.add(t);
         }
         return l;
@@ -238,7 +238,10 @@ public class TaskOperationsImpl implements TaskOperations {
     // return TStatus.fromValue(in.toString());
     // }
     
-    private static TTask convertTask(org.apache.hise.dao.Task u) {
+    private TTask convertTask(Long id) {
+        Task task = Task.load(hiseEngine, id);
+        org.apache.hise.dao.Task u = task.getTaskDto();
+
         TTask t = new TTask();
         t.setId("" + u.getId());
         t.setTaskType(u.isNotification() ? "NOTIFICATION" : "TASK");
@@ -246,13 +249,15 @@ public class TaskOperationsImpl implements TaskOperations {
         t.setActivationTime(u.getActivationTime());
         if (u.getActualOwner() != null) t.setActualOwner(u.getActualOwner());
         t.setCreatedBy(u.getCreatedBy());
+        t.setPresentationName(task.getTaskEvaluator().getPresentationName());
+        t.setPresentationSubject(task.getTaskEvaluator().evalPresentationSubject());
         t.setName(u.getTaskDefinitionName());
         t.setStatus(TStatus.valueOf(u.getStatus().toString()));
         return t;
     }
 
     public org.apache.hise.lang.xsd.htda.TTask getTaskInfo(String identifier) throws IllegalArgumentFault {
-        return convertTask(hiseEngine.getHiseDao().find(org.apache.hise.dao.Task.class, Long.parseLong(identifier)));
+        return convertTask(hiseEngine.getHiseDao().find(org.apache.hise.dao.Task.class, Long.parseLong(identifier)).getId());
     }
 
     public TTaskQueryResultSet query(String selectClause, String whereClause, String orderByClause, Integer maxTasks, Integer taskIndexOffset) throws IllegalArgumentFault, IllegalStateFault {
@@ -372,8 +377,9 @@ public class TaskOperationsImpl implements TaskOperations {
     }
 
     public String getTaskDescription(String identifier, String contentType) throws IllegalArgumentFault {
-        // TODO Auto-generated method stub
-        return null;
+        Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.setCurrentUser(getUserString());
+        return t.getTaskEvaluator().evalPresentationDescription();
     }
 
     public void nominate(String identifier, TOrganizationalEntity organizationalEntity) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {

@@ -114,19 +114,28 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
                 <htd:presentationParameters>
                     
                     <htd:presentationParameter name="firstname" type="xsd:string">
-                        htd:getInput("ClaimApprovalRequest")/cust/firstname </htd:presentationParameter>
+declare namespace cla="http://www.insurance.example.com/claims";
+declare namespace htd="http://www.example.org/WS-HT";
+xs:string(htd:getInput("request")/ClaimApprovalRequest/cla:cust/cla:firstname)
+</htd:presentationParameter>
                     
                     <htd:presentationParameter name="lastname" type="xsd:string">
-                        htd:getInput("ClaimApprovalRequest")/cust/lastname </htd:presentationParameter>
+declare namespace cla="http://www.insurance.example.com/claims";
+declare namespace htd="http://www.example.org/WS-HT";
+xs:string(htd:getInput("request")/ClaimApprovalRequest/cla:cust/cla:lastname)
+</htd:presentationParameter>
                     
                     <htd:presentationParameter name="euroAmount" type="xsd:double">
-                        htd:getInput("ClaimApprovalRequest")/amount </htd:presentationParameter>
+declare namespace cla="http://www.insurance.example.com/claims";
+declare namespace htd="http://www.example.org/WS-HT";
+xs:double(htd:getInput("request")/ClaimApprovalRequest/cla:amount)
+</htd:presentationParameter>
                         
                 </htd:presentationParameters>
                 
-                <htd:subject xml:lang="en-US"> Approve the insurance claim for PLN $euroAmount$ on behalf of $firstname$ $lastname$ </htd:subject>
+<htd:subject xml:lang="en-US"> Approve the insurance claim for PLN {$euroAmount} on behalf of {$firstname} {$lastname} </htd:subject>
 
-                <htd:description xml:lang="en-US" contentType="text/plain"> Approve this claim following corporate guideline #4711.0815/7 ... </htd:description>
+                <htd:description xml:lang="en-US" contentType="text/plain"> Approve this claim following corporate guideline #4711.0815/7 for {$firstname} {$lastname} </htd:description>
 
             </htd:presentationElements>
             
