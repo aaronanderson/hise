@@ -321,6 +321,7 @@ public class TaskOperationsImpl implements TaskOperations {
 
     public void forward(String identifier, TOrganizationalEntity organizationalEntity) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.setCurrentUser(loadUser());
         t.forward(organizationalEntity);
     }
 
@@ -346,6 +347,7 @@ public class TaskOperationsImpl implements TaskOperations {
 
     public Object getInput(String identifier, String part) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.setCurrentUser(getUserString());
         return t.getInput(part);
     }
 
@@ -381,12 +383,14 @@ public class TaskOperationsImpl implements TaskOperations {
 
     public void remove(String identifier) throws IllegalAccessFault, IllegalArgumentFault {
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.setCurrentUser(getUserString());
         t.remove();
     }
 
     public void resume(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
 //        OrgEntity user = loadUser();
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.setCurrentUser(getUserString());
         t.resume();
     }
 
@@ -416,16 +420,19 @@ public class TaskOperationsImpl implements TaskOperations {
 
     public void stop(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.setCurrentUser(getUserString());
         t.stop();
     }
 
     public void suspend(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.setCurrentUser(getUserString());
         t.suspend();
     }
 
     public void suspendUntil(String identifier, TTime time) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
+        t.setCurrentUser(getUserString());
         Date when = time.getPointOfTime();
         if (when == null) {
             Duration when2 = time.getTimePeriod();
