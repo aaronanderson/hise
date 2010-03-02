@@ -199,7 +199,7 @@ org.h2,
       <plugin>
         <groupId>org.apache.felix.karaf.tooling</groupId>
           <artifactId>features-maven-plugin</artifactId>
-          <version>1.2.0-psc-01-01RC1</version>
+          <version>1.2.0</version>
        </plugin>
        <!--
       <plugin>

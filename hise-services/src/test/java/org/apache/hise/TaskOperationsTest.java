@@ -22,10 +22,11 @@ import org.apache.hise.lang.xsd.htda.TTask;
 import org.apache.hise.lang.xsd.htdt.SuspendUntil;
 import org.apache.hise.utils.XQueryEvaluator;
 import org.junit.Test;
+import org.junit.Ignore;
 
 public class TaskOperationsTest {
 
-    @Test
+    @Ignore
     public void testGetMyTasks() throws Exception {
         TaskOperationsImpl ti = new MockTaskOperationsImpl();
         HISEEngineImpl he = new HISEEngineImpl();
