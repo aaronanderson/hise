@@ -57,8 +57,8 @@ org.apache.hise,
    org.springframework.osgi.service,
    org.springframework.osgi.service.importer,
                         </Import-Package>
+                        <Private-Package>org.apache.hise.test</Private-Package>
                         <!--
-                        <Private-Package>org.apache.hise*</Private-Package>
                         <Export-Package>org.apache.hise*,org.w3._2001.xmlschema</Export-Package>
                         -->
                         <DynamicImport-Package>*</DynamicImport-Package>
@@ -111,5 +111,10 @@ org.apache.hise,
       <scope>test</scope>
     </dependency>
      -->
+    <dependency>
+      <groupId>org.apache.hise</groupId>
+      <artifactId>hise-services</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>

@@ -30,6 +30,17 @@ xsi:schemaLocation="
               <property name="handler" ref="hiseJaxWSService1"/>
               <property name="sender" ref="hiseJaxWSSender1"/>
             </bean>
+
+            <bean class="org.apache.hise.engine.store.TaskDD">
+              <property name="taskName">
+                <bean class="javax.xml.namespace.QName" factory-method="valueOf">
+                  <constructor-arg type="java.lang.String" value="{http://www.insurance.example.com/claims}Task4"></constructor-arg>
+                </bean>
+              </property>
+              <property name="handler" ref="hiseJaxWSService2"/>
+              <property name="sender" ref="hiseJaxWSSender2"/>
+            </bean>
+            
             
             <bean class="org.apache.hise.engine.store.TaskDD">
               <property name="taskName">
@@ -46,30 +57,12 @@ xsi:schemaLocation="
   </bean>
 
   <bean id="hiseJaxWSService1" class="org.apache.hise.engine.jaxws.HISEJaxWSService" init-method="init">
+    <property name="id" value="hiseJaxWSService1"/>
     <property name="hiseEngine" ref="hiseEngine"/>
     <property name="transactionManager" ref="transactionManager"></property>
   </bean>
 
-  <jaxws:endpoint id="testHtd1" address="/ClaimsHandlingService/" implementor="#hiseJaxWSService1" serviceName="ins:ClaimsHandlingService" endpointName="ins:ClaimsHandlingPort" publish="true" wsdlLocation="classpath:ExampleTasks.wsdl">
-  <!-- 
-    <jaxws:handlers>
-      <ref bean="transactionHandler"/>
-    </jaxws:handlers>
-    <jaxws:inInterceptors>
-      <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
-        <constructor-arg>
-          <map>
-            <entry key="action" value="UsernameToken"/>
-            <entry key="passwordType" value="PasswordDigest"/>
-            <entry key="passwordCallbackRef">
-              <ref bean="hisePasswordCallback"/>
-            </entry>
-          </map>
-        </constructor-arg>
-      </bean>
-    </jaxws:inInterceptors>
-     -->
-  </jaxws:endpoint>
+  <jaxws:endpoint id="testHtd1" address="/ClaimsHandlingService/" implementor="#hiseJaxWSService1" serviceName="ins:ClaimsHandlingService" endpointName="ins:ClaimsHandlingPort" publish="true" wsdlLocation="classpath:ExampleTasks.wsdl"/>
 
   <bean id="hiseJaxWSSender1" class="org.apache.hise.engine.jaxws.HISEJaxWSClient" init-method="init">
     <property name="wsdlDocumentLocation" value="classpath:ExampleTasks.wsdl"></property>
@@ -83,7 +76,25 @@ xsi:schemaLocation="
 <!-- 
   <jaxws:client id="testHtd1Sender" address="http://localhost:9999" wsdlLocation="classpath:ExampleTasks.wsdl"/>
    -->
-  <jaxws:endpoint id="testHtd2" address="/ClaimApprovalReminderService/" implementor="#hiseJaxWSService1" serviceName="ins:ClaimApprovalReminderService" endpointName="ins:ClaimApprovalReminderPort" publish="true" wsdlLocation="classpath:ExampleTasks.wsdl"/>
+  <jaxws:endpoint id="testHtdReminder" address="/ClaimApprovalReminderService/" implementor="#hiseJaxWSService1" serviceName="ins:ClaimApprovalReminderService" endpointName="ins:ClaimApprovalReminderPort" publish="true" wsdlLocation="classpath:ExampleTasks.wsdl"/>
    
+
+
+  <bean id="hiseJaxWSService2" class="org.apache.hise.engine.jaxws.HISEJaxWSService" init-method="init">
+    <property name="id" value="hiseJaxWSService2"/>
+    <property name="hiseEngine" ref="hiseEngine"/>
+    <property name="transactionManager" ref="transactionManager"></property>
+  </bean>
+  <jaxws:endpoint id="testHtd2" address="/ClaimsHandlingService2/" implementor="#hiseJaxWSService2" serviceName="ins:ClaimsHandlingService" endpointName="ins:ClaimsHandlingPort" publish="true" wsdlLocation="classpath:ExampleTasks.wsdl"/>
+
+  <bean id="hiseJaxWSSender2" class="org.apache.hise.engine.jaxws.HISEJaxWSClient" init-method="init">
+    <property name="wsdlDocumentLocation" value="classpath:ExampleTasks.wsdl"></property>
+    <property name="serviceName">
+      <bean class="javax.xml.namespace.QName" factory-method="valueOf">
+        <constructor-arg type="java.lang.String" value="{http://www.insurance.example.com/claims}ClaimsResolvingService"></constructor-arg>
+      </bean>
+    </property>
+  </bean>
+
 </beans>    
 

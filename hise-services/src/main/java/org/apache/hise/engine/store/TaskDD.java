@@ -24,8 +24,8 @@ import javax.xml.namespace.QName;
 public class TaskDD {
 
     public QName taskName;
-    public Object handler;
-    public Object sender;
+    public org.apache.hise.engine.jaxws.HISEJaxWSService handler;
+    public org.apache.hise.engine.jaxws.HISEJaxWSClient sender;
 
     public QName getTaskName() {
         return taskName;
@@ -35,19 +35,19 @@ public class TaskDD {
         this.taskName = taskName;
     }
 
-    public Object getHandler() {
+    public org.apache.hise.engine.jaxws.HISEJaxWSService getHandler() {
         return handler;
     }
 
-    public void setHandler(Object handler) {
+    public void setHandler(org.apache.hise.engine.jaxws.HISEJaxWSService handler) {
         this.handler = handler;
     }
 
-    public Object getSender() {
+    public org.apache.hise.engine.jaxws.HISEJaxWSClient getSender() {
         return sender;
     }
 
-    public void setSender(Object sender) {
+    public void setSender(org.apache.hise.engine.jaxws.HISEJaxWSClient sender) {
         this.sender = sender;
     }
 

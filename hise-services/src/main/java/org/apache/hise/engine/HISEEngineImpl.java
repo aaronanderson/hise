@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.api.HISEEngine;
 import org.apache.hise.api.HISEUserDetails;
+import org.apache.hise.api.Handler;
 import org.apache.hise.dao.HISEDao;
 import org.apache.hise.dao.Job;
 import org.apache.hise.engine.jaxws.HISEJaxWSClient;
@@ -83,18 +84,21 @@ public class HISEEngineImpl implements HISEEngine {
         return new QName(ns, q.getLocalPart());
     }
     
-    public static String tasksKey(QName portType, String operation) {
-        return getCanonicalQName(portType) + ";" + operation; 
+    public static String tasksKey(Handler handler, QName portType, String operation) {
+        return "" + System.identityHashCode(handler) + ";" + getCanonicalQName(portType) + ";" + operation; 
     }
 
     public void registerTask(TaskInfo ti) {
-        log.debug("registering route " + ti.taskKey + " -> " + ti.taskDefinition.getTaskName());
+        TaskDefinition d = ti.taskDefinition;
+        String taskKey = HISEEngineImpl.tasksKey(ti.dd.getHandler(), d.getTaskInterface().getPortType(), d.getTaskInterface().getOperation());
+        log.debug("registering route " + taskKey + " -> " + ti.taskDefinition.getTaskName());
         
-        if (tasks.containsKey(ti.taskDefinition.getTaskName()) || tasksMap.containsKey(ti.taskKey)) {
+        QName taskName = ti.taskDefinition.getTaskName();
+        if (tasks.containsKey(taskName) || tasksMap.containsKey(taskKey)) {
             log.warn("Unable to deploy " + ti + " is already deployed.");
         }
         
-        tasksMap.put(ti.taskKey, ti.taskDefinition.getTaskName());
+        tasksMap.put(taskKey, ti.taskDefinition.getTaskName());
         tasks.put(ti.taskDefinition.getTaskName(), ti);
         
         log.debug("registered");
@@ -105,9 +109,11 @@ public class HISEEngineImpl implements HISEEngine {
         return tasks.get(taskName).taskDefinition;
     }
     
-    public QName getTaskName(QName portType, String operation) {
-        QName n = tasksMap.get(tasksKey(portType, operation));
-        Validate.notNull(n, "Task for " + portType + " " + operation + " not found in routing table.");
+    public QName getTaskName(Handler handler, QName portType, String operation) {
+    	java.util.logging.Logger l;
+    	String key = tasksKey(handler, portType, operation);
+        QName n = tasksMap.get(key);
+        Validate.notNull(n, "Task for " + portType + " " + operation + " not found in routing table. Key: " + key);
         return n;
     }
     
@@ -118,10 +124,10 @@ public class HISEEngineImpl implements HISEEngine {
         return r.size() == 1 ? (String) r.get(0) : "";
     }
     
-    public Node receive(QName portType, String operation, Element body, Node requestHeader) {
+    public Node receive(Handler handler, QName portType, String operation, Element body, Node requestHeader) {
         String createdBy = fetchCreatedBy(requestHeader);
         
-        QName taskName = getTaskName(portType, operation);
+        QName taskName = getTaskName(handler, portType, operation);
         assert(taskName != null);
         log.debug("routed " + portType + " " + operation + " -> " + taskName);
         TaskDefinition def = getTaskDefinition(taskName);

@@ -35,6 +35,7 @@ import javax.xml.ws.handler.MessageContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.api.HISEEngine;
+import org.apache.hise.api.Handler;
 import org.apache.hise.engine.HISEEngineImpl;
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
@@ -50,7 +51,7 @@ import org.w3c.dom.Node;
 
 @WebServiceProvider
 @ServiceMode(value = Service.Mode.MESSAGE)
-public class HISEJaxWSService implements Provider<SOAPMessage> {
+public class HISEJaxWSService implements Provider<SOAPMessage>, Handler {
     private static Log __log = LogFactory.getLog(HISEJaxWSService.class);
 
     private HISEEngine hiseEngine;
@@ -58,6 +59,7 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
     private PlatformTransactionManager transactionManager;
     private MessageFactory messageFactory;
     private TransactionTemplate transactionTemplate;
+    private String id;
 
     public HISEJaxWSService() throws Exception {
         messageFactory = MessageFactory.newInstance();
@@ -67,7 +69,15 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
         transactionTemplate = new TransactionTemplate(transactionManager);
     }
     
-    public void setHiseEngine(HISEEngine hiseEngine) {
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setHiseEngine(HISEEngine hiseEngine) {
         this.hiseEngine = hiseEngine;
     }
 
@@ -98,7 +108,7 @@ public class HISEJaxWSService implements Provider<SOAPMessage> {
 
                     Element body = request.getSOAPBody();
                     __log.debug("invoking " + request + " operation:" + operation + " portType:" + portType + " operation2:" + operation2);
-                    Node approveResponseHeader = hiseEngine.receive(portType, operation.getLocalPart(), body, request.getSOAPHeader());
+                    Node approveResponseHeader = hiseEngine.receive(HISEJaxWSService.this, portType, operation.getLocalPart(), body, request.getSOAPHeader());
                     SOAPMessage m = messageFactory.createMessage();
                     
                     Document doc = m.getSOAPHeader().getOwnerDocument();

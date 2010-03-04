@@ -42,7 +42,6 @@ public class HISEDeployer {
             org.apache.hise.api.HISEEngine.TaskInfo ti = new org.apache.hise.api.HISEEngine.TaskInfo();
             ti.dd = t;
             ti.parent = di;
-            ti.taskKey = HISEEngineImpl.tasksKey(d.getTaskInterface().getPortType(), d.getTaskInterface().getOperation());
             ti.taskDefinition = d;
             hiseEngine.registerTask(ti);
         }
