@@ -45,6 +45,37 @@
                     </execution>
                 </executions>
             </plugin>
+
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>openjpa-enhancer</id>
+            <phase>process-classes</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <property name="maven.runtime.classpath" refid="maven.compile.classpath"/>
+                <path id="classpath">
+		   <pathelement path="${maven.runtime.classpath}"/>
+		</path>
+		<taskdef name="openjpac" classname="org.apache.openjpa.ant.PCEnhancerTask" classpathref="classpath"/>
+                <openjpac>
+		    <fileset dir="${basedir}/src/main">
+                <include name="org/apache/hise/dao/*.java" />
+		    </fileset>
+		    <classpath>
+		     <pathelement location="${basedir}/target/classes"/>
+		     <pathelement path="${maven.runtime.classpath}"/>
+		    </classpath>
+		 </openjpac>
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
         </plugins>
     </build>
     <profiles>

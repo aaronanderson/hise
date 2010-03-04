@@ -1,4 +1,4 @@
-package org.apache.hise;
+package org.apache.hise.test;
 
 import javax.jws.WebService;
 

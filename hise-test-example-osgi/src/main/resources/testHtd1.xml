@@ -425,6 +425,109 @@ xs:double(htd:getInput("request")/ClaimApprovalRequest/cla:amount)
     </htd:completionDeadline>
   </htd:deadlines>
         </htd:task>    
+
+        <htd:task name="Task4">
+            
+            <htd:documentation xml:lang="en-US">This task is used to handle claims that require manual approval. </htd:documentation>
+            <htd:interface portType="tns:ClaimsHandlingPT" operation="approve" responsePortType="tns:ClaimsResolvingPT" responseOperation="resolve"/>
+            <htd:priority> htd:getInput("ClaimApprovalRequest")/priority </htd:priority>
+            
+            <htd:peopleAssignments>
+            	<htd:potentialOwners>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:groups>
+                                <htd:group>someGroup</htd:group>
+                            </htd:groups>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>
+                </htd:potentialOwners>
+                
+                <htd:businessAdministrators>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:groups>
+                                <htd:group>group1</htd:group>
+                                <htd:group>group2</htd:group>
+                            </htd:groups>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>
+                </htd:businessAdministrators>
+
+                <htd:businessAdministrators>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:users>
+                                <htd:user>user1</htd:user>
+                                <htd:user>user2</htd:user>
+                            </htd:users>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>
+                </htd:businessAdministrators>
+                
+            	<htd:taskStakeholders>
+                  <htd:from>
+                    <htd:literal>
+                        <htd:organizationalEntity>
+                            <htd:users>
+                                <htd:user>user3</htd:user>
+                            </htd:users>
+                        </htd:organizationalEntity>
+                    </htd:literal>
+                  </htd:from>
+                </htd:taskStakeholders>
+                
+            </htd:peopleAssignments>
+            
+            <htd:delegation potentialDelegatees="nobody"/>
+            
+            <htd:presentationElements>
+                
+                <htd:name xml:lang="en-US"> Approve Claim </htd:name>
+                
+                <htd:presentationParameters>
+                    
+                    <htd:presentationParameter name="firstname" type="xsd:string">
+declare namespace cla="http://www.insurance.example.com/claims";
+declare namespace htd="http://www.example.org/WS-HT";
+xs:string(htd:getInput("request")/ClaimApprovalRequest/cla:cust/cla:firstname)
+</htd:presentationParameter>
+                    
+                    <htd:presentationParameter name="lastname" type="xsd:string">
+declare namespace cla="http://www.insurance.example.com/claims";
+declare namespace htd="http://www.example.org/WS-HT";
+xs:string(htd:getInput("request")/ClaimApprovalRequest/cla:cust/cla:lastname)
+</htd:presentationParameter>
+                    
+                    <htd:presentationParameter name="euroAmount" type="xsd:double">
+declare namespace cla="http://www.insurance.example.com/claims";
+declare namespace htd="http://www.example.org/WS-HT";
+xs:double(htd:getInput("request")/ClaimApprovalRequest/cla:amount)
+</htd:presentationParameter>
+                        
+                </htd:presentationParameters>
+                
+<htd:subject xml:lang="en-US"> Approve the insurance claim for PLN {$euroAmount} on behalf of {$firstname} {$lastname} </htd:subject>
+
+                <htd:description xml:lang="en-US" contentType="text/plain"> Approve this claim following corporate guideline #4711.0815/7 for {$firstname} {$lastname} </htd:description>
+
+            </htd:presentationElements>
+            
+            <htd:outcome>
+                <![CDATA[
+                  <cla:resolve xmlns:cla="http://www.insurance.example.com/claims" xmlns:htd="http://www.example.org/WS-HT">
+                     <claimId>{htd:getInput("request")/ClaimApprovalRequest/cla:cust/cla:id/text()}</claimId>
+                     <ok>{$outcome}</ok>
+                  </cla:resolve>
+                ]]>
+            </htd:outcome>
+        </htd:task>    
     </htd:tasks>    
     
     <htd:notifications>

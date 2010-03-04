@@ -2,6 +2,7 @@ package org.apache.hise.api;
 
 import javax.xml.namespace.QName;
 
+import org.apache.hise.dao.HISEDao;
 import org.apache.hise.engine.store.HISEDD;
 import org.apache.hise.engine.store.TaskDD;
 import org.apache.hise.lang.TaskDefinition;
@@ -18,4 +19,5 @@ public interface HISEEngine {
     
     public void registerTask(TaskInfo ti);
     public Node receive(QName portType, String operation, Element body, Node requestHeader);
+    public HISEDao getHiseDao();
 }
