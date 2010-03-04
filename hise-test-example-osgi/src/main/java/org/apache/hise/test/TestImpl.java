@@ -10,7 +10,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-@WebService(endpointInterface = "org.apache.hise.Test")
+@WebService(endpointInterface = "org.apache.hise.test.Test")
 public class TestImpl implements Test {
     
     private PlatformTransactionManager transactionManager;
