@@ -345,7 +345,7 @@ public class HISEDao extends JpaDaoSupport {
                                     " or e.name in (:groups) and e.type = :constGroup", 
                                     new JQBParam("constGroup", TaskOrgEntity.OrgEntityType.GROUP)
                                 }),
-                            ") and e.genericHumanRole = :role",
+                            ") and e.genericHumanRole = :role and t.actualOwner is null",
                             new JQBParam("role", query.getGenericHumanRole())
                     })
                     .setMaxResults(query.getMaxTasks())

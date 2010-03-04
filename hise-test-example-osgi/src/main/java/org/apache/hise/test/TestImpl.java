@@ -2,7 +2,6 @@ package org.apache.hise.test;
 
 import javax.jws.WebService;
 
-import org.apache.hise.Test;
 import org.apache.hise.api.HISEEngine;
 import org.apache.hise.dao.Job;
 import org.apache.hise.dao.Task;
