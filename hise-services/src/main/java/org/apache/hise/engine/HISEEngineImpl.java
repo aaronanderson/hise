@@ -30,6 +30,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.api.HISEEngine;
 import org.apache.hise.api.HISEUserDetails;
+import org.apache.hise.api.Handler;
 import org.apache.hise.dao.HISEDao;
 import org.apache.hise.dao.Job;
 import org.apache.hise.engine.jaxws.HISEJaxWSClient;
@@ -83,7 +84,7 @@ public class HISEEngineImpl implements HISEEngine {
         return new QName(ns, q.getLocalPart());
     }
     
-    public static String tasksKey(Object handler, QName portType, String operation) {
+    public static String tasksKey(Handler handler, QName portType, String operation) {
         return "" + System.identityHashCode(handler) + ";" + getCanonicalQName(portType) + ";" + operation; 
     }
 
@@ -96,7 +97,6 @@ public class HISEEngineImpl implements HISEEngine {
         if (tasks.containsKey(taskName) || tasksMap.containsKey(taskKey)) {
             log.warn("Unable to deploy " + ti + " is already deployed.");
         }
-
         
         tasksMap.put(taskKey, ti.taskDefinition.getTaskName());
         tasks.put(ti.taskDefinition.getTaskName(), ti);
@@ -109,9 +109,11 @@ public class HISEEngineImpl implements HISEEngine {
         return tasks.get(taskName).taskDefinition;
     }
     
-    public QName getTaskName(Object handler, QName portType, String operation) {
-        QName n = tasksMap.get(tasksKey(handler, portType, operation));
-        Validate.notNull(n, "Task for " + portType + " " + operation + " not found in routing table.");
+    public QName getTaskName(Handler handler, QName portType, String operation) {
+    	java.util.logging.Logger l;
+    	String key = tasksKey(handler, portType, operation);
+        QName n = tasksMap.get(key);
+        Validate.notNull(n, "Task for " + portType + " " + operation + " not found in routing table. Key: " + key);
         return n;
     }
     
@@ -122,7 +124,7 @@ public class HISEEngineImpl implements HISEEngine {
         return r.size() == 1 ? (String) r.get(0) : "";
     }
     
-    public Node receive(Object handler, QName portType, String operation, Element body, Node requestHeader) {
+    public Node receive(Handler handler, QName portType, String operation, Element body, Node requestHeader) {
         String createdBy = fetchCreatedBy(requestHeader);
         
         QName taskName = getTaskName(handler, portType, operation);

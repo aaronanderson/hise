@@ -35,7 +35,7 @@ public class TaskDD {
         this.taskName = taskName;
     }
 
-    public Object getHandler() {
+    public org.apache.hise.engine.jaxws.HISEJaxWSService getHandler() {
         return handler;
     }
 
@@ -43,7 +43,7 @@ public class TaskDD {
         this.handler = handler;
     }
 
-    public Object getSender() {
+    public org.apache.hise.engine.jaxws.HISEJaxWSClient getSender() {
         return sender;
     }
 

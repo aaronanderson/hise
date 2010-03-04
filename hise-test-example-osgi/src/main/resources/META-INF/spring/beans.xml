@@ -57,6 +57,7 @@ xsi:schemaLocation="
   </bean>
 
   <bean id="hiseJaxWSService1" class="org.apache.hise.engine.jaxws.HISEJaxWSService" init-method="init">
+    <property name="id" value="hiseJaxWSService1"/>
     <property name="hiseEngine" ref="hiseEngine"/>
     <property name="transactionManager" ref="transactionManager"></property>
   </bean>
@@ -80,6 +81,7 @@ xsi:schemaLocation="
 
 
   <bean id="hiseJaxWSService2" class="org.apache.hise.engine.jaxws.HISEJaxWSService" init-method="init">
+    <property name="id" value="hiseJaxWSService2"/>
     <property name="hiseEngine" ref="hiseEngine"/>
     <property name="transactionManager" ref="transactionManager"></property>
   </bean>

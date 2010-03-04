@@ -17,6 +17,6 @@ public interface HISEEngine {
     }
     
     public void registerTask(TaskInfo ti);
-    public Node receive(Object handler, QName portType, String operation, Element body, Node requestHeader);
+    public Node receive(Handler handler, QName portType, String operation, Element body, Node requestHeader);
     public HISEDao getHiseDao();
 }
