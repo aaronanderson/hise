@@ -31,6 +31,7 @@
 		<module>hise-services</module>
         <module>hise-web</module>
         <module>hise-bundle</module>
+        <module>hise-karaf</module>
 	</modules>
 	<properties>
 		<cxf.version>2.2.6</cxf.version>
