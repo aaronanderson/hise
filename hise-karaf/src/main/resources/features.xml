@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+     Licensed to the Apache Software Foundation (ASF) under one or more
+     contributor license agreements.  See the NOTICE file distributed with
+     this work for additional information regarding copyright ownership.
+     The ASF licenses this file to You under the Apache License, Version 2.0
+     (the "License"); you may not use this file except in compliance with
+     the License.  You may obtain a copy of the License at
+
+     http///www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+  -->
+<features>
+  <feature name="hise" version="${project.version}">
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.2.2_5</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.openjpa/1.2.1_2</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saxon/9.1.0.8_3</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.serp/1.13.1_2</bundle>
+    <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/1.4.0</bundle>
+    <bundle>mvn:org.apache.hise/hise-bundle/${project.version}</bundle>
+  </feature>
+  <feature name="hise-h2" version="${project.version}">
+    <bundle>wrap:mvn:com/h2database/h2/1.1.117</bundle>
+    <feature version="${project.version}">hise</feature>
+  </feature>
+  <feature name="hise-sqlserver" version="${project.version}">
+    <bundle>wrap:mvn:com.microsoft.sqlserver/sqljdbc/1.2</bundle>
+    <feature version="${project.version}">hise</feature>
+  </feature>
+  <feature name="hise-oracle" version="${project.version}">
+    <bundle>wrap:mvn:oracle/ojdbc5/11.1.0.6.0</bundle>
+    <feature version="${project.version}">hise</feature>
+  </feature>
+</features>

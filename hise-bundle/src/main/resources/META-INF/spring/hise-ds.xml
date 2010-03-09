@@ -41,6 +41,8 @@ http://www.springframework.org/schema/osgi-compendium http://www.springframework
         <prop key="db.user">sa</prop>
         <prop key="db.password"></prop>
         <prop key="db.maxActive">4</prop>
+        <prop key="db.maxIdle">0</prop>
+        <prop key="db.testOnBorrow">true</prop>
   </osgix:cm-properties>
 
   <ctx:property-placeholder properties-ref="preProps" />
@@ -87,8 +89,17 @@ http://www.springframework.org/schema/osgi-compendium http://www.springframework
         <property name="username" value="${db.user}" />
         <property name="password" value="${db.password}"/>
         <property name="maxActive" value="${db.maxActive}"/>
+        <property name="maxIdle" value="${db.maxIdle}"/>
+        <property name="minIdle" value="${db.minIdle}"/>
+        <property name="testOnBorrow" value="${db.testOnBorrow}"/>
+        <property name="testWhileIdle" value="${db.testWhileIdle}"/>
+        <property name="timeBetweenEvictionRunsMillis" value="${db.timeBetweenEvictionRunsMillis}"/>
+        <!--
+        <property name="validationQuery" value="${db.validationQuery}"/>
+        -->
   </bean>
 <!--
+        <property name="validationQueryTimeout" value="${db.validationQueryTimeout}"/>
 -->
   <!--
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
