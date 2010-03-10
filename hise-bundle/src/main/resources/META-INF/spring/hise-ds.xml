@@ -41,8 +41,11 @@ http://www.springframework.org/schema/osgi-compendium http://www.springframework
         <prop key="db.user">sa</prop>
         <prop key="db.password"></prop>
         <prop key="db.maxActive">4</prop>
+        <prop key="db.minIdle">0</prop>
         <prop key="db.maxIdle">0</prop>
         <prop key="db.testOnBorrow">true</prop>
+        <prop key="db.testWhileIdle">true</prop>
+        <prop key="db.timeBetweenEvictionRunsMillis">5000</prop>
   </osgix:cm-properties>
 
   <ctx:property-placeholder properties-ref="preProps" />
