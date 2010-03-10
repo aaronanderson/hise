@@ -33,72 +33,8 @@
     <artifactId>hise-bundle</artifactId>
     <version>0.2.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
-    <profiles>
-    	<profile>
-    		<id>itest</id>
-    		<build>
-    			<resources>
-    				<resource>
-    					<directory>src/main/resources-itest</directory>
-    				</resource>
-    				<resource>
-    					<directory>src/main/resources</directory>
-    				</resource>
-    			</resources>
-    		</build>
-    	</profile>
-    </profiles>
-
-    <pluginRepositories>
-      <pluginRepository>
-        <id>open.iona.m2-snapshot</id>
-        <name>IONA Snapshots Repository</name>
-        <url>http://repo.open.iona.com/maven2-snapshot/</url>
-        <snapshots>
-          <enabled>true</enabled>
-        </snapshots>
-        <releases>
-           <enabled>false</enabled>
-        </releases>
-      </pluginRepository>
-      <pluginRepository>
-        <id>open.iona.m2</id>
-        <name>IONA Repository</name>
-        <url>http://repo.open.iona.com/maven2/</url>
-        <snapshots>
-          <enabled>false</enabled>
-        </snapshots>
-        <releases>
-           <enabled>true</enabled>
-        </releases>
-      </pluginRepository>
-    </pluginRepositories>
-
     <build>
-    <plugins>
-        <!--
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-resources</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${basedir}/target/karaf</outputDirectory>
-              <resources>          
-                <resource>
-                    <directory>${basedir}/src/main/karaf</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>              
-            </configuration>            
-          </execution>
-        </executions>
-      </plugin>
-      -->
+        <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -108,124 +44,37 @@
                     <instructions>
                         <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
                         <Import-Package>
-                            javax.persistence,
-                            javax.xml.bind,
-                            javax.xml.soap,
-                            META-INF.cxf,
-                            META-INF.cxf.osgi,
-                            org.apache.cxf.resource,
-                            org.apache.cxf.binding.soap.spring,
-                            org.apache.cxf.ws.security.wss4j,
-                            org.apache.cxf.jaxws.spi,
-
-   org.springframework.osgi.config,
-   org.springframework.osgi.context,
-   org.springframework.osgi.context.support,
-   org.springframework.osgi.service,
-   org.springframework.osgi.service.importer,
-
+javax.persistence,
+javax.xml.bind,
+javax.xml.soap,
+META-INF.cxf,
+META-INF.cxf.osgi,
+org.apache.cxf.resource,
+org.apache.cxf.binding.soap.spring,
+org.apache.cxf.ws.security.wss4j,
+org.apache.cxf.jaxws.spi,
 org.apache.openjpa.persistence,
-
-net.sf.saxon.xpath
+javax.security.auth.callback,
+org.apache.ws.security,
+net.sf.saxon.xpath,
+org.springframework.osgi.config,
+org.springframework.osgi.context,
+org.springframework.osgi.context.support,
+org.springframework.osgi.service,
+org.springframework.osgi.service.importer
                         </Import-Package>
-                        <!--
-org.h2,
-                            org.apache.openjpa.persistence,
-                            org.apache.openjpa.jdbc.sql
-                            org.springframework.orm,
-                            org.springframework.beans,
-                            org.springframework.jdbc,
-                            org.springframework.jdbc.datasource,
-                        <Private-Package>org.apache.hise*</Private-Package>
-                        -->
                         <Export-Package>org.apache.hise*,org.w3._2001.xmlschema</Export-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                         <Require-Bundle>
                             org.apache.cxf.bundle
                         </Require-Bundle>
-                        <!--
-                        -->
-                        <!--
-
-                        <DynamicImport-Package>org.w3.*,javax.xml.xquery</DynamicImport-Package>
-                            org.w3.*,
-			    net.sf.saxon*
-                        <Embed-Dependency>saxon*,spring-orm,spring-jdbc,ojdbc5;scope=compile|runtime</Embed-Dependency>
-                        -->
                         <Embed-Dependency>hise-wsdl;scope=compile|runtime;inline=**</Embed-Dependency>
-
-                        <!--
-                        <_exportcontents>org.apache.hise*</_exportcontents>
-                        -->
-                        <!--
-                        <DynamicImport-Package>*</DynamicImport-Package>
-<Include-Resource>
-  {maven-resources}, {maven-dependencies}
-</Include-Resource>
-                        -->
-                        <!--
-                        <Bundle-ClassPath>.,{maven-dependencies}</Bundle-ClassPath>
-                        -->
                     </instructions>
                 </configuration>
             </plugin>
-          <!--
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-          <artifactId>build-helper-maven-plugin</artifactId>
-          <version>1.2</version>
-          <executions>
-            <execution>
-              <id>attach-artifacts</id>
-              <phase>package</phase>
-              <goals>
-                <goal>attach-artifact</goal>
-              </goals>
-              <configuration>
-                <artifacts>
-                  <artifact>
-                    <file>target/karaf/features.xml</file>
-                     <type>xml</type>
-                     <classifier>features</classifier>
-                   </artifact>
-                 </artifacts>
-               </configuration>
-             </execution>
-         </executions>
-       </plugin>
-       -->
-      <plugin>
-        <groupId>org.apache.felix.karaf.tooling</groupId>
-          <artifactId>features-maven-plugin</artifactId>
-          <version>1.2.0</version>
-       </plugin>
-       <!--
-      <plugin>
-        <groupId>org.apache.felix.karaf.tooling</groupId>
-          <artifactId>features-maven-plugin</artifactId>
-          <version>1.2.0-psc-01-01RC1</version>
-          <executions>
-            <execution>
-              <id>generate-features</id>
-              <phase>generate-resources</phase>
-              <goals>
-                <goal>generate-features-xml</goal>
-              </goals>
-             </execution>
-         </executions>
-       </plugin>
-       -->
-
-    </plugins>
-  </build>
+        </plugins>
+    </build>
     <dependencies>
-
-        <dependency>
-            <groupId>org.apache.hise</groupId>
-            <artifactId>hise-test-example</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.hise</groupId>
             <artifactId>hise-wsdl</artifactId>
@@ -236,173 +85,5 @@ org.h2,
             <artifactId>hise-services</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jpa_1.0_spec</artifactId>
-            <version>1.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
-            <version>1.1.2</version>
-        </dependency>
-        <!--
-        <dependency>
-            <groupId>org.apache.servicemix</groupId>
-            <artifactId>servicemix-utils</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-        -->
-
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.1.108</version>
-            <scope>runtime</scope>
-        </dependency>
-        <!--
-        <dependency>
-            <groupId>oracle</groupId>
-            <artifactId>ojdbc5</artifactId>
-            <version>11.1.0.6.0</version>
-        </dependency>
-        -->
-
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-bindings-http</artifactId>
-            <version>${cxf.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-core</artifactId>
-            <version>${cxf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-frontend-jaxws</artifactId>
-            <version>${cxf.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jaxb-xjc</artifactId>
-                    <groupId>com.sun.xml.bind</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http</artifactId>
-            <version>${cxf.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-common-utilities</artifactId>
-            <version>${cxf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-ws-security</artifactId>
-            <version>${cxf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-            <version>2.7.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.xml.soap</groupId>
-            <artifactId>saaj-impl</artifactId>
-            <version>1.3</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>soap</groupId>
-            <artifactId>soap</artifactId>
-            <scope>runtime</scope>
-            <version>2.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>wsdl4j</groupId>
-            <artifactId>wsdl4j</artifactId>
-            <scope>runtime</scope>
-            <version>1.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>${spring.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-            <version>${spring.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>${spring.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>${spring.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.8.0.GA</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!--
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.openjpa</artifactId>
-            <version>1.2.1_2</version>
-        </dependency>
-        -->
-        <!--
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.saxon</artifactId>
-            <version>9.1.0.8_3</version>
-        </dependency>
-        -->
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.serp</artifactId>
-            <version>1.13.1_2</version>
-        </dependency>
-
     </dependencies>
 </project>
