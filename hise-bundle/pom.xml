@@ -115,6 +115,7 @@
                             META-INF.cxf.osgi,
                             org.apache.cxf.resource,
                             org.apache.cxf.binding.soap.spring,
+                            org.apache.cxf.ws.security.wss4j,
                             org.apache.cxf.jaxws.spi,
 
    org.springframework.osgi.config,

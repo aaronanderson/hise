@@ -26,7 +26,7 @@
     <bundle>mvn:org.apache.hise/hise-bundle/${project.version}</bundle>
   </feature>
   <feature name="hise-h2" version="${project.version}">
-    <bundle>wrap:mvn:com/h2database/h2/1.1.117</bundle>
+    <bundle>mvn:com.h2database/h2/1.1.117</bundle>
     <feature version="${project.version}">hise</feature>
   </feature>
   <feature name="hise-sqlserver" version="${project.version}">
@@ -36,5 +36,9 @@
   <feature name="hise-oracle" version="${project.version}">
     <bundle>wrap:mvn:oracle/ojdbc5/11.1.0.6.0</bundle>
     <feature version="${project.version}">hise</feature>
+  </feature>
+  <feature name="hise-h2-test-example-osgi" version="${project.version}">
+    <feature version="${project.version}">hise-h2</feature>
+    <bundle>mvn:org.apache.hise/hise-test-example-osgi/${project.version}</bundle>
   </feature>
 </features>
