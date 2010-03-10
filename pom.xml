@@ -37,6 +37,7 @@
 		<cxf.version>2.2.6</cxf.version>
 		<spring.version>2.5.6.SEC01</spring.version>
 		<saxon.version>9.1.0.8</saxon.version>
+        <log4j.version>1.2.13</log4j.version>
 	</properties>
 	<repositories>
                 <!-- Just for Saxon 9 -->
