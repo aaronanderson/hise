@@ -37,6 +37,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
+<!--
                         <Import-Package>
                             javax.persistence,
                             org.apache.openjpa.persistence,
@@ -44,8 +45,8 @@
                             javax.xml.soap,
                             META-INF.cxf,
                             META-INF.cxf.osgi,
-org.apache.hise,
 
+org.apache.hise,
                             org.apache.cxf.resource,
                             org.apache.cxf.binding.soap.spring,
                             org.springframework.beans,
@@ -57,14 +58,36 @@ org.apache.hise,
    org.springframework.osgi.service,
    org.springframework.osgi.service.importer,
                         </Import-Package>
+-->
+
+                        <Import-Package>
+org.apache.hise,
+                            javax.jws,
+                            javax.wsdl,
+                            META-INF.cxf,
+                            META-INF.cxf.osgi,
+                            org.apache.cxf.bus,
+                            org.apache.cxf.bus.spring,
+                            org.apache.cxf.bus.resource,
+                            org.apache.cxf.configuration.spring,
+                            org.apache.cxf.resource,
+                            org.apache.cxf.transport.http_osgi,
+                            org.apache.servicemix.util,
+                            org.springframework.beans.factory.config
+                        </Import-Package>
                         <Private-Package>org.apache.hise.test</Private-Package>
+                        <Require-Bundle>org.apache.cxf.bundle</Require-Bundle>
+
+
                         <!--
                         <Export-Package>org.apache.hise*,org.w3._2001.xmlschema</Export-Package>
                         -->
                         <DynamicImport-Package>*</DynamicImport-Package>
+                        <!--
                         <Require-Bundle>
                             org.apache.cxf.bundle
                         </Require-Bundle>
+                        -->
                         <!--
                         -->
                         <!--

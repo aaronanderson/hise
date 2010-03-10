@@ -23,6 +23,9 @@
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saxon/9.1.0.8_1-SNAPSHOT</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.serp/1.13.1_2</bundle>
     <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/1.4.0</bundle>
+    <bundle>mvn:org.apache.ws.security/wss4j/1.5.8</bundle>
+    <bundle>mvn:org.apache.cxf/cxf-rt-transports-http/2.2.6</bundle>
+    <bundle>mvn:org.apache.cxf/cxf-rt-transports-http-jetty/2.2.6</bundle>
     <bundle>mvn:org.apache.hise/hise-bundle/${project.version}</bundle>
   </feature>
   <feature name="hise-h2" version="${project.version}">
@@ -40,5 +43,9 @@
   <feature name="hise-h2-test-example-osgi" version="${project.version}">
     <feature version="${project.version}">hise-h2</feature>
     <bundle>mvn:org.apache.hise/hise-test-example-osgi/${project.version}</bundle>
+  </feature>
+  <feature name="hise-sqlserver-test-example-osgi" version="${project.version}">
+    <bundle>mvn:org.apache.hise/hise-test-example-osgi/${project.version}</bundle>
+    <feature version="${project.version}">hise-sqlserver</feature>
   </feature>
 </features>
