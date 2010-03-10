@@ -152,10 +152,7 @@ org.h2,
 			    net.sf.saxon*
                         <Embed-Dependency>saxon*,spring-orm,spring-jdbc,ojdbc5;scope=compile|runtime</Embed-Dependency>
                         -->
-                        <Embed-Dependency>h2,spring-orm,spring-jdbc,spring-aspects,hise-wsdl;scope=compile|runtime;inline=**</Embed-Dependency>
-                        <Embed-Transitive>true</Embed-Transitive>
-                        <!--
-                        -->
+                        <Embed-Dependency>hise-wsdl;scope=compile|runtime;inline=**</Embed-Dependency>
 
                         <!--
                         <_exportcontents>org.apache.hise*</_exportcontents>
