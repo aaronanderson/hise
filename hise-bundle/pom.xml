@@ -115,6 +115,7 @@
                             META-INF.cxf.osgi,
                             org.apache.cxf.resource,
                             org.apache.cxf.binding.soap.spring,
+                            org.apache.cxf.ws.security.wss4j,
                             org.apache.cxf.jaxws.spi,
 
    org.springframework.osgi.config,
@@ -151,7 +152,7 @@ org.h2,
 			    net.sf.saxon*
                         <Embed-Dependency>saxon*,spring-orm,spring-jdbc,ojdbc5;scope=compile|runtime</Embed-Dependency>
                         -->
-                        <Embed-Dependency>h2,spring-orm,spring-jdbc,spring-aspects,hise-wsdl;scope=compile|runtime</Embed-Dependency>
+                        <Embed-Dependency>h2,spring-orm,spring-jdbc,spring-aspects,hise-wsdl;scope=compile|runtime;inline=**</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <!--
                         -->
