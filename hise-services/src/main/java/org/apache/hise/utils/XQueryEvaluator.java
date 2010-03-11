@@ -144,4 +144,8 @@ public class XQueryEvaluator {
             contextObjectTL.set(null);
         }
     }
+    
+    public static Object resultToObject(List l) {
+    	if (l.isEmpty()) return null; else return l.get(0);
+    }
 }

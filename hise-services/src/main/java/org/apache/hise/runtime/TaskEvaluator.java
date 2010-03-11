@@ -228,7 +228,7 @@ public class TaskEvaluator {
         XQueryEvaluator evaluator = buildQueryEvaluator();
         for (TPresentationParameter p : task.getTaskDefinition().getPresentationParameters()) {
             XQueryEvaluator evaluator2 = buildQueryEvaluator();
-            Object v = evaluator2.evaluateExpression(XmlUtils.getStringContent(p.getContent()), null).get(0);
+            Object v = XQueryEvaluator.resultToObject(evaluator2.evaluateExpression(XmlUtils.getStringContent(p.getContent()), null));
             __log.debug("evaluated presentationParameter: " + p.getName() + " = " + v);
         	evaluator.bindVariable(QName.valueOf(p.getName()), v);
         }
