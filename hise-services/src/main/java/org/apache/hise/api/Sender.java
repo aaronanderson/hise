@@ -16,41 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.hise.api;
 
-package org.apache.hise.engine.store;
+import org.w3c.dom.Node;
 
-import org.apache.hise.api.Handler;
-import org.apache.hise.api.Sender;
-
-import javax.xml.namespace.QName;
-
-public class TaskDD {
-
-    public QName taskName;
-    public Handler handler;
-    public Sender sender;
-
-    public QName getTaskName() {
-        return taskName;
-    }
-
-    public void setTaskName(QName taskName) {
-        this.taskName = taskName;
-    }
-
-    public Handler getHandler() {
-        return handler;
-    }
-
-    public void setHandler(Handler handler) {
-        this.handler = handler;
-    }
-
-    public Sender getSender() {
-        return sender;
-    }
-
-    public void setSender(Sender sender) {
-        this.sender = sender;
-    }
+/**
+ * Created by IntelliJ IDEA.
+ * User: mproch
+ * Date: Mar 12, 2010
+ * Time: 9:41:32 PM
+ */
+public interface Sender {
+   Node invoke(Node message, Node epr);
 }

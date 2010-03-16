@@ -19,23 +19,15 @@
 
 package org.apache.hise.engine;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.namespace.QName;
-
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.api.HISEEngine;
 import org.apache.hise.api.HISEUserDetails;
 import org.apache.hise.api.Handler;
+import org.apache.hise.api.Sender;
 import org.apache.hise.dao.HISEDao;
 import org.apache.hise.dao.Job;
-import org.apache.hise.engine.jaxws.HISEJaxWSClient;
-import org.apache.hise.engine.store.HISEDD;
-import org.apache.hise.engine.store.TaskDD;
 import org.apache.hise.lang.TaskDefinition;
 import org.apache.hise.runtime.Task;
 import org.apache.hise.runtime.TaskEvaluator;
@@ -43,6 +35,11 @@ import org.apache.hise.utils.DOMUtils;
 import org.apache.hise.utils.XQueryEvaluator;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import javax.xml.namespace.QName;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HISEEngineImpl implements HISEEngine {
     private static Log log = LogFactory.getLog(HISEEngineImpl.class);
@@ -152,7 +149,7 @@ public class HISEEngineImpl implements HISEEngine {
     public void sendResponse(QName taskName, Node body, Node epr) {
         TaskInfo ti = tasks.get(taskName);
         log.debug("sending response for " + taskName + " to " + DOMUtils.domToString(epr) + " body " + DOMUtils.domToString(body) + " " + ti.dd.sender);
-        HISEJaxWSClient c = (HISEJaxWSClient) ti.dd.sender;
+        Sender c = ti.dd.sender ;
         log.debug("result: " + c.invoke(body, epr));
     }
     
