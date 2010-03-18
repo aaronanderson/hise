@@ -35,7 +35,7 @@ http://www.springframework.org/schema/osgi-compendium http://www.springframework
         <prop key="openjpa.dictionary">org.apache.openjpa.jdbc.sql.H2Dictionary</prop>
         <prop key="openjpa.synchronizeMappings">buildSchema(ForeignKeys=true,SchemaAction='add')</prop>
         <prop key="openjpa.generateDdl">true</prop>
-        <prop key="openjpa.showSql">true</prop>
+        <prop key="openjpa.showSql">false</prop>
         <prop key="db.driver">org.h2.Driver</prop>
         <prop key="db.url">jdbc:h2:file:hise-h2-db;DB_CLOSE_ON_EXIT=false</prop>
         <prop key="db.user">sa</prop>
