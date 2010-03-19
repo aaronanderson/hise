@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 
 public class HISEEngineImpl implements HISEEngine {
+
     private static Log log = LogFactory.getLog(HISEEngineImpl.class);
     
     public final Map<String, QName> tasksMap = new HashMap<String, QName>();
@@ -102,7 +103,7 @@ public class HISEEngineImpl implements HISEEngine {
     }
     
     public TaskDefinition getTaskDefinition(QName taskName) {
-        Validate.notNull(tasks.get(taskName), "" + taskName + " not found");
+        Validate.notNull(tasks.get(taskName), "" + taskName + " not found. Deployed tasks: " + tasks.toString());
         return tasks.get(taskName).taskDefinition;
     }
     

@@ -312,8 +312,8 @@ public class HISEDao extends JpaDaoSupport {
 
     public OrgEntity getOrgEntity(final String name) {
         return (OrgEntity) getJpaTemplate().execute(new JpaCallback() {
-            public Object doInJpa(EntityManager e) throws PersistenceException {
-                Query query = e.createQuery("FROM OrgEntity o WHERE o.name = :name");
+            public Object doInJpa(EntityManager em) throws PersistenceException {
+                Query query = em.createQuery("FROM OrgEntity o WHERE o.name = :name");
                 query.setParameter("name", name);
                 return query.getSingleResult();
             }
@@ -321,20 +321,29 @@ public class HISEDao extends JpaDaoSupport {
     }
     
     public List<Task> getUserTasks(final TaskQuery query) {
-//        TaskOrgEntity to;to.g
+        
+        Validate.notNull(query);
+        
         switch (query.getGenericHumanRole()) {
         case ACTUALOWNER:
             return (List<Task>) getJpaTemplate().executeFind(new JpaCallback() {
                 public Object doInJpa(EntityManager em) throws PersistenceException {
+                    
+                    Validate.notNull(em);
+                    
                     return em.createQuery("select distinct t from Task t where t.actualOwner = :user")
                     .setParameter("user", query.getUser())
                     .setMaxResults(query.getMaxTasks())
                     .getResultList();
                 }
             });
+
         case POTENTIALOWNERS:
             return (List<Task>) getJpaTemplate().executeFind(new JpaCallback() {
                 public Object doInJpa(EntityManager em) throws PersistenceException {
+                    
+                    Validate.notNull(em);
+                    
                     return new JpaQueryBuilder().buildQuery(em, 
                             new Object[] {
                             "select distinct t from Task t, TaskOrgEntity e where e.task = t and (e.name = :user and e.type = :constUser",
@@ -353,7 +362,7 @@ public class HISEDao extends JpaDaoSupport {
                 }
             });
         default:
-            throw new IllegalStateException();
+            throw new IllegalStateException("generic human role not supported");
         }
     }
     

@@ -60,6 +60,7 @@ public class Task {
     private HISEEngineImpl hiseEngine;
 
     private org.apache.hise.dao.Task taskDto;
+
     private TaskDefinition taskDefinition;
 
     private TaskEvaluator taskEvaluator;
@@ -95,6 +96,10 @@ public class Task {
         return currentUser;
     }
 
+    /**
+     * TODO throw an exception if current user is not TASK_ADMINISTRATOR
+     * @param currentUser
+     */
     public void setCurrentUser(String currentUser) {
         this.currentUser = currentUser;
     }
@@ -104,8 +109,10 @@ public class Task {
     }
 
     private Task(HISEEngineImpl engine, boolean notification) {
+        
+        Validate.notNull(engine);
+        
         this.hiseEngine = engine;
-        Validate.notNull(hiseEngine);
 
         taskStateListeners = new ArrayList<TaskStateListener>();
         if (!notification) {
@@ -163,30 +170,32 @@ public class Task {
     }
     
     public static Task create(HISEEngineImpl engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
+
         Task t = new Task(engine, false);
         Validate.notNull(taskDefinition);
         Validate.isTrue(!taskDefinition.isNotification());
+        
         t.taskDefinition = taskDefinition;
-        org.apache.hise.dao.Task u = new org.apache.hise.dao.Task();
-        u.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
-        u.setCreatedBy(createdBy);
-        u.setStatus(null);
-        u.getInput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
-        u.getInput().put("requestHeader", new Message("requestHeader", DOMUtils.domToString(requestHeader)));
-        u.setCreatedOn(new Date());
-        u.setActivationTime(new Date());
-        u.setEscalated(false);
-        u.setNotification(false);
-        engine.getHiseDao().persist(u);
-        t.taskDto = u;
+        org.apache.hise.dao.Task taskDto = new org.apache.hise.dao.Task();
+        taskDto.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
+        taskDto.setCreatedBy(createdBy);
+        taskDto.setStatus(null);
+        taskDto.getInput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
+        taskDto.getInput().put("requestHeader", new Message("requestHeader", DOMUtils.domToString(requestHeader)));
+        taskDto.setCreatedOn(new Date());
+        taskDto.setActivationTime(new Date());
+        taskDto.setEscalated(false);
+        taskDto.setNotification(false);
+        
+        engine.getHiseDao().persist(taskDto);
+        t.taskDto = taskDto;
         t.setStatus(Status.CREATED);
 
-        u.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
+        taskDto.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
         
         t.setStatus(Status.READY);
         t.tryNominateOwner();
-        
-        
+
         return t;
 
         // recalculatePresentationParameters();
@@ -1094,14 +1103,6 @@ public class Task {
     // }
 
     
-    public void handleTimer() {
-        
-    }
-    
-    public Date calculateWakeupTime() {
-        return null;
-    }
-    
     public void remove() {
         Validate.isTrue(taskDto.isNotification());
         hiseEngine.getHiseDao().remove(taskDto);
@@ -1109,5 +1110,9 @@ public class Task {
     
     public Node getInput(String part) {
         return DOMUtils.parse(taskDto.getInput().get(part).getMessage()).getDocumentElement();
+    }
+    
+    public Node getOutput(String part) {
+        return DOMUtils.parse(taskDto.getOutput().get(part).getMessage()).getDocumentElement();
     }
 }

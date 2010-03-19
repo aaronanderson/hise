@@ -20,17 +20,16 @@
 <beans xmlns="http://www.springframework.org/schema/beans" 
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
        xmlns:util="http://www.springframework.org/schema/util"
-xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
-xmlns:ctx="http://www.springframework.org/schema/context"
+       xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+       xmlns:ctx="http://www.springframework.org/schema/context"
        
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
     http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
-http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
-    ">
+    http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd">
 
-  <osgix:cm-properties id="preProps" persistent-id="org.apache.hise">
+    <osgix:cm-properties id="preProps" persistent-id="org.apache.hise">
         <prop key="openjpa.db">H2</prop>
         <prop key="openjpa.dictionary">org.apache.openjpa.jdbc.sql.H2Dictionary</prop>
         <prop key="openjpa.synchronizeMappings">buildSchema(ForeignKeys=true,SchemaAction='add')</prop>
@@ -46,10 +45,9 @@ http://www.springframework.org/schema/osgi-compendium http://www.springframework
         <prop key="db.testOnBorrow">true</prop>
         <prop key="db.testWhileIdle">true</prop>
         <prop key="db.timeBetweenEvictionRunsMillis">5000</prop>
-  </osgix:cm-properties>
+    </osgix:cm-properties>
 
-  <ctx:property-placeholder properties-ref="preProps" />
-
+    <ctx:property-placeholder properties-ref="preProps" />
 
     <bean id="htEntityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource" />
@@ -75,18 +73,18 @@ http://www.springframework.org/schema/osgi-compendium http://www.springframework
     
     <!-- OpenJPA H2 Driver -->
     <bean id="jpaVendorAdapter" class="org.apache.hise.dao.vendor.OpenJpaVendorAdapter">
-    <property name="database" value="${openjpa.db}"/>
-    <property name="databasePlatform" value="${openjpa.dictionary}"/>
-    <property name="generateDdl"    value="${openjpa.generateDdl}" />
-    <property name="showSql"      value="${openjpa.showSql}" />
-    <property name="extProperties">
-      <util:map>
-        <entry key="openjpa.jdbc.SynchronizeMappings" value="${openjpa.synchronizeMappings}"/>
-      </util:map>
-    </property>
-  </bean>
+	    <property name="database" value="${openjpa.db}"/>
+	    <property name="databasePlatform" value="${openjpa.dictionary}"/>
+	    <property name="generateDdl" value="${openjpa.generateDdl}" />
+	    <property name="showSql" value="${openjpa.showSql}" />
+	    <property name="extProperties">
+	      <util:map>
+	        <entry key="openjpa.jdbc.SynchronizeMappings" value="${openjpa.synchronizeMappings}"/>
+	      </util:map>
+	    </property>
+    </bean>
   
-  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${db.driver}" />
         <property name="url" value="${db.url}"/>
         <property name="username" value="${db.user}" />
@@ -100,7 +98,7 @@ http://www.springframework.org/schema/osgi-compendium http://www.springframework
         <!--
         <property name="validationQuery" value="${db.validationQuery}"/>
         -->
-  </bean>
+    </bean>
 <!--
         <property name="validationQueryTimeout" value="${db.validationQueryTimeout}"/>
 -->

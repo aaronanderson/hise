@@ -28,7 +28,9 @@ public class TaskOperationsTest {
 
     @Ignore
     public void testGetMyTasks() throws Exception {
+        
         TaskOperationsImpl ti = new MockTaskOperationsImpl();
+        
         HISEEngineImpl he = new HISEEngineImpl();
         he.setHiseUserDetails(new HISEUserDetails() {
             public String getUserPassword(String user) {
