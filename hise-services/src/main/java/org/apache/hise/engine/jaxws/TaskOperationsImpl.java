@@ -31,6 +31,8 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceContext;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.TaskQuery;
 import org.apache.hise.engine.HISEEngineImpl;
@@ -57,6 +59,7 @@ import org.apache.hise.lang.xsd.htda.TTaskQueryResultSet;
 import org.apache.hise.lang.xsd.htdt.TTime;
 import org.apache.hise.runtime.Task;
 import org.springframework.transaction.annotation.Transactional;
+import org.w3c.dom.Node;
 
 /**
  * Implementation of WS-HT API. Operations are executed by end users, i.e.
@@ -74,6 +77,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @WebService
 public class TaskOperationsImpl implements TaskOperations {
+    
+    private static Log log = LogFactory.getLog(TaskOperationsImpl.class);
 
     private HISEEngineImpl hiseEngine;
 
@@ -237,7 +242,15 @@ public class TaskOperationsImpl implements TaskOperations {
     public void complete(String identifier, Object taskData) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
         t.setCurrentUser(getUserString());
+        //TODO set output
+        //t.setOutput(((Node) taskData).getFirstChild());
         t.complete();
+    }
+
+    public void setOutput(String identifier, String part, Object taskData) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
+        Task t = Task.load(hiseEngine, Long.valueOf(identifier));
+        t.setCurrentUser(getUserString());
+        t.setOutput(((Node) taskData).getFirstChild());
     }
     
     // not started
@@ -323,11 +336,6 @@ public class TaskOperationsImpl implements TaskOperations {
 
     public void setGenericHumanRole(String identifier, String genericHumanRole, TOrganizationalEntity organizationalEntity) throws IllegalAccessFault,
             IllegalStateFault, IllegalArgumentFault {
-        // TODO Auto-generated method stub
-
-    }
-
-    public void setOutput(String identifier, String part, Object taskData) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
         // TODO Auto-generated method stub
 
     }

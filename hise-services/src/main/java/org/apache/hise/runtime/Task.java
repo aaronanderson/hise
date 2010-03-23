@@ -242,29 +242,33 @@ public class Task {
     }
 
     public static Task createNotification(HISEEngineImpl engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
-        Task t = new Task(engine, true);
+        
         Validate.notNull(taskDefinition);
         Validate.isTrue(taskDefinition.isNotification());
-        t.taskDefinition = taskDefinition;
-        org.apache.hise.dao.Task u = new org.apache.hise.dao.Task();
-        u.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
-        u.setCreatedBy(createdBy);
-        u.setStatus(null);
-        u.getInput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
-        u.getInput().put("requestHeader", new Message("requestHeader", DOMUtils.domToString(requestHeader)));
-        u.setCreatedOn(new Date());
-        u.setActivationTime(new Date());
-        u.setEscalated(false);
-        u.setNotification(true);
-        engine.getHiseDao().persist(u);
         
-        t.taskDto = u;
+        Task t = new Task(engine, true);
+        
+        t.taskDefinition = taskDefinition;
+
+        org.apache.hise.dao.Task taskDto = new org.apache.hise.dao.Task();
+        taskDto.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
+        taskDto.setCreatedBy(createdBy);
+        taskDto.setStatus(null);
+        taskDto.getInput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
+        taskDto.getInput().put("requestHeader", new Message("requestHeader", DOMUtils.domToString(requestHeader)));
+        taskDto.setCreatedOn(new Date());
+        taskDto.setActivationTime(new Date());
+        taskDto.setEscalated(false);
+        taskDto.setNotification(true);
+        engine.getHiseDao().persist(taskDto);
+        
+        t.taskDto = taskDto;
         t.setStatus(Status.CREATED);
 
-        u.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
+        taskDto.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
         
         t.setStatus(Status.READY);
-        engine.getHiseDao().persist(u);
+        engine.getHiseDao().persist(taskDto);
         
         return t;
     }
@@ -275,6 +279,10 @@ public class Task {
         setStatus(Status.RESERVED);
     }
     
+    public void setOutput(Node requestXml) {
+        __log.debug("setting task output to: " + requestXml);
+        this.taskDto.getOutput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
+    }
 
     public TaskDefinition getTaskDefinition() {
         return taskDefinition;
@@ -596,6 +604,9 @@ public class Task {
         sendResponse();
     }
     
+    /**
+     * FIXME is outcome a reponse?
+     */
     private void sendResponse() {
         try {
             Node response = taskEvaluator.evaluateOutcome(taskDto.getStatus() == Status.COMPLETED);

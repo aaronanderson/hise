@@ -47,6 +47,7 @@ public class HISEEngineImpl implements HISEEngine {
     
     public final Map<String, QName> tasksMap = new HashMap<String, QName>();
     public final Map<QName, TaskInfo> tasks = new HashMap<QName, TaskInfo>();
+
     private HISEDao hiseDao;
     private HISEUserDetails hiseUserDetails;
     
