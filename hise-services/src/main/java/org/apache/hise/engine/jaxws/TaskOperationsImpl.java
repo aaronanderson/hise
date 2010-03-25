@@ -57,6 +57,8 @@ import org.apache.hise.lang.xsd.htda.TTaskAbstract;
 import org.apache.hise.lang.xsd.htda.TTaskQueryResultSet;
 
 import org.apache.hise.lang.xsd.htdt.TTime;
+import org.apache.hise.runtime.HiseIllegalAccessException;
+import org.apache.hise.runtime.HiseIllegalStateException;
 import org.apache.hise.runtime.Task;
 import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Node;
@@ -78,7 +80,7 @@ import org.w3c.dom.Node;
 @WebService
 public class TaskOperationsImpl implements TaskOperations {
     
-    private static Log log = LogFactory.getLog(TaskOperationsImpl.class);
+    private static final Log log = LogFactory.getLog(TaskOperationsImpl.class);
 
     private HISEEngineImpl hiseEngine;
 
@@ -92,15 +94,6 @@ public class TaskOperationsImpl implements TaskOperations {
      */
     public void init() throws Exception {
         context = (WebServiceContext) Class.forName("org.apache.cxf.jaxws.context.WebServiceContextImpl").newInstance();
-    }
-
-    /**
-     * IoC setter.
-     * 
-     * @param hiseEngine
-     */
-    public void setHiseEngine(HISEEngineImpl hiseEngine) {
-        this.hiseEngine = hiseEngine;
     }
 
     protected String getUserString() {
@@ -125,7 +118,7 @@ public class TaskOperationsImpl implements TaskOperations {
         query.setTaskType(taskType);
         query.setGenericHumanRole(GenericHumanRole.valueOf(genericHumanRole));
         query.setWorkQueue(workQueue);
-        query.setStatus(status);
+        query.setStatuses(status);
         query.setWhereClause(whereClause);
         query.setCreatedOnClause(createdOnClause);
 
@@ -160,16 +153,29 @@ public class TaskOperationsImpl implements TaskOperations {
         return t.getOutput(part);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void stop(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
         t.setCurrentUser(getUserString());
-        t.stop();
+        
+        try {
+            t.stop();
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateFault(e.getMessage());
+        }
     }
 
     public void suspend(String identifier) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
         t.setCurrentUser(getUserString());
-        t.suspend();
+        
+        try {
+            t.suspend();
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateFault(e.getMessage());
+        }
     }
 
     public void suspendUntil(String identifier, TTime time) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
@@ -182,7 +188,11 @@ public class TaskOperationsImpl implements TaskOperations {
             when2.addTo(when);
         }
 
-        t.suspendUntil(when);
+        try {
+            t.suspendUntil(when);
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateFault(e.getMessage());
+        }
     }
 
     public void remove(String identifier) throws IllegalAccessFault, IllegalArgumentFault {
@@ -195,7 +205,12 @@ public class TaskOperationsImpl implements TaskOperations {
         // OrgEntity user = loadUser();
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
         t.setCurrentUser(getUserString());
-        t.resume();
+        
+        try {
+            t.resume();
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateFault(e.getMessage());
+        }
     }
 
     public org.apache.hise.lang.xsd.htda.TTask getTaskInfo(String identifier) throws IllegalArgumentFault {
@@ -205,20 +220,38 @@ public class TaskOperationsImpl implements TaskOperations {
     public void claim(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {
         Task task = Task.load(hiseEngine, Long.valueOf(identifier));
         task.setCurrentUser(getUserString());
-        task.claim();
+        
+        try {
+            task.claim();
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateFault(e.getMessage());
+        } catch (HiseIllegalAccessException e) {
+            throw new IllegalAccessFault(e.getMessage());
+        }
     }
 
     public void fail(String identifier, String faultName, Object faultData) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault,
             IllegalOperationFault {
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
         t.setCurrentUser(getUserString());
-        t.fail();
+        
+        try {
+            t.fail();
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateFault(e.getMessage());
+        }
     }
 
     public void forward(String identifier, TOrganizationalEntity organizationalEntity) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
+        
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
         t.setCurrentUser(getUserString());
-        t.forward(organizationalEntity);
+        
+        try {
+            t.forward(organizationalEntity);
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateFault(e.getMessage());
+        }
     }
 
     public String getTaskDescription(String identifier, String contentType) throws IllegalArgumentFault {
@@ -230,13 +263,23 @@ public class TaskOperationsImpl implements TaskOperations {
     public void release(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
         t.setCurrentUser(getUserString());
-        t.release();
+        
+        try {
+            t.release();
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateFault(e.getMessage());
+        }
     }
 
     public void start(String identifier) throws IllegalArgumentFault, IllegalStateFault, IllegalAccessFault {
         Task t = Task.load(hiseEngine, Long.parseLong(identifier));
         t.setCurrentUser(getUserString());
-        t.start();
+        
+        try {
+            t.start();
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateFault(e.getMessage());
+        }
     }
 
     public void complete(String identifier, Object taskData) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
@@ -244,7 +287,12 @@ public class TaskOperationsImpl implements TaskOperations {
         t.setCurrentUser(getUserString());
         //TODO set output
         //t.setOutput(((Node) taskData).getFirstChild());
-        t.complete();
+        
+        try {
+            t.complete();
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateFault(e.getMessage());
+        }
     }
 
     public void setOutput(String identifier, String part, Object taskData) throws IllegalAccessFault, IllegalStateFault, IllegalArgumentFault {
@@ -368,20 +416,29 @@ public class TaskOperationsImpl implements TaskOperations {
         org.apache.hise.dao.Task taskDto = task.getTaskDto();
 
         TTask result = new TTask();
-        result.setId(taskDto.getId().toString());
-        result.setTaskType(taskDto.isNotification() ? "NOTIFICATION" : "TASK");
-        result.setCreatedOn(taskDto.getCreatedOn());
-        result.setActivationTime(taskDto.getActivationTime());
+        result.withId(taskDto.getId().toString()).
+            withTaskType(taskDto.isNotification() ? "NOTIFICATION" : "TASK").
+            withCreatedOn(taskDto.getCreatedOn()).
+            withActivationTime(taskDto.getActivationTime()).
+            withCreatedBy(taskDto.getCreatedBy()).
+            withPresentationName(task.getTaskEvaluator().getPresentationName()).
+            withPresentationSubject(task.getTaskEvaluator().evalPresentationSubject()).
+            withName(taskDto.getTaskDefinitionName()).
+            withStatus(TStatus.fromValue(taskDto.getStatus().toString()));
+
         if (taskDto.getActualOwner() != null) {
             result.setActualOwner(taskDto.getActualOwner());
         }
-        result.setCreatedBy(taskDto.getCreatedBy());
-        result.setPresentationName(task.getTaskEvaluator().getPresentationName());
-        result.setPresentationSubject(task.getTaskEvaluator().evalPresentationSubject());
-        result.setName(taskDto.getTaskDefinitionName());
-        result.setStatus(TStatus.fromValue(taskDto.getStatus().toString()));
 
         return result;
     }
 
+    /**
+     * IoC setter.
+     * 
+     * @param hiseEngine
+     */
+    public void setHiseEngine(HISEEngineImpl hiseEngine) {
+        this.hiseEngine = hiseEngine;
+    }
 }

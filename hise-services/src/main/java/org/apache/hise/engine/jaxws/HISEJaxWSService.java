@@ -52,6 +52,7 @@ import org.w3c.dom.Node;
 @WebServiceProvider
 @ServiceMode(value = Service.Mode.MESSAGE)
 public class HISEJaxWSService implements Provider<SOAPMessage>, Handler {
+
     private static Log __log = LogFactory.getLog(HISEJaxWSService.class);
 
     private HISEEngine hiseEngine;
@@ -59,6 +60,7 @@ public class HISEJaxWSService implements Provider<SOAPMessage>, Handler {
     private PlatformTransactionManager transactionManager;
     private MessageFactory messageFactory;
     private TransactionTemplate transactionTemplate;
+    
     private String id;
 
     public HISEJaxWSService() throws Exception {
@@ -73,9 +75,9 @@ public class HISEJaxWSService implements Provider<SOAPMessage>, Handler {
 		return id;
 	}
 
-	public void setId(String id) {
-		this.id = id;
-	}
+//	public void setId(String id) {
+//		this.id = id;
+//	}
 
 	public void setHiseEngine(HISEEngine hiseEngine) {
         this.hiseEngine = hiseEngine;

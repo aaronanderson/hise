@@ -17,14 +17,21 @@
  * under the License.
  */
 
-package org.apache.hise.engine.store;
+package org.apache.hise.runtime;
 
-public class CompileException extends Exception {
-    
-    private static final long serialVersionUID = 1L;
+/**
+ * By default, the identity of the person on behalf of which the operation is invoked is
+ * passed to the task. When the person is not authorized to perform the operation the
+ * illegalAccessFault and recipientNotAllowed is thrown in the case of tasks and
+ * notifications respectively.
+ * 
+ * @author Witek Wołejszo
+ * @author Warren Crossing
+ */
+public class HiseIllegalAccessException extends Exception {
 
-    public CompileException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
+    public HiseIllegalAccessException(String msg) {
+        super(msg);
     }
-    
+
 }

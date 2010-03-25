@@ -41,7 +41,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class HISEScheduler {
     
-    private Log __log = LogFactory.getLog(HISEScheduler.class);
+    private static final Log log = LogFactory.getLog(HISEScheduler.class);
     
     private HISEEngineImpl hiseEngine;
     private ScheduledExecutorService executor;
@@ -55,7 +55,7 @@ public class HISEScheduler {
 
         public void run() {
             final Date currentEventDateTime = Calendar.getInstance().getTime();
-            __log.debug("scheduler CheckJobs at " + currentEventDateTime);
+            log.debug("scheduler CheckJobs at " + currentEventDateTime);
             try {
                 TransactionTemplate tt = new TransactionTemplate(transactionManager);
                 List<Job> jobs = (List<Job>) tt.execute(new TransactionCallback() {
@@ -64,7 +64,7 @@ public class HISEScheduler {
                     }
                 });
                 
-                __log.debug("dequeued jobs: " + jobs);
+                log.debug("dequeued jobs: " + jobs);
     
                 for (Job j : jobs) {
                     try {
@@ -74,9 +74,9 @@ public class HISEScheduler {
                             public Object doInTransaction(TransactionStatus ts) {
                                 Job j3 = hiseEngine.getHiseDao().find(Job.class, j2); 
                                 if (j3 == null) {
-                                    __log.debug("Skipping job " + j3 + " - it's no longer id DB");
+                                    log.debug("Skipping job " + j3 + " - it's no longer id DB");
                                 } else {
-                                    __log.debug("Executing job " + j3);
+                                    log.debug("Executing job " + j3);
                                     hiseEngine.executeJob(j3);
                                     hiseEngine.getHiseDao().remove(j3);
                                 }
@@ -85,11 +85,11 @@ public class HISEScheduler {
                             
                         });
                     } catch (Throwable t) {
-                        __log.warn("Job execution failed " + j, t);
+                        log.warn("Job execution failed " + j, t);
                     }
                 }
             } catch (Throwable t) {
-                __log.warn("CheckJobs failed", t);
+                log.warn("CheckJobs failed", t);
             }
         }
     }

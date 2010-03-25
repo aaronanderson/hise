@@ -31,16 +31,12 @@ import org.apache.commons.logging.LogFactory;
  * Utility class used to merge presentation parameters into template strings using regexp replace.
  * @author Witek Wołejszo
  */
-public class RegexpTemplateEngine {
+public class RegexpTemplateEngine implements TemplateEngine {
     
     private final Log log = LogFactory.getLog(RegexpTemplateEngine.class);
 
-    /**
-     * Replaces occurrences of "$key$" in a template string with values provided in presentationParameters.
-     * Removes blocks starting with ?IF-key? and ending with ?ENDIF-key? if key is not present in presentationParameters.
-     * @param template The template String.
-     * @param presentationParameterValues Presentation parameters.
-     * @return The template string with filled in values.
+    /* (non-Javadoc)
+     * @see org.apache.hise.utils.TemplateEngine#merge(java.lang.String, java.util.Map)
      */
     public String merge(String template, Map<String, Object> presentationParameterValues) {
          

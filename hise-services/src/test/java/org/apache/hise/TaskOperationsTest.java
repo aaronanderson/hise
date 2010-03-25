@@ -41,8 +41,9 @@ public class TaskOperationsTest {
                 return Collections.singleton("group1");
             }
         });
-        MockHiseDao hd = new MockHiseDao();
-        he.setHiseDao(hd);
+
+        MockHiseDao dao = new MockHiseDao();
+        he.setHiseDao(dao);
         ti.setHiseEngine(he);
         
         List<TTask> r = ti.getMyTasks("ALL", "ACTUALOWNER", "", Collections.EMPTY_LIST, "", "", 100);

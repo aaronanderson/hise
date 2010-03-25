@@ -149,7 +149,7 @@ public class Task {
         return t;
     }
 
-    private void tryNominateOwner() {
+    private void tryNominateOwner() throws HiseIllegalStateException {
         {
             int poSize = 0;
             TaskOrgEntity selected = null;
@@ -189,12 +189,25 @@ public class Task {
         
         engine.getHiseDao().persist(taskDto);
         t.taskDto = taskDto;
-        t.setStatus(Status.CREATED);
+        try {
+            t.setStatus(Status.CREATED);
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateException(e);
+        }
 
         taskDto.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
         
-        t.setStatus(Status.READY);
-        t.tryNominateOwner();
+        try {
+            t.setStatus(Status.READY);
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateException(e);
+        }
+
+        try {
+            t.tryNominateOwner();
+        } catch (HiseIllegalStateException e) {
+            t.__log.warn("Could not nominate owner.");
+        }
 
         return t;
 
@@ -263,20 +276,28 @@ public class Task {
         engine.getHiseDao().persist(taskDto);
         
         t.taskDto = taskDto;
-        t.setStatus(Status.CREATED);
+        try {
+            t.setStatus(Status.CREATED);
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateException(e);
+        }
 
         taskDto.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
         
-        t.setStatus(Status.READY);
+        try {
+            t.setStatus(Status.READY);
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateException(e);
+        }
+
         engine.getHiseDao().persist(taskDto);
         
         return t;
     }
 
-    
-    public void setActualOwner(String user) {
-        taskDto.setActualOwner(user);
+    public void setActualOwner(String user) throws HiseIllegalStateException {
         setStatus(Status.RESERVED);
+        taskDto.setActualOwner(user);
     }
     
     public void setOutput(Node requestXml) {
@@ -412,7 +433,7 @@ public class Task {
     // }
     //
 
-    public void setStatus(Status newStatus) {
+    public void setStatus(Status newStatus) throws HiseIllegalStateException {
         for (TaskStateListener l : taskStateListeners) {
             l.stateChanged(taskDto.getStatus(), newStatus);
         }
@@ -520,28 +541,25 @@ public class Task {
     /**
      * Claims task. Task in READY status can be claimed by people from potential owners group not listed in excluded owners.
      * 
-     * @param person
-     *            The Person that claims the task.
-     * @throws HTIllegalStateException
-     *             Thrown when task is in illegal state for claim i.e. not READY.
-     * @throws HTIllegalAccessException
-     *             Thrown when task is in illegal state for claim i.e. not READY or person cannot become actual owner i.e. not potential owner or excluded.
+     * @throws HiseIllegalStateException Thrown when task is in illegal state for claim i.e. not READY.
+     * @throws HiseIllegalAccessException Thrown when task is in illegal state for claim i.e. not READY or person cannot 
+     *                                    become actual owner i.e. not potential owner or excluded.
      */
-    public void claim() {
+    public void claim() throws HiseIllegalStateException, HiseIllegalAccessException {
 
         if (taskDto.getActualOwner() != null) {
-            throw new IllegalStateException("Actual owner already set " + taskDto.getActualOwner());
+            throw new HiseIllegalStateException("Actual owner already set " + taskDto.getActualOwner());
         }
 
         if (!taskDto.getStatus().equals(org.apache.hise.dao.Task.Status.READY)) {
-            throw new IllegalStateException("Task not claimable. Not READY." + taskDto.getStatus());
+            throw new HiseIllegalStateException("Task not claimable. Not READY." + taskDto.getStatus());
         }
 
-        // // check if the task can be claimed by person
-        // if (!this.getPotentialOwners().contains(person)) {
-        // throw new HTIllegalAccessException("Not a potential owner.", person.getName());
-        // }
-        //
+        // check if the task can be claimed by person
+        if (isCurrentUserInPotentialOwners()) {
+            throw new HiseIllegalAccessException("User: " + currentUser + " is not a potential owner.");
+        }
+        
         // //TODO test
         // // check if the person is excluded from potential owners
         // if ((this.getExcludedOwners() != null && this.getExcludedOwners().contains(person))) {
@@ -554,23 +572,34 @@ public class Task {
         setStatus(Status.RESERVED);
     }
     
-    public void start() {
+    /**
+     * TODO implement
+     */
+    private boolean isCurrentUserInPotentialOwners() {
+        return true;
+    }
+
+    public void start() throws HiseIllegalStateException {
         setStatus(Status.IN_PROGRESS);
     }
 
-    public void stop() {
+    public void stop() throws HiseIllegalStateException {
         setStatus(Status.RESERVED);
     }
 
-    public void release() {
+    public void release() throws HiseIllegalStateException {
         setStatus(Status.READY);
     }
     
-    public void suspend() {
+    /**
+     * Suspends the task.
+     * @throws HiseIllegalStateException 
+     */
+    public void suspend() throws HiseIllegalStateException {
         setStatus(Status.SUSPENDED);
     }
     
-    public void suspendUntil(Date when) {
+    public void suspendUntil(Date when) throws HiseIllegalStateException {
         Validate.notNull(when);
 
         setStatus(Status.SUSPENDED);
@@ -578,28 +607,26 @@ public class Task {
         taskDto.setSuspendUntil(job);
     }
     
-    public void suspendUntilJobAction() {
+    public void suspendUntilJobAction() throws HiseIllegalStateException {
         taskDto.setSuspendUntil(null);
         resume();
     }
 
-    public void deadlineJobAction() {
+    public void deadlineJobAction() throws HiseIllegalStateException {
         taskDto.getDeadlines().remove(getCurrentJob());
         deadlineController.deadlineCrossed(getCurrentJob());
     }
-
     
-    
-    public void resume() {
+    public void resume() throws HiseIllegalStateException {
         setStatus(taskDto.getStatusBeforeSuspend());
     }
 
-    public void fail() {
+    public void fail() throws HiseIllegalStateException {
         setStatus(Status.FAILED);
         sendResponse();
     }
 
-    public void complete() {
+    public void complete() throws HiseIllegalStateException {
         setStatus(Status.COMPLETED);
         sendResponse();
     }
@@ -618,12 +645,12 @@ public class Task {
         }
     }
 
-    private void releaseOwner() {
+    private void releaseOwner() throws HiseIllegalStateException {
         setStatus(Status.READY);
         taskDto.setActualOwner(null);
     }
     
-    public void forward(TOrganizationalEntity target) {
+    public void forward(TOrganizationalEntity target) throws HiseIllegalStateException {
         Set<TaskOrgEntity> e = new HashSet<TaskOrgEntity>();
         
         for (String user : XmlUtils.notNull(target.getUsers(), new TUserlist()).getUser()) {
@@ -647,7 +674,7 @@ public class Task {
         forward(e);
     }
     
-    public void forward(Set<TaskOrgEntity> targets) {
+    public void forward(Set<TaskOrgEntity> targets) throws HiseIllegalStateException {
         __log.debug("forwarding to " + targets);
         releaseOwner();
         

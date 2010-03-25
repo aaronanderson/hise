@@ -97,7 +97,7 @@ public class DeadlineController implements TaskStateListener {
         }
     }
     
-    public void deadlineCrossed(Job deadline) {
+    public void deadlineCrossed(Job deadline) throws HiseIllegalStateException {
         __log.debug("deadline crossed" + deadline);
 
         EscalationResult e = task.getTaskEvaluator().findEscalation(deadline.getDetails());

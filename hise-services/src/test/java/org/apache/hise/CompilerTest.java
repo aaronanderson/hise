@@ -32,8 +32,8 @@ import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
-
 public class CompilerTest {
+    
     @Test
     public void testCompile() throws Exception {
         Resource htdXml = new ClassPathResource("testHtd1.xml");
@@ -49,11 +49,11 @@ public class CompilerTest {
         Assert.assertEquals("notify", hi.getTaskDefinitions().get(QName.valueOf("{http://www.insurance.example.com/claims}Notify2")).getTaskInterface().getOperation());
     }
     
-    @Test
-    public void testDuplicateTaskDef() throws Exception {
+    @Test//(expected = CompileException.class)
+    public void testDuplicateTaskDef() throws CompileException {
         Resource htdXml = new ClassPathResource("duplicateTaskDef.xml");
         try {
-            HumanInteractions hi = HumanInteractionsCompiler.compile(htdXml);
+            HumanInteractionsCompiler.compile(htdXml);
         } catch (CompileException e) {
             Assert.assertTrue(e.getCause().getMessage().contains("Duplicate task found, name: {http://www.insurance.example.com/claims}Task1"));
             return;
