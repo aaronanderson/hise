@@ -10,13 +10,16 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public interface HISEEngine {
+
     public static class TaskInfo {
         public TaskDefinition taskDefinition;
         public HISEDD parent;
         public TaskDD dd;
     }
     
-    public void registerTask(TaskInfo ti);
-    public Node receive(Handler handler, QName portType, String operation, Element body, Node requestHeader);
-    public HISEDao getHiseDao();
+    void registerTask(TaskInfo ti);
+
+    Node receive(Handler handler, QName portType, String operation, Element body, Node requestHeader);
+
+    HISEDao getHiseDao();
 }

@@ -60,6 +60,7 @@ public class Task {
     private HISEEngineImpl hiseEngine;
 
     private org.apache.hise.dao.Task taskDto;
+
     private TaskDefinition taskDefinition;
 
     private TaskEvaluator taskEvaluator;
@@ -95,6 +96,10 @@ public class Task {
         return currentUser;
     }
 
+    /**
+     * TODO throw an exception if current user is not TASK_ADMINISTRATOR
+     * @param currentUser
+     */
     public void setCurrentUser(String currentUser) {
         this.currentUser = currentUser;
     }
@@ -104,8 +109,10 @@ public class Task {
     }
 
     private Task(HISEEngineImpl engine, boolean notification) {
+        
+        Validate.notNull(engine);
+        
         this.hiseEngine = engine;
-        Validate.notNull(hiseEngine);
 
         taskStateListeners = new ArrayList<TaskStateListener>();
         if (!notification) {
@@ -142,7 +149,7 @@ public class Task {
         return t;
     }
 
-    private void tryNominateOwner() {
+    private void tryNominateOwner() throws HiseIllegalStateException {
         {
             int poSize = 0;
             TaskOrgEntity selected = null;
@@ -163,30 +170,45 @@ public class Task {
     }
     
     public static Task create(HISEEngineImpl engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
+
         Task t = new Task(engine, false);
         Validate.notNull(taskDefinition);
         Validate.isTrue(!taskDefinition.isNotification());
+        
         t.taskDefinition = taskDefinition;
-        org.apache.hise.dao.Task u = new org.apache.hise.dao.Task();
-        u.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
-        u.setCreatedBy(createdBy);
-        u.setStatus(null);
-        u.getInput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
-        u.getInput().put("requestHeader", new Message("requestHeader", DOMUtils.domToString(requestHeader)));
-        u.setCreatedOn(new Date());
-        u.setActivationTime(new Date());
-        u.setEscalated(false);
-        u.setNotification(false);
-        engine.getHiseDao().persist(u);
-        t.taskDto = u;
-        t.setStatus(Status.CREATED);
+        org.apache.hise.dao.Task taskDto = new org.apache.hise.dao.Task();
+        taskDto.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
+        taskDto.setCreatedBy(createdBy);
+        taskDto.setStatus(null);
+        taskDto.getInput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
+        taskDto.getInput().put("requestHeader", new Message("requestHeader", DOMUtils.domToString(requestHeader)));
+        taskDto.setCreatedOn(new Date());
+        taskDto.setActivationTime(new Date());
+        taskDto.setEscalated(false);
+        taskDto.setNotification(false);
+        
+        engine.getHiseDao().persist(taskDto);
+        t.taskDto = taskDto;
+        try {
+            t.setStatus(Status.CREATED);
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateException(e);
+        }
 
-        u.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
+        taskDto.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
         
-        t.setStatus(Status.READY);
-        t.tryNominateOwner();
-        
-        
+        try {
+            t.setStatus(Status.READY);
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateException(e);
+        }
+
+        try {
+            t.tryNominateOwner();
+        } catch (HiseIllegalStateException e) {
+            t.__log.warn("Could not nominate owner.");
+        }
+
         return t;
 
         // recalculatePresentationParameters();
@@ -233,39 +255,55 @@ public class Task {
     }
 
     public static Task createNotification(HISEEngineImpl engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
-        Task t = new Task(engine, true);
+        
         Validate.notNull(taskDefinition);
         Validate.isTrue(taskDefinition.isNotification());
+        
+        Task t = new Task(engine, true);
+        
         t.taskDefinition = taskDefinition;
-        org.apache.hise.dao.Task u = new org.apache.hise.dao.Task();
-        u.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
-        u.setCreatedBy(createdBy);
-        u.setStatus(null);
-        u.getInput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
-        u.getInput().put("requestHeader", new Message("requestHeader", DOMUtils.domToString(requestHeader)));
-        u.setCreatedOn(new Date());
-        u.setActivationTime(new Date());
-        u.setEscalated(false);
-        u.setNotification(true);
-        engine.getHiseDao().persist(u);
-        
-        t.taskDto = u;
-        t.setStatus(Status.CREATED);
 
-        u.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
+        org.apache.hise.dao.Task taskDto = new org.apache.hise.dao.Task();
+        taskDto.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
+        taskDto.setCreatedBy(createdBy);
+        taskDto.setStatus(null);
+        taskDto.getInput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
+        taskDto.getInput().put("requestHeader", new Message("requestHeader", DOMUtils.domToString(requestHeader)));
+        taskDto.setCreatedOn(new Date());
+        taskDto.setActivationTime(new Date());
+        taskDto.setEscalated(false);
+        taskDto.setNotification(true);
+        engine.getHiseDao().persist(taskDto);
         
-        t.setStatus(Status.READY);
-        engine.getHiseDao().persist(u);
+        t.taskDto = taskDto;
+        try {
+            t.setStatus(Status.CREATED);
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateException(e);
+        }
+
+        taskDto.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
+        
+        try {
+            t.setStatus(Status.READY);
+        } catch (HiseIllegalStateException e) {
+            throw new IllegalStateException(e);
+        }
+
+        engine.getHiseDao().persist(taskDto);
         
         return t;
     }
 
-    
-    public void setActualOwner(String user) {
-        taskDto.setActualOwner(user);
+    public void setActualOwner(String user) throws HiseIllegalStateException {
         setStatus(Status.RESERVED);
+        taskDto.setActualOwner(user);
     }
     
+    public void setOutput(Node requestXml) {
+        __log.debug("setting task output to: " + requestXml);
+        this.taskDto.getOutput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
+    }
 
     public TaskDefinition getTaskDefinition() {
         return taskDefinition;
@@ -395,7 +433,7 @@ public class Task {
     // }
     //
 
-    public void setStatus(Status newStatus) {
+    public void setStatus(Status newStatus) throws HiseIllegalStateException {
         for (TaskStateListener l : taskStateListeners) {
             l.stateChanged(taskDto.getStatus(), newStatus);
         }
@@ -503,28 +541,25 @@ public class Task {
     /**
      * Claims task. Task in READY status can be claimed by people from potential owners group not listed in excluded owners.
      * 
-     * @param person
-     *            The Person that claims the task.
-     * @throws HTIllegalStateException
-     *             Thrown when task is in illegal state for claim i.e. not READY.
-     * @throws HTIllegalAccessException
-     *             Thrown when task is in illegal state for claim i.e. not READY or person cannot become actual owner i.e. not potential owner or excluded.
+     * @throws HiseIllegalStateException Thrown when task is in illegal state for claim i.e. not READY.
+     * @throws HiseIllegalAccessException Thrown when task is in illegal state for claim i.e. not READY or person cannot 
+     *                                    become actual owner i.e. not potential owner or excluded.
      */
-    public void claim() {
+    public void claim() throws HiseIllegalStateException, HiseIllegalAccessException {
 
         if (taskDto.getActualOwner() != null) {
-            throw new IllegalStateException("Actual owner already set " + taskDto.getActualOwner());
+            throw new HiseIllegalStateException("Actual owner already set " + taskDto.getActualOwner());
         }
 
         if (!taskDto.getStatus().equals(org.apache.hise.dao.Task.Status.READY)) {
-            throw new IllegalStateException("Task not claimable. Not READY." + taskDto.getStatus());
+            throw new HiseIllegalStateException("Task not claimable. Not READY." + taskDto.getStatus());
         }
 
-        // // check if the task can be claimed by person
-        // if (!this.getPotentialOwners().contains(person)) {
-        // throw new HTIllegalAccessException("Not a potential owner.", person.getName());
-        // }
-        //
+        // check if the task can be claimed by person
+        if (isCurrentUserInPotentialOwners()) {
+            throw new HiseIllegalAccessException("User: " + currentUser + " is not a potential owner.");
+        }
+        
         // //TODO test
         // // check if the person is excluded from potential owners
         // if ((this.getExcludedOwners() != null && this.getExcludedOwners().contains(person))) {
@@ -537,23 +572,34 @@ public class Task {
         setStatus(Status.RESERVED);
     }
     
-    public void start() {
+    /**
+     * TODO implement
+     */
+    private boolean isCurrentUserInPotentialOwners() {
+        return true;
+    }
+
+    public void start() throws HiseIllegalStateException {
         setStatus(Status.IN_PROGRESS);
     }
 
-    public void stop() {
+    public void stop() throws HiseIllegalStateException {
         setStatus(Status.RESERVED);
     }
 
-    public void release() {
+    public void release() throws HiseIllegalStateException {
         setStatus(Status.READY);
     }
     
-    public void suspend() {
+    /**
+     * Suspends the task.
+     * @throws HiseIllegalStateException 
+     */
+    public void suspend() throws HiseIllegalStateException {
         setStatus(Status.SUSPENDED);
     }
     
-    public void suspendUntil(Date when) {
+    public void suspendUntil(Date when) throws HiseIllegalStateException {
         Validate.notNull(when);
 
         setStatus(Status.SUSPENDED);
@@ -561,32 +607,33 @@ public class Task {
         taskDto.setSuspendUntil(job);
     }
     
-    public void suspendUntilJobAction() {
+    public void suspendUntilJobAction() throws HiseIllegalStateException {
         taskDto.setSuspendUntil(null);
         resume();
     }
 
-    public void deadlineJobAction() {
+    public void deadlineJobAction() throws HiseIllegalStateException {
         taskDto.getDeadlines().remove(getCurrentJob());
         deadlineController.deadlineCrossed(getCurrentJob());
     }
-
     
-    
-    public void resume() {
+    public void resume() throws HiseIllegalStateException {
         setStatus(taskDto.getStatusBeforeSuspend());
     }
 
-    public void fail() {
+    public void fail() throws HiseIllegalStateException {
         setStatus(Status.FAILED);
         sendResponse();
     }
 
-    public void complete() {
+    public void complete() throws HiseIllegalStateException {
         setStatus(Status.COMPLETED);
         sendResponse();
     }
     
+    /**
+     * FIXME is outcome a reponse?
+     */
     private void sendResponse() {
         try {
             Node response = taskEvaluator.evaluateOutcome(taskDto.getStatus() == Status.COMPLETED);
@@ -598,12 +645,12 @@ public class Task {
         }
     }
 
-    private void releaseOwner() {
+    private void releaseOwner() throws HiseIllegalStateException {
         setStatus(Status.READY);
         taskDto.setActualOwner(null);
     }
     
-    public void forward(TOrganizationalEntity target) {
+    public void forward(TOrganizationalEntity target) throws HiseIllegalStateException {
         Set<TaskOrgEntity> e = new HashSet<TaskOrgEntity>();
         
         for (String user : XmlUtils.notNull(target.getUsers(), new TUserlist()).getUser()) {
@@ -627,7 +674,7 @@ public class Task {
         forward(e);
     }
     
-    public void forward(Set<TaskOrgEntity> targets) {
+    public void forward(Set<TaskOrgEntity> targets) throws HiseIllegalStateException {
         __log.debug("forwarding to " + targets);
         releaseOwner();
         
@@ -1094,14 +1141,6 @@ public class Task {
     // }
 
     
-    public void handleTimer() {
-        
-    }
-    
-    public Date calculateWakeupTime() {
-        return null;
-    }
-    
     public void remove() {
         Validate.isTrue(taskDto.isNotification());
         hiseEngine.getHiseDao().remove(taskDto);
@@ -1109,5 +1148,9 @@ public class Task {
     
     public Node getInput(String part) {
         return DOMUtils.parse(taskDto.getInput().get(part).getMessage()).getDocumentElement();
+    }
+    
+    public Node getOutput(String part) {
+        return DOMUtils.parse(taskDto.getOutput().get(part).getMessage()).getDocumentElement();
     }
 }

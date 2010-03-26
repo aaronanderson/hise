@@ -78,7 +78,7 @@
   <chapter>
     <title>Intoduction into OSGi distribution</title>
     <para>
-      HISE OSGi distribution works out of box under Apach ServiceMix 4. 
+      HISE OSGi distribution works out of box under Apache ServiceMix 4. 
       It contains bundles directory with required dependencies. 
       In order to run it, you need to put those artifacts into SMX4/deploy directory. 
       Next, you can point your browser to http://localhost:8181/cxf address 

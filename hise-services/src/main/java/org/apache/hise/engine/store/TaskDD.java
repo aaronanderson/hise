@@ -19,13 +19,16 @@
 
 package org.apache.hise.engine.store;
 
+import org.apache.hise.api.Handler;
+import org.apache.hise.api.Sender;
+
 import javax.xml.namespace.QName;
 
 public class TaskDD {
 
     public QName taskName;
-    public org.apache.hise.engine.jaxws.HISEJaxWSService handler;
-    public org.apache.hise.engine.jaxws.HISEJaxWSClient sender;
+    public Handler handler;
+    public Sender sender;
 
     public QName getTaskName() {
         return taskName;
@@ -35,20 +38,19 @@ public class TaskDD {
         this.taskName = taskName;
     }
 
-    public org.apache.hise.engine.jaxws.HISEJaxWSService getHandler() {
+    public Handler getHandler() {
         return handler;
     }
 
-    public void setHandler(org.apache.hise.engine.jaxws.HISEJaxWSService handler) {
+    public void setHandler(Handler handler) {
         this.handler = handler;
     }
 
-    public org.apache.hise.engine.jaxws.HISEJaxWSClient getSender() {
+    public Sender getSender() {
         return sender;
     }
 
-    public void setSender(org.apache.hise.engine.jaxws.HISEJaxWSClient sender) {
+    public void setSender(Sender sender) {
         this.sender = sender;
     }
-
 }

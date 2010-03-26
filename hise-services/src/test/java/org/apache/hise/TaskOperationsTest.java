@@ -28,7 +28,9 @@ public class TaskOperationsTest {
 
     @Ignore
     public void testGetMyTasks() throws Exception {
+        
         TaskOperationsImpl ti = new MockTaskOperationsImpl();
+        
         HISEEngineImpl he = new HISEEngineImpl();
         he.setHiseUserDetails(new HISEUserDetails() {
             public String getUserPassword(String user) {
@@ -39,8 +41,9 @@ public class TaskOperationsTest {
                 return Collections.singleton("group1");
             }
         });
-        MockHiseDao hd = new MockHiseDao();
-        he.setHiseDao(hd);
+
+        MockHiseDao dao = new MockHiseDao();
+        he.setHiseDao(dao);
         ti.setHiseEngine(he);
         
         List<TTask> r = ti.getMyTasks("ALL", "ACTUALOWNER", "", Collections.EMPTY_LIST, "", "", 100);

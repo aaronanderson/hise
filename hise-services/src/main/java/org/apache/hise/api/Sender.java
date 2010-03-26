@@ -16,15 +16,16 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.hise.api;
 
-package org.apache.hise.engine.store;
+import org.w3c.dom.Node;
 
-public class CompileException extends Exception {
-    
-    private static final long serialVersionUID = 1L;
-
-    public CompileException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
-    }
-    
+/**
+ * Created by IntelliJ IDEA.
+ * User: mproch
+ * Date: Mar 12, 2010
+ * Time: 9:41:32 PM
+ */
+public interface Sender {
+   Node invoke(Node message, Node epr);
 }

@@ -20,18 +20,13 @@
 package org.apache.hise.dao;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
-import javax.annotation.Resource;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,31 +36,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
-import javax.persistence.Transient;
-import javax.xml.XMLConstants;
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.namespace.QName;
 
-import net.sf.saxon.Configuration;
-import net.sf.saxon.query.DynamicQueryContext;
-import net.sf.saxon.query.StaticQueryContext;
-import net.sf.saxon.query.XQueryExpression;
-import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.AnyItemType;
-
-import org.apache.commons.lang.Validate;
-import org.apache.commons.lang.builder.EqualsBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -89,9 +67,9 @@ public class Task extends JpaBase {
     @Column(nullable = false)
     private String taskDefinitionKey;
 
-    public static enum TaskTypes {
-        ALL, TASKS, NOTIFICATIONS;
-    }
+//    public static enum TaskTypes {
+//        ALL, TASKS, NOTIFICATIONS;
+//    }
 
     /**
      * Task statuses.
@@ -207,6 +185,9 @@ public class Task extends JpaBase {
     @Enumerated(EnumType.STRING)
     private Status statusBeforeSuspend;
 
+    /**
+     * Owner of a task.
+     */
     private String actualOwner;
 
     /**

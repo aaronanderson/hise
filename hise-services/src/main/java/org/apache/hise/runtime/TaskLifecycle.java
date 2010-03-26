@@ -35,7 +35,8 @@ public class TaskLifecycle implements TaskStateListener {
         this.task = task;
     }
 
-    public void stateChanged(Status oldStatus, Status newStatus) {
+    public void stateChanged(Status oldStatus, Status newStatus) throws HiseIllegalStateException {
+
         boolean isOk = false;
 
         // check if change is valid for current state
@@ -103,7 +104,7 @@ public class TaskLifecycle implements TaskStateListener {
             } else {
                 String msg = "Changing Task status : " + task + " status from: " + oldStatus + " to: " + newStatus + " is not allowed.";
                 __log.error(msg);
-                throw new IllegalStateException(msg);
+                throw new HiseIllegalStateException(msg);
             }
 
         } else {

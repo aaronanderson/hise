@@ -24,16 +24,21 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.apache.hise.lang.xsd.htda.TStatus;
 
 public class TaskQuery {
 
+    /**
+     * Username or login.
+     */
     private String user;
+    
     private Collection<String> userGroups = new HashSet<String>();
     private String taskType = "ALL";
     private GenericHumanRole genericHumanRole = GenericHumanRole.ACTUALOWNER;
     private String workQueue = "";
-    private List<TStatus> status = Collections.EMPTY_LIST;
+    private List<TStatus> statuses = Collections.EMPTY_LIST;
     private String whereClause = "";
     private String createdOnClause = "";
     private Integer maxTasks = 20;
@@ -78,12 +83,12 @@ public class TaskQuery {
         this.workQueue = workQueue;
     }
 
-    public List<TStatus> getStatus() {
-        return status;
+    public List<TStatus> getStatuses() {
+        return statuses;
     }
 
-    public void setStatus(List<TStatus> status) {
-        this.status = status;
+    public void setStatuses(List<TStatus> statuses) {
+        this.statuses = statuses;
     }
 
     public String getWhereClause() {
@@ -107,6 +112,7 @@ public class TaskQuery {
     }
 
     public void setMaxTasks(Integer maxTasks) {
+        Validate.notNull(maxTasks, "Maximum tasks number cannot be set to null.");
         this.maxTasks = maxTasks;
     }
 }

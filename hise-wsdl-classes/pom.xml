@@ -56,12 +56,32 @@
                 <groupId>org.apache.cxf</groupId>
                 <artifactId>cxf-codegen-plugin</artifactId>
                 <version>${cxf.version}</version>
+                <dependencies>
+                    <!-- generate constructors -->
+                    <dependency>
+                        <groupId>net.java.dev.jaxb2-commons</groupId>
+                        <artifactId>jaxb-fluent-api</artifactId>
+                        <version>2.1.8</version>
+                    </dependency>
+                    <!-- default value support net.java.dev.jaxb2-commons -->
+                    <dependency>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-xjc-dv</artifactId>
+                        <version>${cxf.version}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>generate-sources</id>
                         <phase>generate-sources</phase>
                         <configuration>
                             <sourceRoot>${project.build.directory}/generated-sources/main</sourceRoot>
+                            <defaultOptions>
+                                <extraargs>
+                                    <extraarg>-xjc-Xfluent-api</extraarg>
+                                    <extraarg>-xjc-Xdv</extraarg>
+                                </extraargs>
+                            </defaultOptions>
                             <wsdlOptions>
                                 <wsdlOption>
                                     <wsdl>${project.build.directory}/wsdl/ws-humantask.wsdl</wsdl>

@@ -17,14 +17,18 @@
  * under the License.
  */
 
-package org.apache.hise.engine.store;
+package org.apache.hise.runtime;
 
-public class CompileException extends Exception {
-    
-    private static final long serialVersionUID = 1L;
+/**
+ * Invoking an operation that is not allowed in the current state of the
+ * task results in an illegalStateFault.
+ *
+ * @author Warren Crossing 
+ */
+public class HiseIllegalStateException extends Exception {
 
-    public CompileException(String arg0, Throwable arg1) {
-        super(arg0, arg1);
+    public HiseIllegalStateException(String msg) {
+        super(msg);
     }
-    
+
 }

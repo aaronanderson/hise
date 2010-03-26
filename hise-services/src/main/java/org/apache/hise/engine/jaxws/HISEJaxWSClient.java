@@ -19,8 +19,14 @@
 
 package org.apache.hise.engine.jaxws;
 
-import java.net.URL;
-import java.util.Iterator;
+import org.apache.commons.lang.Validate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.jaxws.spi.ProviderImpl;
+import org.apache.hise.api.Sender;
+import org.apache.hise.utils.XQueryEvaluator;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
@@ -29,17 +35,11 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
 import javax.xml.ws.spi.ServiceDelegate;
-
-import org.apache.commons.lang.Validate;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.cxf.jaxws.spi.ProviderImpl;
-import org.apache.hise.utils.XQueryEvaluator;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
+import java.net.URL;
+import java.util.Iterator;
 
 
-public class HISEJaxWSClient {
+public class HISEJaxWSClient implements Sender {
 
     private Log __log = LogFactory.getLog(HISEJaxWSClient.class);
     

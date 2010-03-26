@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.hise.utils.RegexpTemplateEngine;
+import org.apache.hise.utils.TemplateEngine;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -36,7 +37,7 @@ public class RegexpTemplateEngineTest {
     @Test
     public void mergeTest1() {
         
-        RegexpTemplateEngine te = new RegexpTemplateEngine();
+        TemplateEngine te = new RegexpTemplateEngine();
         String r1 = te.merge("Raz dwa trzy.", null);
         
         Assert.assertEquals("Raz dwa trzy.", r1);
@@ -59,7 +60,7 @@ public class RegexpTemplateEngineTest {
     @Test
     public void mergeTest2() {
         
-        RegexpTemplateEngine te = new RegexpTemplateEngine();
+        TemplateEngine te = new RegexpTemplateEngine();
         
         Map<String, Object> pp = new HashMap<String, Object>();
         pp.put("euroAmount", Double.valueOf(1));
@@ -72,7 +73,7 @@ public class RegexpTemplateEngineTest {
     
     @Test
     public void removeTest1() {
-        RegexpTemplateEngine te = new RegexpTemplateEngine();
+        TemplateEngine te = new RegexpTemplateEngine();
         Map<String, Object> pp = new HashMap<String, Object>();
         //no x in pp
         String r1 = te.merge("?IF-x?bla bla bla?ENDIF-x?", pp);
@@ -81,7 +82,7 @@ public class RegexpTemplateEngineTest {
     
     @Test
     public void noRemoveTest1() {
-        RegexpTemplateEngine te = new RegexpTemplateEngine();
+        TemplateEngine te = new RegexpTemplateEngine();
         Map<String, Object> pp = new HashMap<String, Object>();
         pp.put("x", "1");
         pp.put("y", "bleh");
@@ -91,7 +92,7 @@ public class RegexpTemplateEngineTest {
     
     @Test
     public void noRemoveTest2() {
-        RegexpTemplateEngine te = new RegexpTemplateEngine();
+        TemplateEngine te = new RegexpTemplateEngine();
         Map<String, Object> pp = new HashMap<String, Object>();
         pp.put("correctedItemName1", "pozycja");
         pp.put("correctedItemNewNetValue1", "1");
@@ -101,7 +102,7 @@ public class RegexpTemplateEngineTest {
     
     @Test
     public void noRemoveTest3() {
-        RegexpTemplateEngine te = new RegexpTemplateEngine();
+        TemplateEngine te = new RegexpTemplateEngine();
         Map<String, Object> pp = new HashMap<String, Object>();
         pp.put("correctedItemName1", "pozycja");
         pp.put("correctedItemNewNetValue1", "1");
@@ -113,7 +114,7 @@ public class RegexpTemplateEngineTest {
     
     @Test
     public void combinedTest1() {
-        RegexpTemplateEngine te = new RegexpTemplateEngine();
+        TemplateEngine te = new RegexpTemplateEngine();
         Map<String, Object> pp = new HashMap<String, Object>();
         pp.put("y", "1");
         String r1 = te.merge("?IF-x?bla bla bla?ENDIF-x?$y$", pp);
@@ -123,7 +124,7 @@ public class RegexpTemplateEngineTest {
     @Test
     public void mergeTestNoPresentationValue() {
         
-        RegexpTemplateEngine te = new RegexpTemplateEngine();
+        TemplateEngine te = new RegexpTemplateEngine();
         
         Map<String, Object> pp = new HashMap<String, Object>();
         String r1 = te.merge("$Raz$ dwa $trzy$.", pp);
