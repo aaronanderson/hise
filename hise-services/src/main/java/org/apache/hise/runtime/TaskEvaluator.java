@@ -50,8 +50,10 @@ import org.apache.hise.lang.xsd.htd.TToParts;
 import org.apache.hise.utils.DOMUtils;
 import org.apache.hise.utils.XQueryEvaluator;
 import org.apache.hise.utils.XmlUtils;
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 
 public class TaskEvaluator {
     
@@ -67,7 +69,11 @@ public class TaskEvaluator {
         public static Node getInput(String part) {
             TaskEvaluator te = (TaskEvaluator) XQueryEvaluator.contextObjectTL.get();
             try {
-                return DOMUtils.parse(te.task.getTaskDto().getInput().get(part).getMessage()).getDocumentElement();
+                if(te.task.getTaskDto().getInput().get(part) != null) {
+                    return DOMUtils.parse(te.task.getTaskDto().getInput().get(part).getMessage()).getDocumentElement();
+                } else {
+                    return null;
+                }
             } catch (Exception e) {
                 throw new RuntimeException("", e);
             }
@@ -77,6 +83,7 @@ public class TaskEvaluator {
     public XQueryEvaluator buildQueryEvaluator() {
         XQueryEvaluator evaluator = new XQueryEvaluator();
         evaluator.setContextObject(this);
+        evaluator.declareNamespace("htd", "http://www.example.org/WS-HT");
         evaluator.declareJavaClass("http://www.example.org/WS-HT", HtdFunctions.class);
         evaluator.bindVariable(QName.valueOf("taskId"), task.getTaskDto().getId());
         evaluator.bindVariable(QName.valueOf("currentEventDateTime"), task.getCurrentEventDateTime());

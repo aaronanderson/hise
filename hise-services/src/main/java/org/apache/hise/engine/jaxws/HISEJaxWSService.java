@@ -19,35 +19,23 @@
 
 package org.apache.hise.engine.jaxws;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-import javax.xml.namespace.QName;
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
-import javax.xml.ws.Provider;
-import javax.xml.ws.Service;
-import javax.xml.ws.ServiceMode;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.WebServiceProvider;
-import javax.xml.ws.handler.MessageContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.api.HISEEngine;
 import org.apache.hise.api.Handler;
-import org.apache.hise.engine.HISEEngineImpl;
-import org.springframework.orm.jpa.JpaCallback;
-import org.springframework.orm.jpa.JpaTemplate;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
+import org.apache.hise.utils.DOMUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.xml.namespace.QName;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPMessage;
+import javax.xml.ws.*;
+import javax.xml.ws.handler.MessageContext;
+import org.apache.hise.dao.Transactional;
 
 @WebServiceProvider
 @ServiceMode(value = Service.Mode.MESSAGE)
@@ -55,24 +43,21 @@ public class HISEJaxWSService implements Provider<SOAPMessage>, Handler {
 
     private static Log __log = LogFactory.getLog(HISEJaxWSService.class);
 
+    @Inject
     private HISEEngine hiseEngine;
+    @Resource
     private WebServiceContext context;
-    private PlatformTransactionManager transactionManager;
     private MessageFactory messageFactory;
-    private TransactionTemplate transactionTemplate;
     
     private String id;
 
     public HISEJaxWSService() throws Exception {
         messageFactory = MessageFactory.newInstance();
     }
-
-    public void init() {
-        transactionTemplate = new TransactionTemplate(transactionManager);
-    }
     
 	public String getId() {
-		return id;
+                return String.valueOf(System.identityHashCode(this));
+		//return id;
 	}
 
 //	public void setId(String id) {
@@ -87,18 +72,12 @@ public class HISEJaxWSService implements Provider<SOAPMessage>, Handler {
         return context;
     }
 
-    public void setTransactionManager(PlatformTransactionManager transactionManager) {
-        this.transactionManager = transactionManager;
-    }
-
-    @Resource
     public void setContext(WebServiceContext context) {
         this.context = context;
     }
 
+    @Transactional
     public SOAPMessage invoke(final SOAPMessage request) {
-        return (SOAPMessage) transactionTemplate.execute(new TransactionCallback() {
-            public Object doInTransaction(TransactionStatus arg0) {
                 try {
                     // TransactionStatus tx = transactionManager.getTransaction(new DefaultTransactionDefinition());
 //                    assert transactionManager.isValidateExistingTransaction();
@@ -121,7 +100,5 @@ public class HISEJaxWSService implements Provider<SOAPMessage>, Handler {
                 } catch (Exception e) {
                     throw new RuntimeException("Error during receiving message ", e);
                 }
-            }
-        });
     }
 }

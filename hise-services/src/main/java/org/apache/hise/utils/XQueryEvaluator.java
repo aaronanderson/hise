@@ -58,6 +58,8 @@ public class XQueryEvaluator {
     public static ThreadLocal<Object> contextObjectTL = new ThreadLocal<Object>() ;
     
     private Map<QName, Object> vars = new HashMap<QName, Object>();
+    private Map<String, String> namespaces = new HashMap<String, String>();
+    
     private Configuration config = Configuration.makeConfiguration(null, null);
     private JavaExtensionLibrary jel = new JavaExtensionLibrary(config);
     
@@ -69,6 +71,10 @@ public class XQueryEvaluator {
     
     public void declareJavaClass(String uri, Class clazz) {
         jel.declareJavaClass(uri, clazz);
+    }
+
+    public void declareNamespace(String prefix, String namespace) {
+        namespaces.put(prefix, namespace);
     }
 
     public void setContextObject(Object contextObject) {
@@ -100,6 +106,9 @@ public class XQueryEvaluator {
             }
 
             StaticQueryContext sqc = new StaticQueryContext(config);
+            for (Map.Entry<String,String> namespace : namespaces.entrySet()){
+                sqc.declareNamespace(namespace.getKey(), namespace.getValue());
+            }
             for (QName var : vars.keySet()) {
                 sqc.declareGlobalVariable(StructuredQName.fromClarkName(var.toString()), SequenceType.SINGLE_ITEM, convertJavaToSaxon(vars.get(var)) , false);
             }
@@ -143,9 +152,5 @@ public class XQueryEvaluator {
         } finally {
             contextObjectTL.set(null);
         }
-    }
-    
-    public static Object resultToObject(List l) {
-    	if (l.isEmpty()) return null; else return l.get(0);
     }
 }

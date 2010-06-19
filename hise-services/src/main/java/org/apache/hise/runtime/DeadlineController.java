@@ -29,14 +29,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.Job;
-import org.apache.hise.dao.Message;
 import org.apache.hise.dao.TaskOrgEntity;
 import org.apache.hise.dao.Task.Status;
 import org.apache.hise.lang.xsd.htd.TDeadline;
 import org.apache.hise.lang.xsd.htd.TDeadlines;
 import org.apache.hise.lang.xsd.htd.TEscalation;
 import org.apache.hise.runtime.TaskEvaluator.EscalationResult;
-import org.apache.hise.utils.DOMUtils;
 import org.w3c.dom.Node;
 
 public class DeadlineController implements TaskStateListener {

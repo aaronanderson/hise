@@ -19,14 +19,17 @@
 
 package org.apache.hise.engine.store;
 
+import java.net.URL;
 import java.util.List;
-
-import org.springframework.core.io.Resource;
+import javax.annotation.Resource;
+import javax.inject.Inject;
 
 public class HISEDD {
 
+    @Inject
     private List<TaskDD> tasksDI;
-    private Resource humanInteractionsResource;
+    @Resource
+    private URL humanInteractionsResource;
 
     public List<TaskDD> getTasksDI() {
         return tasksDI;
@@ -36,11 +39,11 @@ public class HISEDD {
         this.tasksDI = tasksDI;
     }
 
-    public Resource getHumanInteractionsResource() {
+    public URL getHumanInteractionsResource() {
         return humanInteractionsResource;
     }
 
-    public void setHumanInteractionsResource(Resource humanInteractionsResource) {
+    public void setHumanInteractionsResource(URL humanInteractionsResource) {
         this.humanInteractionsResource = humanInteractionsResource;
     }
 }

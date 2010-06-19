@@ -21,6 +21,7 @@ package org.apache.hise.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import javax.inject.Inject;
 
 import org.apache.commons.lang.Validate;
 import org.apache.hise.api.HISEUserDetails;
@@ -32,6 +33,7 @@ import org.apache.hise.dao.TaskOrgEntity.OrgEntityType;
  * Default implementation serves user details from HISE DAO
  */
 public class DefaultHISEUserDetails implements HISEUserDetails {
+    @Inject
     private HISEDao hiseDao;
     
     public void setHiseDao(HISEDao hiseDao) {

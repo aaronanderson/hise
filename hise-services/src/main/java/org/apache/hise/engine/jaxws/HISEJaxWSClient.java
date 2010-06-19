@@ -22,7 +22,6 @@ package org.apache.hise.engine.jaxws;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.cxf.jaxws.spi.ProviderImpl;
 import org.apache.hise.api.Sender;
 import org.apache.hise.utils.XQueryEvaluator;
 import org.w3c.dom.Document;
@@ -34,9 +33,10 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.ws.Dispatch;
 import javax.xml.ws.Service;
-import javax.xml.ws.spi.ServiceDelegate;
 import java.net.URL;
 import java.util.Iterator;
+import javax.annotation.PostConstruct;
+import org.apache.hise.dao.Transactional;
 
 
 public class HISEJaxWSClient implements Sender {
@@ -48,15 +48,15 @@ public class HISEJaxWSClient implements Sender {
     URL wsdlDocumentLocation;
     QName serviceName;
     
-    private ServiceDelegate destinationService;
+    private Service destinationService;
     private QName destinationPort;
     private XQueryEvaluator evaluator = new XQueryEvaluator();
-    
+
+    @PostConstruct
     public void init() throws Exception {
+        evaluator.declareNamespace("wsa", "http://www.w3.org/2005/08/addressing");
         messageFactory = MessageFactory.newInstance();
-        javax.xml.ws.spi.Provider provider = new ProviderImpl();
-        destinationService = provider.createServiceDelegate(wsdlDocumentLocation, serviceName, Service.class);
-//        destinationService = Service.create(wsdlDocumentLocation, serviceName);
+        destinationService = Service.create(wsdlDocumentLocation, serviceName);
         destinationPort = null;
         {
             Iterator<QName> it = destinationService.getPorts();
@@ -78,9 +78,10 @@ public class HISEJaxWSClient implements Sender {
     }
 
     public String getAddressFromEpr(Node epr) {
-        return (String) evaluator.evaluateExpression("declare namespace wsa=\"http://www.w3.org/2005/08/addressing\"; string(wsa:EndpointReference/wsa:Address)", epr).get(0);
+        return (String) evaluator.evaluateExpression("string(wsa:EndpointReference/wsa:Address)", epr).get(0);
     }
 
+    @Transactional
     public Node invoke(Node message, Node epr) {
         try {            
             

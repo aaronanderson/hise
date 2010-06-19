@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import javax.annotation.Resource;
+import javax.inject.Inject;
 
 import javax.jws.WebService;
 import javax.xml.datatype.Duration;
@@ -35,6 +37,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.dao.GenericHumanRole;
 import org.apache.hise.dao.TaskQuery;
+import org.apache.hise.dao.Transactional;
 import org.apache.hise.engine.HISEEngineImpl;
 
 import org.apache.hise.engine.wsdl.IllegalAccessFault;
@@ -60,7 +63,6 @@ import org.apache.hise.lang.xsd.htdt.TTime;
 import org.apache.hise.runtime.HiseIllegalAccessException;
 import org.apache.hise.runtime.HiseIllegalStateException;
 import org.apache.hise.runtime.Task;
-import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Node;
 
 /**
@@ -82,18 +84,14 @@ public class TaskOperationsImpl implements TaskOperations {
     
     private static final Log log = LogFactory.getLog(TaskOperationsImpl.class);
 
-    private HISEEngineImpl hiseEngine;
+    @Inject
+    HISEEngineImpl hiseEngine;
 
-    private WebServiceContext context;
+    @Resource
+    WebServiceContext context;
 
-    /**
-     * Sets up {@link WebServiceContext} used to lookup authenticated user
-     * performing operations.
-     * 
-     * @throws Exception
-     */
-    public void init() throws Exception {
-        context = (WebServiceContext) Class.forName("org.apache.cxf.jaxws.context.WebServiceContextImpl").newInstance();
+    public void setWebServiceContext(WebServiceContext context) {
+       this.context = context;
     }
 
     protected String getUserString() {

@@ -22,9 +22,19 @@ package org.apache.hise.runtime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import javax.wsdl.Operation;
+import javax.wsdl.Part;
+import javax.xml.namespace.NamespaceContext;
+import javax.xml.namespace.QName;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
@@ -43,6 +53,8 @@ import org.apache.hise.lang.xsd.htd.TOrganizationalEntity;
 import org.apache.hise.lang.xsd.htd.TUserlist;
 import org.apache.hise.utils.DOMUtils;
 import org.apache.hise.utils.XmlUtils;
+import org.apache.ws.commons.schema.utils.NamespaceMap;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -66,24 +78,24 @@ public class Task {
     private TaskEvaluator taskEvaluator;
 
     private List<TaskStateListener> taskStateListeners;
-    
+
     private Job currentJob;
     private Date currentEventDateTime = Calendar.getInstance().getTime();
-    
+
     private String currentUser;
-    
+
     private DeadlineController deadlineController;
-    
+
     protected Task() {}
-    
+
     public Job getCurrentJob() {
         return currentJob;
     }
-    
+
     public void setCurrentJob(Job currentJob) {
         this.currentJob = currentJob;
     }
-    
+
     public Date getCurrentEventDateTime() {
         return currentEventDateTime;
     }
@@ -109,9 +121,9 @@ public class Task {
     }
 
     private Task(HISEEngineImpl engine, boolean notification) {
-        
+
         Validate.notNull(engine);
-        
+
         this.hiseEngine = engine;
 
         taskStateListeners = new ArrayList<TaskStateListener>();
@@ -161,32 +173,36 @@ public class Task {
                     }
                 }
             }
-            
+
             if (poSize == 1 && selected != null) {
                 //Nominate a single potential owner
                 setActualOwner(selected.getName());
             }
         }
     }
-    
+
     public static Task create(HISEEngineImpl engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
 
         Task t = new Task(engine, false);
         Validate.notNull(taskDefinition);
         Validate.isTrue(!taskDefinition.isNotification());
-        
+
+        Map<String, Node> inputParts = findInputParts(taskDefinition, requestXml);
+
         t.taskDefinition = taskDefinition;
         org.apache.hise.dao.Task taskDto = new org.apache.hise.dao.Task();
         taskDto.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
         taskDto.setCreatedBy(createdBy);
         taskDto.setStatus(null);
-        taskDto.getInput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
+        for(String partName: inputParts.keySet()) {
+            taskDto.getInput().put(partName, new Message(partName, DOMUtils.domToString(inputParts.get(partName))));
+        }
         taskDto.getInput().put("requestHeader", new Message("requestHeader", DOMUtils.domToString(requestHeader)));
         taskDto.setCreatedOn(new Date());
         taskDto.setActivationTime(new Date());
         taskDto.setEscalated(false);
         taskDto.setNotification(false);
-        
+
         engine.getHiseDao().persist(taskDto);
         t.taskDto = taskDto;
         try {
@@ -196,7 +212,7 @@ public class Task {
         }
 
         taskDto.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
-        
+
         try {
             t.setStatus(Status.READY);
         } catch (HiseIllegalStateException e) {
@@ -254,27 +270,67 @@ public class Task {
         // recalculatePriority();
     }
 
+    static Map<String, Node> findInputParts(TaskDefinition taskDefinition, Node requestXml) {
+        Map<String, Node> inputParts = new HashMap<String, Node>();
+
+        Operation operation = taskDefinition.getPortType().getOperation(taskDefinition.getTaskInterface().getOperation(), null, null);
+        if(operation == null) {
+            LogFactory.getLog(Task.class).error("Operation: " + taskDefinition.getTaskInterface().getOperation() + " not found in port type definition.");
+            return inputParts;
+        }
+
+        Map<String, Part> partsMap = operation.getInput().getMessage().getParts();
+        Node messagePart = null;
+        for (Part part : partsMap.values()) {
+            String name = part.getName();
+            QName element = part.getElementName();
+            QName type = part.getTypeName();
+            Element root = (Element) requestXml;            
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            try {
+                if (element != null) {
+                    Map namespaceMap = new HashMap(1);
+                    namespaceMap.put("prefix", element.getNamespaceURI());
+                    NamespaceContext nc = new NamespaceMap(namespaceMap);
+                    xPath.setNamespaceContext(nc);
+                    messagePart = (Node) xPath.evaluate("prefix:" + element.getLocalPart(), root, XPathConstants.NODE);
+                } else if (type != null) {
+                    messagePart = (Node) xPath.evaluate("child::*/" + part.getName(), root, XPathConstants.NODE);
+                }
+            } catch (XPathExpressionException ex) {
+                LogFactory.getLog(Task.class).error("Can not get message part.", ex);
+            }
+            inputParts.put(name, messagePart);
+        }
+
+        return inputParts;
+    }
+
     public static Task createNotification(HISEEngineImpl engine, TaskDefinition taskDefinition, String createdBy, Node requestXml, Node requestHeader) {
-        
+
         Validate.notNull(taskDefinition);
         Validate.isTrue(taskDefinition.isNotification());
-        
+
         Task t = new Task(engine, true);
-        
+
         t.taskDefinition = taskDefinition;
+
+        Map<String, Node> inputParts = findInputParts(taskDefinition, requestXml);
 
         org.apache.hise.dao.Task taskDto = new org.apache.hise.dao.Task();
         taskDto.setTaskDefinitionKey(taskDefinition.getTaskName().toString());
         taskDto.setCreatedBy(createdBy);
         taskDto.setStatus(null);
-        taskDto.getInput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
+        for(String partName: inputParts.keySet()) {
+            taskDto.getInput().put(partName, new Message(partName, DOMUtils.domToString(inputParts.get(partName))));
+        }
         taskDto.getInput().put("requestHeader", new Message("requestHeader", DOMUtils.domToString(requestHeader)));
         taskDto.setCreatedOn(new Date());
         taskDto.setActivationTime(new Date());
         taskDto.setEscalated(false);
         taskDto.setNotification(true);
         engine.getHiseDao().persist(taskDto);
-        
+
         t.taskDto = taskDto;
         try {
             t.setStatus(Status.CREATED);
@@ -283,7 +339,7 @@ public class Task {
         }
 
         taskDto.setPeopleAssignments(t.getTaskEvaluator().evaluatePeopleAssignments());
-        
+
         try {
             t.setStatus(Status.READY);
         } catch (HiseIllegalStateException e) {
@@ -291,7 +347,7 @@ public class Task {
         }
 
         engine.getHiseDao().persist(taskDto);
-        
+
         return t;
     }
 
@@ -299,7 +355,7 @@ public class Task {
         setStatus(Status.RESERVED);
         taskDto.setActualOwner(user);
     }
-    
+
     public void setOutput(Node requestXml) {
         __log.debug("setting task output to: " + requestXml);
         this.taskDto.getOutput().put("request", new Message("request", DOMUtils.domToString(requestXml)));
@@ -559,7 +615,7 @@ public class Task {
         if (isCurrentUserInPotentialOwners()) {
             throw new HiseIllegalAccessException("User: " + currentUser + " is not a potential owner.");
         }
-        
+
         // //TODO test
         // // check if the person is excluded from potential owners
         // if ((this.getExcludedOwners() != null && this.getExcludedOwners().contains(person))) {
@@ -571,7 +627,7 @@ public class Task {
         // taskDto.addOperationComment(Operations.CLAIM, person);
         setStatus(Status.RESERVED);
     }
-    
+
     /**
      * TODO implement
      */
@@ -590,7 +646,7 @@ public class Task {
     public void release() throws HiseIllegalStateException {
         setStatus(Status.READY);
     }
-    
+
     /**
      * Suspends the task.
      * @throws HiseIllegalStateException 
@@ -598,7 +654,7 @@ public class Task {
     public void suspend() throws HiseIllegalStateException {
         setStatus(Status.SUSPENDED);
     }
-    
+
     public void suspendUntil(Date when) throws HiseIllegalStateException {
         Validate.notNull(when);
 
@@ -606,7 +662,7 @@ public class Task {
         Job job = hiseEngine.getHiseScheduler().createJob(when, "suspendUntil", taskDto);
         taskDto.setSuspendUntil(job);
     }
-    
+
     public void suspendUntilJobAction() throws HiseIllegalStateException {
         taskDto.setSuspendUntil(null);
         resume();
@@ -616,7 +672,7 @@ public class Task {
         taskDto.getDeadlines().remove(getCurrentJob());
         deadlineController.deadlineCrossed(getCurrentJob());
     }
-    
+
     public void resume() throws HiseIllegalStateException {
         setStatus(taskDto.getStatusBeforeSuspend());
     }
@@ -626,18 +682,21 @@ public class Task {
         sendResponse();
     }
 
+    /**
+     * TODO Execution of the task finished successfully. If no output data is set the operation returns illegalArgumentFault.
+     */
     public void complete() throws HiseIllegalStateException {
         setStatus(Status.COMPLETED);
         sendResponse();
     }
-    
+
     /**
      * FIXME is outcome a reponse?
      */
     private void sendResponse() {
         try {
             Node response = taskEvaluator.evaluateOutcome(taskDto.getStatus() == Status.COMPLETED);
-            hiseEngine.sendResponse(getTaskDefinition().getTaskName(), 
+            hiseEngine.sendResponse(getTaskDefinition().getTaskName(),
                     response,
                     taskEvaluator.createEprFromHeader(DOMUtils.parse(taskDto.getInput().get("requestHeader").getMessage()).getDocumentElement()));
         } catch (Exception e) {
@@ -649,10 +708,10 @@ public class Task {
         setStatus(Status.READY);
         taskDto.setActualOwner(null);
     }
-    
+
     public void forward(TOrganizationalEntity target) throws HiseIllegalStateException {
         Set<TaskOrgEntity> e = new HashSet<TaskOrgEntity>();
-        
+
         for (String user : XmlUtils.notNull(target.getUsers(), new TUserlist()).getUser()) {
             TaskOrgEntity x = new TaskOrgEntity();
             x.setGenericHumanRole(GenericHumanRole.POTENTIALOWNERS);
@@ -670,24 +729,24 @@ public class Task {
             x.setTask(taskDto);
             e.add(x);
         }
-        
+
         forward(e);
     }
-    
+
     public void forward(Set<TaskOrgEntity> targets) throws HiseIllegalStateException {
         __log.debug("forwarding to " + targets);
         releaseOwner();
-        
+
         for (TaskOrgEntity x : taskDto.getPeopleAssignments()) {
             x.setTask(null);
             hiseEngine.getHiseDao().remove(x);
         }
         taskDto.getPeopleAssignments().clear();
         taskDto.getPeopleAssignments().addAll(targets);
-        
+
         tryNominateOwner();
     }
-    
+
 
     //    
     // /**
@@ -1140,16 +1199,16 @@ public class Task {
     // return result;
     // }
 
-    
+
     public void remove() {
         Validate.isTrue(taskDto.isNotification());
         hiseEngine.getHiseDao().remove(taskDto);
     }
-    
+
     public Node getInput(String part) {
         return DOMUtils.parse(taskDto.getInput().get(part).getMessage()).getDocumentElement();
     }
-    
+
     public Node getOutput(String part) {
         return DOMUtils.parse(taskDto.getOutput().get(part).getMessage()).getDocumentElement();
     }

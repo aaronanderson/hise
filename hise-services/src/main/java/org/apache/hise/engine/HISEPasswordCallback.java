@@ -20,6 +20,7 @@
 package org.apache.hise.engine;
 
 import java.io.IOException;
+import javax.inject.Inject;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -33,7 +34,7 @@ import org.apache.ws.security.WSPasswordCallback;
  * @author Rafał Rusin
  */
 public class HISEPasswordCallback implements CallbackHandler {
-    
+    @Inject
     private HISEUserDetails hiseUserDetails;
     
     public void setHiseUserDetails(HISEUserDetails hiseUserDetails) {

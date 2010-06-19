@@ -27,9 +27,7 @@ import javax.persistence.MappedSuperclass;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
-import org.springframework.beans.factory.annotation.Configurable;
 
-@Configurable
 @MappedSuperclass
 public abstract class JpaBase {
 

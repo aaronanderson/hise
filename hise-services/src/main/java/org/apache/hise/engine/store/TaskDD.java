@@ -19,6 +19,8 @@
 
 package org.apache.hise.engine.store;
 
+import javax.annotation.Resource;
+import javax.inject.Inject;
 import org.apache.hise.api.Handler;
 import org.apache.hise.api.Sender;
 
@@ -26,8 +28,11 @@ import javax.xml.namespace.QName;
 
 public class TaskDD {
 
+    @Resource
     public QName taskName;
+    @Inject
     public Handler handler;
+    @Inject
     public Sender sender;
 
     public QName getTaskName() {

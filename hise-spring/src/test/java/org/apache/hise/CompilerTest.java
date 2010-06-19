@@ -19,7 +19,7 @@
 
 package org.apache.hise;
 
-import java.util.HashSet;
+import java.net.URL;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
@@ -29,14 +29,12 @@ import org.apache.hise.engine.store.HumanInteractionsCompiler;
 import org.apache.hise.lang.HumanInteractions;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 
 public class CompilerTest {
     
     @Test
     public void testCompile() throws Exception {
-        Resource htdXml = new ClassPathResource("testHtd1.xml");
+        URL htdXml = getClass().getClassLoader().getResource("testHtd1.xml");
         HumanInteractions hi = HumanInteractionsCompiler.compile(htdXml);
         Set<QName> s = hi.getTaskDefinitions().keySet();
         Assert.assertNotNull(hi);
@@ -51,7 +49,7 @@ public class CompilerTest {
     
     @Test//(expected = CompileException.class)
     public void testDuplicateTaskDef() throws CompileException {
-        Resource htdXml = new ClassPathResource("duplicateTaskDef.xml");
+        URL htdXml = getClass().getClassLoader().getResource("duplicateTaskDef.xml");
         try {
             HumanInteractionsCompiler.compile(htdXml);
         } catch (CompileException e) {

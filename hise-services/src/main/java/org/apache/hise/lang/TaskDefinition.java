@@ -22,6 +22,7 @@ package org.apache.hise.lang;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import javax.wsdl.PortType;
 
 import javax.xml.namespace.QName;
 
@@ -67,6 +68,8 @@ public class TaskDefinition {
      * XML namespaces supported in human task definitions.
      */
     private Map<String, String> xmlNamespaces;
+
+    private PortType portType;
 
     // ==================== CONSTRUCTOR =========================
 
@@ -365,4 +368,13 @@ public class TaskDefinition {
     public TDeadlines getDeadlines() {
         return tTask.getDeadlines();
     }
+
+    public PortType getPortType() {
+        return portType;
+    }
+
+    public void setPortType(PortType portType) {
+        this.portType = portType;
+    }
+   
 }

@@ -20,6 +20,6 @@ public interface HISEEngine {
     void registerTask(TaskInfo ti);
 
     Node receive(Handler handler, QName portType, String operation, Element body, Node requestHeader);
-
+    
     HISEDao getHiseDao();
 }

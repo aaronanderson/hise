@@ -19,61 +19,79 @@
 
 package org.apache.hise.engine.store;
 
+import java.net.URI;
+import java.net.URL;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import javax.wsdl.Definition;
+import javax.wsdl.PortType;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang.Validate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hise.lang.HumanInteractions;
 import org.apache.hise.lang.TaskDefinition;
-import org.apache.hise.lang.xsd.htd.TGenericHumanRole;
 import org.apache.hise.lang.xsd.htd.THumanInteractions;
+import org.apache.hise.lang.xsd.htd.TImport;
 import org.apache.hise.lang.xsd.htd.TNotification;
 import org.apache.hise.lang.xsd.htd.TTask;
 import org.apache.hise.lang.xsd.htd.TTaskInterface;
-import org.apache.hise.utils.DOMUtils;
-import org.springframework.core.io.Resource;
-import org.w3c.dom.Document;
 
 public class HumanInteractionsCompiler {
-    private static final Log log = LogFactory.getLog(HumanInteractionsCompiler.class);
 
+    private final Log log = LogFactory.getLog(HumanInteractionsCompiler.class);
     private Map<String, String> xmlNamespaces;
 
     private HumanInteractionsCompiler() {
     }
 
-    public static HumanInteractions compile(Resource resource) throws CompileException {
+    public static HumanInteractions compile(URL resource) throws CompileException {
         Validate.notNull(resource, "Specified resource is null");
         try {
             HumanInteractionsCompiler c = new HumanInteractionsCompiler();
-            log.debug("compiling " + resource);
+            LogFactory.getLog(HumanInteractionsCompiler.class).debug("compiling " + resource);
             return c.compile2(resource);
         } catch (Exception e) {
             throw new CompileException("Compile error for " + resource, e);
         }
     }
 
-    private HumanInteractions compile2(Resource resource) throws Exception {
+    private HumanInteractions compile2(URL resource) throws Exception {
         Validate.notNull(resource);
 
-        Resource htdXml = resource;
+        URL htdXml = resource;
         THumanInteractions hiDoc;
         {
             JAXBContext jaxbContext = JAXBContext.newInstance("org.apache.hise.lang.xsd.htd");
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            DocumentBuilderFactory f = DOMUtils.getDocumentBuilderFactory();
-            f.setNamespaceAware(true);
-            DocumentBuilder b = f.newDocumentBuilder();
-            Document d = b.parse(htdXml.getInputStream());
-            hiDoc = ((JAXBElement<THumanInteractions>) unmarshaller.unmarshal(d)).getValue();
+            hiDoc = ((JAXBElement<THumanInteractions>) unmarshaller.unmarshal(htdXml.openStream())).getValue();
+        }
+
+        Set<Definition> definitions = new HashSet<Definition>();
+
+        for (TImport tImport : hiDoc.getImport()) {
+            if ("http://schemas.xmlsoap.org/wsdl/".equals(tImport.getImportType())) {
+                try {
+                    URI wsdl = new URI(tImport.getLocation());
+                    if (!wsdl.isAbsolute()){
+                      wsdl = htdXml.toURI().resolve(wsdl);
+                    }
+                    WSDLFactory wsdlf = WSDLFactory.newInstance();
+                    WSDLReader reader = wsdlf.newWSDLReader();
+                    Definition definition = reader.readWSDL(wsdl.toString());
+                    definitions.add(definition);
+                } catch (Exception ex) {
+                    log.error("Error during reading wsdl file.", ex);
+                }
+            }
         }
 
         HumanInteractions humanInteractions = new HumanInteractions();
@@ -82,12 +100,15 @@ public class HumanInteractionsCompiler {
             for (TTask tTask : hiDoc.getTasks().getTask()) {
                 TaskDefinition taskDefinition = new TaskDefinition(tTask, this.xmlNamespaces, hiDoc.getTargetNamespace());
                 taskDefinition.setTaskInterface(tTask.getInterface());
-                
+
                 QName name = taskDefinition.getTaskName();
                 if (humanInteractions.getTaskDefinitions().containsKey(name)) {
                     throw new RuntimeException("Duplicate task found, name: " + name + " resource: " + resource);
                 }
                 humanInteractions.getTaskDefinitions().put(name, taskDefinition);
+
+                QName portTypeName = taskDefinition.getTaskInterface().getPortType();
+                taskDefinition.setPortType(findPortType(portTypeName, definitions));
             }
         }
 
@@ -98,18 +119,31 @@ public class HumanInteractionsCompiler {
                 x.setOperation(tnote.getInterface().getOperation());
                 x.setPortType(tnote.getInterface().getPortType());
                 taskDefinition.setTaskInterface(x);
-                
+
                 QName name = taskDefinition.getTaskName();
                 if (humanInteractions.getTaskDefinitions().containsKey(name)) {
                     throw new RuntimeException("Duplicate task found, name: " + name + " resource: " + resource);
                 }
                 humanInteractions.getTaskDefinitions().put(name, taskDefinition);
+
+                QName portTypeName = taskDefinition.getTaskInterface().getPortType();
+                taskDefinition.setPortType(findPortType(portTypeName, definitions));
             }
         }
 
         return humanInteractions;
     }
 
+    private PortType findPortType(QName portTypeName, Set<Definition> definitions) {
+        for (Definition definition : definitions) {
+            PortType portType = (PortType) definition.getAllPortTypes().get(portTypeName);
+            if (portType != null) {
+                return portType;
+                }
+            }
+
+        throw new RuntimeException("PortType not found in definitions portType: " + portTypeName);
+    }
     // /**
     // * Creates HumanInteractions instance, passing DOM Document instance to its constructor.
     // *

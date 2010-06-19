@@ -19,20 +19,24 @@
 
 package org.apache.hise.engine.store;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
 import org.apache.commons.lang.Validate;
 import org.apache.hise.api.HISEEngine;
-import org.apache.hise.engine.HISEEngineImpl;
 import org.apache.hise.lang.HumanInteractions;
 import org.apache.hise.lang.TaskDefinition;
 
 public class HISEDeployer {
+    @Inject
     public HISEEngine hiseEngine;
+    @Inject
     public HISEDD deploymentInfo;
-    
+
+    @PostConstruct
     public void init() throws CompileException {
         deploy(deploymentInfo);
     }
-    
+
     public void deploy(HISEDD di) throws CompileException {
         HumanInteractions tasks = HumanInteractionsCompiler.compile(di.getHumanInteractionsResource());
         

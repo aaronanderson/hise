@@ -46,7 +46,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Configurable;
 
 
 /**
@@ -59,7 +58,6 @@ import org.springframework.beans.factory.annotation.Configurable;
  */
 @Entity
 @Table(name = "TASK")
-@Configurable(preConstruction = true)
 public class Task extends JpaBase {
 
     private final Log log = LogFactory.getLog(Task.class);

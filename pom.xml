@@ -29,13 +29,14 @@
 		<module>hise-test-example-osgi</module>
 		<module>hise-wsdl-classes</module>
 		<module>hise-services</module>
+		<module>hise-spring</module>
         <module>hise-web</module>
         <module>hise-bundle</module>
         <module>hise-karaf</module>
 	</modules>
 	<properties>
-		<cxf.version>2.2.6</cxf.version>
-		<spring.version>2.5.6.SEC01</spring.version>
+		<cxf.version>2.2.9</cxf.version>
+		<spring.version>3.0.2.RELEASE</spring.version>
 		<saxon.version>9.1.0.8</saxon.version>
         <log4j.version>1.2.13</log4j.version>
 	</properties>
@@ -96,7 +97,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.4</version>
+                <version>4.7</version>
             </dependency>
             <dependency>
                 <groupId>org.jmock</groupId>

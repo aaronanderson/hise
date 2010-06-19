@@ -1,5 +1,6 @@
 package org.apache.hise.test;
 
+import javax.annotation.PostConstruct;
 import org.apache.hise.api.HISEEngine;
 import org.apache.hise.dao.OrgEntity;
 import org.apache.hise.dao.TaskOrgEntity;
@@ -30,6 +31,7 @@ public class SampleUsers {
         hiseEngine.getHiseDao().persist(o);
     }
 
+    @PostConstruct
     public void init() {
     	try {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);

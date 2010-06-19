@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    ~ Licensed to the Apache Software Foundation (ASF) under one ~ or more contributor license agreements. See the NOTICE file ~ distributed with this work for additional information ~ regarding copyright ownership. The ASF licenses this file ~ to you under the Apache License, Version 2.0 (the ~ "License"); you may not use this file except in compliance ~ with the License. You may obtain a copy of the License at ~ ~ http://www.apache.org/licenses/LICENSE-2.0 ~ ~ Unless required by applicable law or agreed to in writing, ~ software distributed under the License is distributed on an ~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY ~ KIND, either express or implied. See the License for the ~ specific
+    language governing permissions and limitations ~ under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util" xmlns:http-conf="http://cxf.apache.org/transports/http/configuration" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:cxf="http://cxf.apache.org/core" xmlns:htd="http://www.example.org/WS-HT" xmlns:htda="http://www.example.org/WS-HT/api" xmlns:htdt="http://www.example.org/WS-HT/api/xsd" xmlns:htdaw="http://www.example.org/WS-HT/api/wsdl" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ins="http://www.insurance.example.com/claims"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+       http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+       http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       ">
+
+    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
+    <import resource="classpath:META-INF/cxf/cxf-extension-jaxws.xml"/> 
+
+    <!-- no autowiring, manually specify the injections using the Spring configuration below
+  <context:annotation-config/>
+-->
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="htEntityManagerFactory"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+    <bean id="commonAnnotationBean" class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject">
+            <ref local="commonAnnotationBean" />
+        </property>
+        <property name="targetMethod">
+            <value>ignoreResourceType</value>
+        </property>
+        <property name="arguments">
+            <list>
+                <value>java.net.URL</value>
+            </list>
+        </property>
+    </bean>
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetObject">
+            <ref local="commonAnnotationBean" />
+        </property>
+        <property name="targetMethod">
+            <value>ignoreResourceType</value>
+        </property>
+        <property name="arguments">
+            <list>
+                <value>javax.xml.namespace.QName</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="hiseDao" class="org.apache.hise.dao.HISEDaoImpl"/>
+
+    <bean id="hiseEngine" class="org.apache.hise.engine.HISEEngineImpl">
+        <property name="hiseDao" ref="hiseDao"/>
+        <property name="hiseScheduler" ref="hiseScheduler"/>
+        <property name="hiseUserDetails" ref="hiseUserDetails"/>
+    </bean>
+
+    <bean id="hiseUserDetails" class="org.apache.hise.engine.DefaultHISEUserDetails">
+        <property name="hiseDao" ref="hiseDao"/>
+    </bean>
+
+    <bean id="hisePasswordCallback" class="org.apache.hise.engine.HISEPasswordCallback">
+        <property name="hiseUserDetails" ref="hiseUserDetails"/>
+    </bean>
+
+    <bean id="hiseScheduler" class="org.apache.hise.engine.HISESchedulerImpl">
+        <property name="jobExecutor" ref="jobExecutor"/>
+    </bean>
+
+    <bean id="jobExecutor" class="org.apache.hise.engine.HISESchedulerImpl$JobExecutorImpl">
+        <property name="hiseDao" ref="hiseDao"/>
+        <property name="jobTaskBuilder" ref="jobTaskBuilder"/>
+    </bean>
+
+    <!-- The JobTask bean could be a singleton but this config illustrates injecting stateful beans using JSR330-->
+    <bean id="jobTaskBuilder"  class="org.springframework.beans.factory.config.ProviderCreatingFactoryBean">
+        <property name="targetBeanName">
+            <idref local="jobTask" />
+        </property>
+    </bean>
+
+    <bean id="jobTask" scope="prototype" class="org.apache.hise.engine.HISESchedulerImpl$JobTaskImpl">
+        <property name="hiseEngine" ref="hiseEngine"/>
+    </bean>
+
+    <util:properties id="hiseLoginProperties" location="classpath:hise-login.properties"/>
+
+    <bean name="taskOperations" class="org.apache.hise.engine.jaxws.TaskOperationsImpl">
+        <property name="hiseEngine" ref="hiseEngine"/>
+    </bean>
+
+    <jaxws:endpoint id="taskOperationsEndpoint" name="taskOperationsEndpoint" address="/taskOperations/" implementor="#taskOperations" implementorClass="org.apache.hise.engine.jaxws.TaskOperationsImpl" serviceName="htdaw:taskOperations" publish="true"  wsdlLocation="classpath:ws-humantask.wsdl">
+        <!--<jaxws:features>
+            <wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+        </jaxws:features> -->
+        <jaxws:inInterceptors>
+            <bean class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+                <constructor-arg>
+                    <map>
+                        <entry key="action" value="UsernameToken"/>
+                        <entry key="passwordType" value="PasswordDigest"/>
+                        <entry key="passwordCallbackRef">
+                            <ref bean="hisePasswordCallback"/>
+                        </entry>
+                    </map>
+                </constructor-arg>
+            </bean>
+        </jaxws:inInterceptors>
+    </jaxws:endpoint>
+
+    <bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor"/>
+    <bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor"/>
+
+    <cxf:bus>
+        <cxf:inInterceptors>
+            <ref bean="logInbound"/>
+        </cxf:inInterceptors>
+        <cxf:outInterceptors>
+            <ref bean="logOutbound"/>
+        </cxf:outInterceptors>
+        <cxf:inFaultInterceptors>
+            <ref bean="logInbound"/>
+        </cxf:inFaultInterceptors>
+        <cxf:outFaultInterceptors>
+            <ref bean="logOutbound"/>
+        </cxf:outFaultInterceptors>
+    </cxf:bus>
+</beans>

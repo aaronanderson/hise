@@ -8,8 +8,8 @@ Business Machines Corporation, Oracle Inc., and SAP AG. All rights reserved.
 <htd:humanInteractions xmlns:htd="http://www.example.org/WS-HT"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:tns="http://www.insurance.example.com/claims/"
-    targetNamespace="http://www.insurance.example.com/claims/"
+    xmlns:tns="http://www.insurance.example.com/claims"
+    targetNamespace="http://www.insurance.example.com/claims"
     xsi:schemaLocation="http://www.example.org/WS-HT file:/usr/share/schemas/ws-humantask.xsd">
     
     <!-- 

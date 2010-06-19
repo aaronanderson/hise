@@ -16,19 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package org.apache.hise.engine;
 
+import java.util.Calendar;
 import java.util.Date;
-
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hise.dao.HISEDao;
 import org.apache.hise.dao.Job;
 import org.apache.hise.dao.Task;
+import org.apache.hise.dao.Transactional;
 
-/**
- * 
- * @author Rafał Rusin
- */
-public interface HISEScheduler {
 
-    public Job createJob(Date when, String action, Task task);
-
-}

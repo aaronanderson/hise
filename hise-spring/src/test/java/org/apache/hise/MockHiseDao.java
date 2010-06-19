@@ -4,12 +4,12 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.hise.dao.HISEDao;
+import org.apache.hise.dao.HISEDaoImpl;
 import org.apache.hise.dao.Task;
 import org.apache.hise.dao.TaskQuery;
 import org.apache.hise.dao.Task.Status;
 
-public class MockHiseDao extends HISEDao {
+public class MockHiseDao extends HISEDaoImpl {
 
     @Override
     public List<Task> getUserTasks(TaskQuery query) {

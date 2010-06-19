@@ -7,7 +7,7 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
        ">
-  <bean class="org.apache.hise.engine.store.HISEDeployer" init-method="init">
+  <bean class="org.apache.hise.engine.store.HISEDeployer">
     <property name="hiseEngine" ref="hiseEngine"/>
     <property name="deploymentInfo">
       <bean class="org.apache.hise.engine.store.HISEDD">

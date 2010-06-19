@@ -40,6 +40,7 @@ import javax.xml.namespace.QName;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.inject.Inject;
 
 public class HISEEngineImpl implements HISEEngine {
 
@@ -48,9 +49,11 @@ public class HISEEngineImpl implements HISEEngine {
     public final Map<String, QName> tasksMap = new HashMap<String, QName>();
     public final Map<QName, TaskInfo> tasks = new HashMap<QName, TaskInfo>();
 
+    @Inject
     private HISEDao hiseDao;
+    @Inject
     private HISEUserDetails hiseUserDetails;
-    
+    @Inject
     private HISEScheduler hiseScheduler;
     
     public HISEDao getHiseDao() {
@@ -84,7 +87,7 @@ public class HISEEngineImpl implements HISEEngine {
     }
     
     public static String tasksKey(Handler handler, QName portType, String operation) {
-        return "" + System.identityHashCode(handler) + ";" + getCanonicalQName(portType) + ";" + operation; 
+        return "" + handler.getId() + ";" + getCanonicalQName(portType) + ";" + operation;
     }
 
     public void registerTask(TaskInfo ti) {
@@ -132,9 +135,9 @@ public class HISEEngineImpl implements HISEEngine {
         TaskDefinition def = getTaskDefinition(taskName);
         Task t;
         if (def.isNotification()) {
-            t = Task.createNotification(this, getTaskDefinition(taskName), createdBy, DOMUtils.getFirstElement(body), requestHeader);
+            t = Task.createNotification(this, getTaskDefinition(taskName), createdBy, body, requestHeader);
         } else {
-            t = Task.create(this, getTaskDefinition(taskName), createdBy, DOMUtils.getFirstElement(body), requestHeader);
+            t = Task.create(this, getTaskDefinition(taskName), createdBy, body, requestHeader);
         }
         return t.getTaskEvaluator().evaluateApproveResponseHeader();
     }

@@ -77,12 +77,7 @@ org.springframework.osgi.service.importer
     <dependencies>
         <dependency>
             <groupId>org.apache.hise</groupId>
-            <artifactId>hise-wsdl</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.hise</groupId>
-            <artifactId>hise-services</artifactId>
+            <artifactId>hise-spring</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
